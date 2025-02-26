@@ -1,0 +1,3 @@
+librosa
+standard-aifc # deprecated in 3.13, may not be needed for early python versions
+standard-sunau # deprecated in 3.13, may not be needed for early python versions
