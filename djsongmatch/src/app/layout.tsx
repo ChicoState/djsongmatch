@@ -5,9 +5,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="flex flex-col justify-center items-center bg-black">
+      <body className="bg-black">
         {children}
-        hi
       </body>
     </html>
   );
