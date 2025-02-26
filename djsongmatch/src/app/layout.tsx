@@ -5,7 +5,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="flex flex-col justify-center items-center bg-black">
+        {children}
+        hi
+      </body>
     </html>
   );
 }
