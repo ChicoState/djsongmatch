@@ -11,7 +11,7 @@ async function Songs() {
     <div>
       <ul>
         {songs.map((song) => {
-          return <li key={song.track + song.artist}>{song.track}</li>;
+          return <li key={song.songId}>{song.title}</li>;
         })}
       </ul>
     </div>
