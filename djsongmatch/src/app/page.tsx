@@ -1,6 +1,11 @@
 "use client";
 import { AutoComplete, Option } from "@/components/ui/autocomplete";
+import { musicData } from "@/db/schema";
 import "./globals.css";
+
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/libsql";
+const db = drizzle("file:./assets/ClassicHit.db");
 
 // mock data, delete later
 const options: Option[] = [
@@ -8,6 +13,19 @@ const options: Option[] = [
   { value: "Song 2", label: "Song 2" },
   { value: "Song 3", label: "Song 3" },
 ];
+
+async function Songs() {
+  const songs = await db.select().from(musicData);
+  return (
+    <div>
+      <ul>
+        {songs.map((song) => {
+          return <li key={song.songId}>{song.title}</li>;
+        })}
+      </ul>
+    </div>
+  );
+}
 
 export default function Home() {
   return (
