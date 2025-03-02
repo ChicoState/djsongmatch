@@ -12,7 +12,7 @@ import { useState, useRef, useCallback, type KeyboardEvent } from "react";
 
 import { Check } from "lucide-react";
 
-export type Option = Record<"value" | "label", string> & Record<string, string>;
+export type Option = Record<"value" | "label" | "key", string> & Record<string, string>;
 
 type AutoCompleteProps = {
   options: Option[];
@@ -121,7 +121,7 @@ export const AutoComplete = ({
                   const isSelected = selected?.value === option.value;
                   return (
                     <CommandItem
-                      key={option.value}
+                      key={option.key}
                       value={option.label}
                       onMouseDown={(event) => {
                         event.preventDefault();

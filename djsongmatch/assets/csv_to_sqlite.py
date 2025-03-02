@@ -17,7 +17,8 @@ def create_database():
 
     table_query = """
         CREATE TABLE IF NOT EXISTS music_data (
-        Track VARCHAR(255),
+        SongID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Title VARCHAR(255),
         Artist VARCHAR(255),
         Year INT, -- Year of release (assuming integer year)
         Duration INT, -- Duration of the track in milliseconds
@@ -43,10 +44,11 @@ def create_database():
     for row in all_rows:
         c.execute(
             """
-            INSERT INTO music_data VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            INSERT INTO music_data (Title, Artist, Year, Duration, Time_Signature, Danceability, Energy, `Key`, Loudness, Mode, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Tempo, Popularity, Genre)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
-                row["Track"],
+                row["Track"], # renamed to Title
                 row["Artist"],
                 row["Year"],
                 row["Duration"],
@@ -66,8 +68,8 @@ def create_database():
                 row["Genre"],
             ),
         )
-        print(row)
     conn.commit()
+
 
 def print_first_rows(n: int=5):
     conn = sqlite3.connect(DB_FILE)
@@ -78,6 +80,7 @@ def print_first_rows(n: int=5):
         print(row)
 
 def main():
+    create_database()
     print_first_rows()
 
 if __name__ == "__main__":
