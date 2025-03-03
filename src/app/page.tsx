@@ -6,6 +6,8 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/libsql";
 import { sql } from "drizzle-orm";
 
+import Link from "next/link"
+
 const db = drizzle("file:./assets/ClassicHit.db");
 
 async function SongsAutoComplete() {
@@ -31,6 +33,12 @@ export default function Home() {
       <h1 className="text-6xl text-foreground">DJ Song Match!</h1>
       <p className="text-2xl text-foreground">Begin by searching for a song.</p>
       <SongsAutoComplete />
+      <Link href ="/about-page">
+        <button className = "px-4 py-2 bg-blue-500 text-white rounded">
+          About Us
+	</button>
+      </Link>
     </div>
   );
 }
+
