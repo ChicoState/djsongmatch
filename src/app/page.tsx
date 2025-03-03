@@ -27,10 +27,15 @@ async function SongsAutoComplete() {
 
 export default function Home() {
   return (
-    <div className="flex flex-col gap-4 justify-center items-center h-screen">
-      <h1 className="text-6xl text-foreground">DJ Song Match!</h1>
-      <p className="text-2xl text-foreground">Begin by searching for a song.</p>
-      <SongsAutoComplete />
+    <div className="flex flex-row gap-24 h-full">
+      <div className="flex flex-col gap-4 grow-[1]">
+        <p className="text-2xl text-center text-foreground">
+          Search for a song!
+        </p>
+        <SongsAutoComplete />
+        <button className="self-center p-4 w-24 bg-green-200">Generate</button>
+      </div>
+      <p className="h-full bg-red-50 grow-[4]">Table goes here</p>
     </div>
   );
 }
