@@ -22,7 +22,7 @@ def create_database():
         Artist VARCHAR(255),
         Year INT, -- Year of release (assuming integer year)
         Duration INT, -- Duration of the track in milliseconds
-        Time_Signature VARCHAR(10), -- Time signature (e.g., '4/4', '3/4')
+        Time_Signature INT,
         Danceability FLOAT,
         Energy FLOAT,
         `Key` INT, -- Musical key as integer (e.g., 0 = C, 1 = C#, etc.)
