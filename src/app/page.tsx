@@ -39,7 +39,7 @@ export default function Home() {
       </div>
       {/* Right side content */}
       <div className="h-full grow-[4]">
-        <SongTable />
+        <SongTable songs={[]}/>
       </div>
     </div>
   );

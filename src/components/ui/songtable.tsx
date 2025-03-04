@@ -1,5 +1,24 @@
+interface Song {
+  title: String,
+}
 
-export default function SongTable() {
+import { musicData } from "@/db/schema";
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/libsql";
+import { sql } from "drizzle-orm";
+const db = drizzle("file:./assets/ClassicHit.db");
+const songs = await db
+    .select()
+    .from(musicData)
+    .orderBy(sql`RANDOM()`)
+    .limit(10);
+
+interface SongTableProps {
+  songs: Song[];
+}
+
+
+export default function SongTable({songs}: SongTableProps) {
     return (
         <table className="w-full border-collapse border border-gray-500">
           {/* Table column width */}
