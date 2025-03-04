@@ -60,10 +60,10 @@ export default function Home() {
             {/* Empty rows to show the blank table structure */}
             {Array(10).fill(0).map((_, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="p-3 border text-gray-300">-</td>
-                <td className="p-3 border text-gray-300">-</td>
-                <td className="p-3 border text-gray-300">-</td>
-                <td className="p-3 border text-gray-300">-</td>
+                <td className="p-3 border text-gray-500">-</td>
+                <td className="p-3 border text-gray-500">-</td>
+                <td className="p-3 border text-gray-500">-</td>
+                <td className="p-3 border text-gray-500">-</td>
               </tr>
             ))}
             </tbody>
