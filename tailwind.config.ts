@@ -11,6 +11,8 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        table_border: " #6B7280 ",
+        table_text: "gray-500"
       },
     },
   },

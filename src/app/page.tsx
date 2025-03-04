@@ -19,7 +19,7 @@ export default function Home() {
         <SongForm onFetchDataAction={setTableData} />
         {/* Right side content */}
         <div className="h-full grow-[4]">
-          <SongTable data={tableData} />
+          <SongTable songs={tableData} />
         </div>
       </div>
     </QueryClientProvider>
