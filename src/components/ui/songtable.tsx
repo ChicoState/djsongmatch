@@ -1,6 +1,5 @@
 export default function SongTable() {
     return (
-        <div className="h-full grow-[4]">
         <table className="w-full border-collapse border border-gray-500">
           {/* Table column width */}
           <colgroup>
@@ -31,6 +30,5 @@ export default function SongTable() {
             ))}
             </tbody>
           </table>
-      </div>
     )
 }
