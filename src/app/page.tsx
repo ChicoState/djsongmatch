@@ -26,10 +26,9 @@ async function SongsAutoComplete() {
 }
 
 export default function Home() {
-  const nRows = Array.from({ length: 10 }, (_, index) => index);
-
   return (
     <div className="flex flex-row gap-24 h-full">
+      {/* Left side content */}
       <div className="flex flex-col gap-4 grow-[1]">
         <p className="text-2xl text-center text-foreground">
           Search for a song!
@@ -37,15 +36,16 @@ export default function Home() {
         <SongsAutoComplete />
         <button className="self-center p-4 w-24 bg-green-200">Generate</button>
       </div>
+      {/* Right side content */}
       <div className="h-full grow-[4]">
-        <table className="w-full border-collapse">
+        <table className="w-full border-collapse border border-gray-500">
           {/* Table column width */}
           <colgroup>
-              <col className="w-5/12" /> {/* Title: 5/12 of space */}
-              <col className="w-4/12" /> {/* Artist: 4/12 of space */}
-              <col className="w-1/12" /> {/* BPM: 1/12 of space */}
-              <col className="w-2/12" /> {/* Key: 2/12 of space */}
-            </colgroup>
+              <col className="w-6/12" />{/* Title: 5/12 of space */}
+              <col className="w-4/12" />{/* Artist: 4/12 of space */}
+              <col className="w-1/12" />{/* BPM: 1/12 of space */}
+              <col className="w-1/12" />{/* Key: 2/12 of space */}
+          </colgroup>
           {/* Table header */}
           <thead>
             <tr className="bg-gray-100">
