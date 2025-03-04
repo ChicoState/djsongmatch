@@ -8,6 +8,9 @@ export default function AboutPage() {
 =======
       <p className="text-2xl text-foreground">Adding names here to make sure environment is working: Sergio</p>
       <p className = "text-2xl text-foreground">Rodrigo Lopez</p>
+<<<<<<< HEAD
+>>>>>>> 095c08dc005e35f1d08d73b080c33d14c7333b70
+=======
 >>>>>>> 095c08dc005e35f1d08d73b080c33d14c7333b70
     </div>
   );
