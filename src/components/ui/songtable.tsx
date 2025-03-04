@@ -1,3 +1,4 @@
+
 export default function SongTable() {
     return (
         <table className="w-full border-collapse border border-gray-500">
@@ -10,11 +11,11 @@ export default function SongTable() {
           </colgroup>
           {/* Table header */}
           <thead>
-            <tr className="bg-gray-100">
-              <th className="p-3 text-left border">Title</th>
-              <th className="p-3 text-left border">Artist</th>
-              <th className="p-3 text-left border">BPM</th>
-              <th className="p-3 text-left border">Key</th>
+            <tr className="bg-gray-300 border">
+              <th className="p-3 text-left border border-table_border">Title</th>
+              <th className="p-3 text-left border border-table_border">Artist</th>
+              <th className="p-3 text-left border border-table_border">BPM</th>
+              <th className="p-3 text-left border border-table_border">Key</th>
             </tr>
           </thead>
           {/* Table body */}
@@ -22,10 +23,10 @@ export default function SongTable() {
             {/* Empty rows to show the blank table structure */}
             {Array(10).fill(0).map((_, index) => (
               <tr key={index} className="hover:bg-gray-50">
-                <td className="p-3 border text-gray-500">-</td>
-                <td className="p-3 border text-gray-500">-</td>
-                <td className="p-3 border text-gray-500">-</td>
-                <td className="p-3 border text-gray-500">-</td>
+                <td className="p-3 border border-table_border text-table_text">-</td>
+                <td className="p-3 border border-table_border text-table_text">-</td>
+                <td className="p-3 border border-table_border text-table_text">-</td>
+                <td className="p-3 border border-table_border text-table_text">-</td>
               </tr>
             ))}
             </tbody>
