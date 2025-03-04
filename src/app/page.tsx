@@ -1,5 +1,6 @@
 import { AutoComplete, Option } from "@/components/ui/autocomplete";
 import { musicData } from "@/db/schema";
+import SongTable from "@/components/ui/songtable";
 import "./globals.css";
 
 import "dotenv/config";
@@ -28,6 +29,7 @@ async function SongsAutoComplete() {
 export default function Home() {
   return (
     <div className="flex flex-row gap-24 h-full">
+      {/* Left side content */}
       <div className="flex flex-col gap-4 grow-[1]">
         <p className="text-2xl text-center text-foreground">
           Search for a song!
@@ -35,7 +37,10 @@ export default function Home() {
         <SongsAutoComplete />
         <button className="self-center p-4 w-24 bg-green-200">Generate</button>
       </div>
-      <p className="h-full bg-red-50 grow-[4]">Table goes here</p>
+      {/* Right side content */}
+      <div className="h-full grow-[4]">
+        <SongTable />
+      </div>
     </div>
   );
 }
