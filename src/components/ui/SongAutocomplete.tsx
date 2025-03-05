@@ -11,7 +11,12 @@ export default function SongAutocomplete() {
   const [value, setValue] = useState<Song | null>(null);
   const [inputValue, setInputValue] = useState("");
 
-  const { data: options = [], isLoading, isError, error } = useQuery({
+  const {
+    data: options = [],
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
     queryKey: ["songList", inputValue], // only refetch when inputValue changes
     queryFn: ({ queryKey }) => searchSongs(queryKey[1]),
     enabled: inputValue.trim() !== "", // only fetch when input has value
