@@ -7,7 +7,11 @@ import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "@/app/actions";
 
-export default function SongAutocomplete() {
+interface SongAutocompleteProps {
+  onSelect: (selectedSong: Song) => void;
+}
+
+export default function SongAutocomplete({ onSelect }: SongAutocompleteProps) {
   const [value, setValue] = useState<Song | null>(null);
   const [inputValue, setInputValue] = useState("");
 
@@ -29,6 +33,8 @@ export default function SongAutocomplete() {
     _reason: string,
   ) => {
     setValue(value);
+    if (!value) return;
+    onSelect(value);
   };
 
   const handleInputChange = (
