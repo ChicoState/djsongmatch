@@ -4,6 +4,7 @@ import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
 import Form from "next/form";
 import { useEffect, useState } from "react";
+import SongAutocomplete from "./SongAutocomplete";
 
 interface SongFormProps {
   onFetchDataAction: (data: any) => void;
@@ -43,10 +44,11 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
     setSongId(songId.toString());
   };
 
+  // <input name="songId" className="border border-background" />
   return (
     <Form className="flex flex-col gap-4 grow-[1]" action={handleSubmit}>
       <p className="text-2xl text-center text-foreground">Search for a song!</p>
-      <input name="songId" className="border border-background" />
+      <SongAutocomplete />
       <button className="self-center p-4 w-24 bg-green-200" type="submit">
         Generate
       </button>
