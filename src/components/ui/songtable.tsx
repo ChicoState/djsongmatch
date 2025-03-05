@@ -40,10 +40,10 @@ export default function SongTable({ songs }: SongTableProps) {
               {song.artist}
             </td>
             <td className="p-3 border border-table_border text-table_text">
-              {song.key}
+              {song.tempo}
             </td>
             <td className="p-3 border border-table_border text-table_text">
-              {song.tempo}
+              {song.key}
             </td>
           </tr>
         ))}
