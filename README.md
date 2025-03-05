@@ -15,6 +15,21 @@ and the backend can be accessed from:
 ```bash
 http://localhost:5000
 ```
+How to stop both services:
+```
+docker-compose stop
+```
+How to restart both services:
+```
+docker-compose restart
+```
+You can also stop and restart the services individually, by adding the frontend or backend keywords to the commands. Example:
+```
+docker-compose stop frontend
+docker-compose restart frontend
+docker-compose stop backend
+docker-compose restart backend
+```
 
 ## Option 2: Run Only the Frontend
 Build the Next.js container
