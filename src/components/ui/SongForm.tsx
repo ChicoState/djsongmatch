@@ -1,5 +1,5 @@
 "use client";
-import { getSong } from "@/app/actions";
+import { getSameKey, getSong } from "@/app/actions";
 import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
 import Form from "next/form";
@@ -17,8 +17,10 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
   // useQuery uesd for caching and getting whether data is loading/errors etc
   const { data } = useQuery({
     queryKey: ["song", songId],
-    queryFn: () => {
-      return getSong(Number(songId));
+    queryFn: async () => {
+      const song = await getSong(Number(songId));
+      if (!song?.key) return;
+      return getSameKey(song.key);
     },
     enabled: !!songId,
   });

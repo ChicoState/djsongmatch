@@ -3,18 +3,28 @@
 // do NOT export components in this file, only functions
 
 import { musicData, Song } from "@/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 
 const db = drizzle("file:./assets/ClassicHit.db");
 
 export async function getSong(songId: number) {
-    const song: Song[] = await db
+    const song = db
         .select()
         .from(musicData)
         .where(
             eq(musicData.songId, Number(songId.toString()))
-        ).limit(1);
+        ).get();
 
     return song;
+}
+
+export async function getSameKey(key: number) {
+    const sameKey = await db
+        .select()
+        .from(musicData)
+        .where(eq(musicData.key, key))
+        .orderBy(sql`RANDOM()`)
+        .limit(10); // arbitary limit
+    return sameKey;
 }
