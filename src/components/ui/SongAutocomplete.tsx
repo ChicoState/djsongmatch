@@ -50,8 +50,15 @@ export default function SongAutocomplete() {
       inputValue={inputValue}
       onChange={handleValueChange}
       onInputChange={handleInputChange}
+      autoComplete
+      includeInputInList
+      filterSelectedOptions
+      noOptionsText="No songs"
       getOptionLabel={(option: Song) => {
         return `${option.artist} - ${option.title}`;
+      }}
+      getOptionKey={(option: Song) => {
+        return option.songId.toString();
       }}
     />
   );
