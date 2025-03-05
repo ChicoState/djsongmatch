@@ -1,5 +1,6 @@
 "use client";
 import { getSong } from "@/app/actions";
+import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
 import Form from "next/form";
 import { useEffect, useState } from "react";
