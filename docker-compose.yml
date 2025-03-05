@@ -14,7 +14,7 @@ services:
       - .:/app
       - /app/node_modules
     environment:
-      - NODE_ENV=production  # This should be "production" for deployment
+      - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5000
     command: ["sh", "-c", "npm run build && npm run start"]
 
