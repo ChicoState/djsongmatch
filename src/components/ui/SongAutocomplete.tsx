@@ -13,6 +13,7 @@ export default function SongAutocomplete() {
       renderInput={(params) => {
         return <TextField {...params} label="Choose a Song" fullWidth />;
       }}
+      filterOptions={(x) => x}
     />
   );
 }
