@@ -46,7 +46,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
   return (
     <Form className="flex flex-col gap-4 grow-[1]" action={handleSubmit}>
       <p className="text-2xl text-center text-foreground">Search for a song!</p>
-      <input name="songId" className="border-background" />
+      <input name="songId" className="border border-background" />
       <button className="self-center p-4 w-24 bg-green-200" type="submit">
         Generate
       </button>
