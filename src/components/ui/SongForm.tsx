@@ -53,9 +53,6 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
           setSongId(selectedSong.songId.toString());
         }}
       />
-      <button className="self-center p-4 w-24 bg-green-200" type="submit">
-        Generate
-      </button>
     </Form>
   );
 }
