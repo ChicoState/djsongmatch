@@ -5,17 +5,15 @@ import TextField from "@mui/material/TextField";
 import { useState } from "react";
 import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
+import { searchSongs } from "@/app/actions";
 
 export default function SongAutocomplete() {
   const [value, setValue] = useState<Song | null>(null);
   const [inputValue, setInputValue] = useState("");
-  const [options, setOptions] = useState<Song[]>([]);
 
-  const { data, isLoading, isError, error } = useQuery({
+  const { data: options = [], isLoading, isError, error } = useQuery({
     queryKey: ["songList", inputValue], // only refetch when inputValue changes
-    queryFn: () => {
-      return "hi";
-    },
+    queryFn: ({ queryKey }) => searchSongs(queryKey[1]),
     enabled: inputValue.trim() !== "", // only fetch when input has value
     staleTime: 5 * 60 * 1000, // arbitary cache lifetime of 5 min
   });
@@ -47,6 +45,9 @@ export default function SongAutocomplete() {
       inputValue={inputValue}
       onChange={handleValueChange}
       onInputChange={handleInputChange}
+      getOptionLabel={(option: Song) => {
+        return `${option.artist} - ${option.title}`;
+      }}
     />
   );
 }
