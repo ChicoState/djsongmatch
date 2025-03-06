@@ -13,13 +13,14 @@ interface SongFormProps {
 export default function SongForm({ onFetchDataAction }: SongFormProps) {
   // songId is like a local variable to the component
   // setSongId is used to update the songId of the component
-  const [songId, setSongId] = useState<string>();
+  const [songId, setSongId] = useState<number>();
 
   // useQuery uesd for caching and getting whether data is loading/errors etc
   const { data } = useQuery({
     queryKey: ["song", songId],
     queryFn: async () => {
-      const song = await getSong(Number(songId));
+      if (!songId) return;
+      const song = await getSong(songId);
       if (!song?.key) return;
       return getSameKey(song.key);
     },
@@ -41,7 +42,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
     const songId = formData.get("songId");
     if (!songId) return; // just null check
     // update component's songId variable
-    setSongId(songId.toString());
+    setSongId(parseInt(songId.toString()));
   };
 
   // <input name="songId" className="border border-background" />
@@ -50,7 +51,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
       <p className="text-2xl text-center text-foreground">Search for a song!</p>
       <SongAutocomplete
         onSelect={(selectedSong: Song) => {
-          setSongId(selectedSong.songId.toString());
+          setSongId(selectedSong.songId);
         }}
       />
     </Form>
