@@ -36,24 +36,14 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
     }
   }, [data]);
 
-  // function that gets called when the form is submitted
-  const handleSubmit = (formData: FormData) => {
-    // songId comes from name="songId" in <input> below
-    const songId = formData.get("songId");
-    if (!songId) return; // just null check
-    // update component's songId variable
-    setSongId(parseInt(songId.toString()));
-  };
-
-  // <input name="songId" className="border border-background" />
   return (
-    <Form className="flex flex-col gap-4 grow-[1]" action={handleSubmit}>
+    <div className="flex flex-col gap-4 grow-[1]">
       <p className="text-2xl text-center text-foreground">Search for a song!</p>
       <SongAutocomplete
         onSelectAction={(selectedSong: Song) => {
           setSongId(selectedSong.songId);
         }}
       />
-    </Form>
+    </div>
   );
 }
