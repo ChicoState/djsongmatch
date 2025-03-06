@@ -64,7 +64,7 @@ export default function SongAutocomplete({ onSelect }: SongAutocompleteProps) {
         return `${option.artist} - ${option.title}`;
       }}
       getOptionKey={(option: Song) => {
-        return option.songId.toString();
+        return option.songId;
       }}
     />
   );
