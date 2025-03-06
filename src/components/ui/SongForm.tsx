@@ -50,7 +50,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
     <Form className="flex flex-col gap-4 grow-[1]" action={handleSubmit}>
       <p className="text-2xl text-center text-foreground">Search for a song!</p>
       <SongAutocomplete
-        onSelect={(selectedSong: Song) => {
+        onSelectAction={(selectedSong: Song) => {
           setSongId(selectedSong.songId);
         }}
       />

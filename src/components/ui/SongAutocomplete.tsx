@@ -8,16 +8,16 @@ import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "@/app/actions";
 
 interface SongAutocompleteProps {
-  onSelect: (selectedSong: Song) => void;
+  onSelectAction: (selectedSong: Song) => void;
 }
 
-export default function SongAutocomplete({ onSelect }: SongAutocompleteProps) {
+export default function SongAutocomplete({
+  onSelectAction,
+}: SongAutocompleteProps) {
   const [value, setValue] = useState<Song | null>(null);
   const [inputValue, setInputValue] = useState("");
 
-  const {
-    data: options = [],
-  } = useQuery({
+  const { data: options = [] } = useQuery({
     queryKey: ["songList", inputValue], // only refetch when inputValue changes
     queryFn: ({ queryKey }) => searchSongs(queryKey[1]),
     enabled: inputValue.trim() !== "", // only fetch when input has value
@@ -31,7 +31,7 @@ export default function SongAutocomplete({ onSelect }: SongAutocompleteProps) {
   ) => {
     setValue(value);
     if (!value) return;
-    onSelect(value);
+    onSelectAction(value);
   };
 
   const handleInputChange = (
