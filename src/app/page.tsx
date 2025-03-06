@@ -16,9 +16,11 @@ export default function Home() {
     <QueryClientProvider client={queryClient}>
       <div className="flex flex-row gap-24 h-full">
         {/* Left side content */}
-        <SongForm onFetchDataAction={setTableData} />
+        <div className="w-full h-full shrink-[3]">
+          <SongForm onFetchDataAction={setTableData} />
+        </div>
         {/* Right side content */}
-        <div className="h-full grow-[4]">
+        <div className="w-full h-full shrink-[1]">
           <SongTable songs={tableData} />
         </div>
       </div>
