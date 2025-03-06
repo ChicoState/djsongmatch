@@ -12,9 +12,7 @@ RUN npm install
 # Copy the rest of the project files
 COPY . .
 
-RUN npm run build
-
 EXPOSE 3000
 
 # Start the Next.js server
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
