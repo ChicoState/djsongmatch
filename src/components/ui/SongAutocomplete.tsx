@@ -17,9 +17,6 @@ export default function SongAutocomplete({ onSelect }: SongAutocompleteProps) {
 
   const {
     data: options = [],
-    isLoading,
-    isError,
-    error,
   } = useQuery({
     queryKey: ["songList", inputValue], // only refetch when inputValue changes
     queryFn: ({ queryKey }) => searchSongs(queryKey[1]),
