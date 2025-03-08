@@ -13,7 +13,7 @@ http://localhost:3000
 ```
 and the backend can be accessed from:
 ```bash
-http://localhost:5000
+http://localhost:5001
 ```
 How to stop both services:
 ```
