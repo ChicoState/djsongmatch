@@ -13,7 +13,7 @@ http://localhost:3000
 ```
 and the backend can be accessed from:
 ```bash
-http://localhost:5000
+http://localhost:5001
 ```
 How to stop both services:
 ```
@@ -30,6 +30,10 @@ docker-compose restart frontend
 docker-compose stop backend
 docker-compose restart backend
 ```
+To remove all unused objects, run the following command. This will clear up some disc space!!
+```
+docker system prune
+```
 
 ## Option 2: Run Only the Frontend
 Build the Next.js container
@@ -44,7 +48,7 @@ docker run -p 3000:3000 djsongmatch
 ## Option 3: Run Only the Backend
 Navigate to the backend/ directory
 ```bash
-cd backend
+cd src/app/backend
 ```
 Build the Flask container
 ```bash
@@ -52,7 +56,7 @@ docker build -t flask-backend .
 ```
 Run the Flask container
 ```bash
-docker run -p 5000:5000 flask-backend
+docker run -p 5001:5001 flask-backend
 ```
 
 Note: Building the containers may take a while. They don't always need to rebuilt, only in specific scenarios which include: modifying Dockerfile, changing dependencies in package.json or package-lock.json, and modifying drizzle.config.ts. Also, if wanting to work on another branch, checkout the branch and then rebuild the container(s).
