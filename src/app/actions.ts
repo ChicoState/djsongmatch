@@ -3,10 +3,14 @@
 // do NOT export components in this file, only functions
 
 import { musicData, Song } from "@/db/schema";
-import { and, eq, like, or, sql } from "drizzle-orm";
+import { and, eq, like, ne, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 
 const db = drizzle("file:./assets/ClassicHit.db");
+
+// constants for song.mode
+const MINOR = 0;
+const MAJOR = 1
 
 export async function getSong(songId: number) {
     const song = db
