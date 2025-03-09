@@ -13,7 +13,7 @@ RUN npm install
 
 # Conditionally install @libsql/linux-arm64-musl only on ARM64 builds.
 ARG TARGETARCH
-RUN if [ "$TARGETARCH" = "arm64" ]; then npm install @libsql/linux-arm64-musl; fi
+RUN if [ "$TARGETARCH" = "arm64" ]; then npm install @libs ql/linux-arm64-musl; fi
 
 # Copy the rest of the project files
 COPY . .
