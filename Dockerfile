@@ -1,5 +1,5 @@
 # Use Node.js 18 as the base image
-FROM --platform=linux/amd64 node:18-alpine AS builder
+FROM node:18 AS builder
 
 # Set working directory
 WORKDIR /app
@@ -9,13 +9,14 @@ ENV NODE_ENV=development
 
 COPY package.json package-lock.json ./
 
-RUN npm install --legacy-peer-deps
+RUN npm install
+
+# Conditionally install @libsql/linux-arm64-musl only on ARM64 builds.
+ARG TARGETARCH
+RUN if [ "$TARGETARCH" = "arm64" ]; then npm install @libsql/linux-arm64-musl; fi
 
 # Copy the rest of the project files
 COPY . .
-
-# Fix potential permission issues on Mac
-RUN chmod -R 777 /app/node_modules || true
 
 EXPOSE 3000
 
