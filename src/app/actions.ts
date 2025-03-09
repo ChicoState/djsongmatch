@@ -23,14 +23,35 @@ export async function getSong(songId: number) {
     return song;
 }
 
-export async function getSameKey(key: number) {
-    const sameKey = await db
+export async function getSameKey(song: Song, relativeKey: boolean = true) {
+    if (song.key === null || song.mode === null) return;
+
+    let relativeQuery = relativeKey
+        ? and(
+            ne(musicData.mode, song.mode),
+
+            // if song is major, go back 3 half steps to get relative minor
+            // if song is minor, go forward 3 half steps to get relative major
+            // mod 12 because 12 total tones
+            eq(musicData.key, (song.mode === MAJOR ? song.key - 3 : song.key + 3) % 12)
+        )
+        : undefined; // if relativeKey=false, just ignore query
+
+    return db
         .select()
         .from(musicData)
-        .where(eq(musicData.key, key))
+        .where(
+            or(
+                and(
+                    // checks that same song and mode
+                    eq(musicData.mode, song.mode),
+                    eq(musicData.key, song.key)
+                ),
+                relativeQuery
+            )
+        )
         .orderBy(sql`RANDOM()`)
         .limit(10); // arbitary limit
-    return sameKey;
 }
 
 export async function searchSongs(query: string) {

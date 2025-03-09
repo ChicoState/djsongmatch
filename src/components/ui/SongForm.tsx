@@ -21,8 +21,8 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
     queryFn: async () => {
       if (!songId) return;
       const song = await getSong(songId);
-      if (!song?.key) return;
-      return getSameKey(song.key);
+      if (song == undefined) return;
+      return getSameKey(song);
     },
     enabled: !!songId,
   });
