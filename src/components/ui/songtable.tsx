@@ -5,6 +5,23 @@ interface SongTableProps {
   songs: Song[];
 }
 
+// Song.Key in database represents index in this array.
+// So a song.key = 2 would be index 2 in this array, which is D
+const keyMap = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+];
+
 export default function SongTable({ songs }: SongTableProps) {
   return (
     <table className="w-full border border-gray-500 border-collapse">
@@ -40,10 +57,14 @@ export default function SongTable({ songs }: SongTableProps) {
               {song.artist}
             </td>
             <td className="p-3 border border-table_border text-table_text">
-              {song.tempo && Math.round(song.tempo)}
+              {song.tempo != null && Math.round(song.tempo)}
             </td>
             <td className="p-3 border border-table_border text-table_text">
-              {song.key}
+              {song.key != null && keyMap[song.key]}
+
+              {/* Song.Mode = 0 is minor, 1 is Major*/}
+              {song.mode != null && song.mode === 0 && "m"}
+              {/*Adds an "m" if the song is minor, otherwise nothing*/}
             </td>
           </tr>
         ))}
