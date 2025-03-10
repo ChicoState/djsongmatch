@@ -19,7 +19,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
   const { data } = useQuery({
     queryKey: ["song", songId],
     queryFn: async () => {
-      if (!songId) return;
+      if (songId == undefined) return;
       const song = await getSong(songId);
       if (song == undefined) return;
       return getSameKey(song);
