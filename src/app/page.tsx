@@ -1,21 +1,32 @@
 "use client";
 
-import { Slider } from "@/components/ui/slider";
 import "./globals.css";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import "rc-slider/assets/index.css";
+import Slider from "rc-slider";
 
 function SliderWithLabel({ label }: { label: string }) {
   const [value, setValue] = useState([50]);
   const [checked, setChecked] = useState(false);
+  const marks = {
+    30: {
+      label: "Old Song",
+    },
+  };
   return (
     <div className="flex flex-col">
       <label>{label}</label>
       <div className="flex flex-row gap-4">
-        <Slider defaultValue={value} onValueChange={setValue} />
-        <label>{value}%</label>
-        <Switch onCheckedChange={setChecked} />
+        <Slider
+          marks={marks}
+          dotStyle={{
+            scale: 2,
+            height: "8pt",
+            width: "1px",
+          }}
+        />
       </div>
     </div>
   );
@@ -23,7 +34,7 @@ function SliderWithLabel({ label }: { label: string }) {
 
 function SliderArea() {
   return (
-    <div className="flex flex-col gap-12 p-8 rounded-lg bg-background grow-[6] border-2 border-foreground border-opacity-10">
+    <div className="flex flex-col gap-12 p-8 rounded-lg border-2 border-opacity-10 bg-background grow-[6] border-foreground">
       <SliderWithLabel label="Energy" />
       <SliderWithLabel label="Loudness" />
       <SliderWithLabel label="Danceability" />
