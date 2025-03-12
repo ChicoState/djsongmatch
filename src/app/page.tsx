@@ -4,6 +4,7 @@ import { Slider } from "@/components/ui/slider";
 import "./globals.css";
 import { useState } from "react";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 function SliderWithLabel({ label }: { label: string }) {
   const [value, setValue] = useState([50]);
@@ -22,7 +23,7 @@ function SliderWithLabel({ label }: { label: string }) {
 
 function SliderArea() {
   return (
-    <div className="flex flex-col gap-12 p-8 rounded-lg bg-background grow-[3]">
+    <div className="flex flex-col gap-12 p-8 rounded-lg bg-background grow-[6] border-2 border-foreground border-opacity-10">
       <SliderWithLabel label="Energy" />
       <SliderWithLabel label="Loudness" />
       <SliderWithLabel label="Danceability" />
@@ -31,16 +32,31 @@ function SliderArea() {
 }
 
 function ButtonArea() {
-  return <div className="bg-green-300 grow-[1]">hi</div>;
+  return (
+    <div className="flex flex-col gap-4 justify-evenly items-center p-4 grow-[1]">
+      <Button className="py-8 px-16 w-1/4" variant={"outline"}>
+        Advanced Filters
+      </Button>
+      <Button className="py-8 px-16 w-1/4">Generate</Button>
+    </div>
+  );
+}
+
+function MiddleSection() {
+  return (
+    <>
+      <div className="flex py-8 px-36 w-full">
+        <SliderArea />
+        <ButtonArea />
+      </div>
+    </>
+  );
 }
 
 export default function Home() {
   return (
     <main className="flex flex-col justify-center items-center">
-      <div className="flex gap-4 p-4 w-full bg-red-300">
-        <SliderArea />
-        <ButtonArea />
-      </div>
+      <MiddleSection />
     </main>
   );
 }
