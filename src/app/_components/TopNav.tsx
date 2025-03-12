@@ -10,7 +10,7 @@ function Settings() {
     <>
       <DropdownMenu>
         <DropdownMenuTrigger>…</DropdownMenuTrigger>
-        <DropdownMenuContent className="bg-bg text-fg">
+        <DropdownMenuContent className="bg-background text-foreground">
           <DropdownMenuItem className="text-lg">Settings</DropdownMenuItem>
           <DropdownMenuItem className="text-lg">Help</DropdownMenuItem>
           <DropdownMenuItem className="text-lg">Log In</DropdownMenuItem>
@@ -22,7 +22,7 @@ function Settings() {
 
 export default function TopNav() {
   return (
-    <nav className="flex justify-between items-center py-4 px-8 w-full text-xl font-semibold text-bg bg-fg">
+    <nav className="flex justify-between items-center py-4 px-8 w-full text-xl font-semibold text-background bg-foreground">
       <div className="flex gap-8 items-center">
         <h1 className="text-3xl">DJ Song Match</h1>
       </div>

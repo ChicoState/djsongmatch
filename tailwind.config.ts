@@ -9,9 +9,9 @@ export default {
     theme: {
         extend: {
             colors: {
-                bg: "#fff",
-                fg: "#000",
-                primary: "#000",
+                background: "#fff",
+                foreground: "#000",
+                primary: "#489BB2",
                 table_border: "#6B7280",
                 table_text: "gray-500"
             },
