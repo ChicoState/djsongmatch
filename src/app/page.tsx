@@ -14,13 +14,13 @@ export default function Home() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="flex flex-row gap-24 h-full">
+      <div className="flex flex-row gap-24">
         {/* Left side content */}
-        <div className="w-full h-full shrink-[3]">
+        <div className="w-full shrink-[3]">
           <SongForm onFetchDataAction={setTableData} />
         </div>
         {/* Right side content */}
-        <div className="w-full h-full shrink-[1]">
+        <div className="w-full shrink-[1]">
           <SongTable songs={tableData} />
         </div>
       </div>

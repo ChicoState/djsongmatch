@@ -2,6 +2,7 @@
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
+import TopNav from "./_components/TopNav";
 
 export default function RootLayout({
   children,
@@ -12,10 +13,8 @@ export default function RootLayout({
     <html lang="en">
       <body className="bg-background">
         <QueryClientProvider client={queryClient}>
-          <main className="flex flex-col gap-12 p-12 h-screen">
-            <h1 className="self-center text-6xl text-foreground">
-              DJ Song Match!
-            </h1>
+          <TopNav />
+          <main className="flex flex-col gap-12 p-12">
             {children}
           </main>
         </QueryClientProvider>
