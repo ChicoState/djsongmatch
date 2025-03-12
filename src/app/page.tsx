@@ -1,29 +1,36 @@
-"use client";
+import { Slider } from "@/components/ui/slider";
 import "./globals.css";
-import SongForm from "@/components/ui/SongForm";
-import SongTable from "@/components/ui/songtable";
-import { Song } from "@/db/schema";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
+function SliderWithLabel({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col gap-2">
+      <label>{label}</label>
+      <Slider defaultValue={[50]} />
+    </div>
+  );
+}
 
-const queryClient = new QueryClient();
+function SliderArea() {
+  return (
+    <div className="flex flex-col gap-12 p-8 bg-white grow-[3]">
+      <SliderWithLabel label="Energy" />
+      <SliderWithLabel label="Loudness" />
+      <SliderWithLabel label="Danceability" />
+    </div>
+  );
+}
+
+function ButtonArea() {
+  return <div className="bg-green-300 grow-[1]">hi</div>;
+}
 
 export default function Home() {
-  const [tableData, setTableData] = useState<Song[]>([]);
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="flex flex-row gap-24">
-        {/* Left side content */}
-        <div className="w-full shrink-[3]">
-          <SongForm onFetchDataAction={setTableData} />
-        </div>
-        {/* Right side content */}
-        <div className="w-full shrink-[1]">
-          <SongTable songs={tableData} />
-        </div>
+    <main className="flex flex-col justify-center items-center">
+      <div className="flex gap-4 p-4 w-full bg-red-300">
+        <SliderArea />
+        <ButtonArea />
       </div>
-    </QueryClientProvider>
+    </main>
   );
 }

@@ -11,6 +11,7 @@ export default {
             colors: {
                 bg: "#fff",
                 fg: "#000",
+                primary: "#000",
                 table_border: "#6B7280",
                 table_text: "gray-500"
             },

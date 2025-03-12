@@ -14,9 +14,7 @@ export default function RootLayout({
       <body className="bg-background">
         <QueryClientProvider client={queryClient}>
           <TopNav />
-          <main className="flex flex-col gap-12 p-12">
-            {children}
-          </main>
+          {children}
         </QueryClientProvider>
       </body>
     </html>
