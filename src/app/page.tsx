@@ -58,7 +58,7 @@ function ButtonArea() {
   );
 }
 
-function MiddleSection() {
+function InputSection() {
   return (
     <div className="p-8 w-full max-w-4xl">
       <div className="flex flex-col gap-6 p-8 rounded-lg border md:flex-row border-border shadow-xs">
@@ -72,7 +72,7 @@ function MiddleSection() {
 export default function Home() {
   return (
     <main className="flex flex-col justify-center items-center">
-      <MiddleSection />
+      <InputSection />
     </main>
   );
 }
