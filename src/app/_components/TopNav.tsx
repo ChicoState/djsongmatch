@@ -6,6 +6,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
+import DarkModeToggle from "./DarkModeToggle";
 
 function Settings() {
   return (
@@ -29,11 +30,12 @@ function Settings() {
 
 export default function TopNav() {
   return (
-    <nav className="flex justify-between items-center p-4 font-semibold border-b-4">
+    <nav className="flex justify-between items-center p-4 font-semibold border-b border-border">
       <div className="flex items-center">
         <h1 className="text-3xl">DJ Song Match</h1>
       </div>
       <div className="flex gap-4 items-center">
+        <DarkModeToggle />
         <Button variant="outline">Export</Button>
         <Settings />
       </div>

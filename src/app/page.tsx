@@ -58,7 +58,7 @@ function ButtonArea() {
 function MiddleSection() {
   return (
     <div className="p-8 w-full max-w-4xl">
-      <div className="flex flex-col gap-6 p-6 rounded-lg border shadow-xs md:flex-row">
+      <div className="flex flex-col gap-6 p-6 rounded-lg border border-border md:flex-row shadow-xs">
         <SliderArea />
         <ButtonArea />
       </div>
