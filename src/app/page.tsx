@@ -3,6 +3,7 @@
 import "./globals.css";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 
 interface SliderProps {
   label: string;
@@ -10,29 +11,23 @@ interface SliderProps {
   markValue: number;
 }
 
-function SliderWithLabel({ label, defaultValue = 50, markValue }: SliderProps) {
-  // do NOT ask me how this works
-  // only god knows
+function SliderWithLabel({
+  label = "",
+  defaultValue = 50,
+  markValue,
+}: SliderProps) {
   const [value, setValue] = useState(defaultValue);
   return (
     <div className="flex flex-col gap-2">
+      <Slider />
       <div className="w-full max-w-4xl">
         {label}
         <div className="relative">
-          <input
-            type="range"
-            min="0"
-            max="100"
-            value={value}
-            onChange={(e) => setValue(Number.parseInt(e.target.value))}
-            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-muted"
-          />
-
           <div
-            className="absolute w-px h-5 opacity-70 bottom-[0.5] bg-muted-foreground"
+            className="absolute w-px h-5 opacity-85 bottom-[30px] bg-muted-foreground"
             style={{ left: `${markValue}%`, transform: "translateX(-50%)" }}
           >
-            <div className="absolute -top-6 left-1/2 text-sm font-medium -translate-x-1/2">
+            <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
               <span className="whitespace-nowrap">Input Song</span>
             </div>
           </div>
@@ -66,7 +61,7 @@ function ButtonArea() {
 function MiddleSection() {
   return (
     <div className="p-8 w-full max-w-4xl">
-      <div className="flex flex-col gap-6 p-6 rounded-lg border md:flex-row border-border shadow-xs">
+      <div className="flex flex-col gap-6 p-8 rounded-lg border md:flex-row border-border shadow-xs">
         <SliderArea />
         <ButtonArea />
       </div>
