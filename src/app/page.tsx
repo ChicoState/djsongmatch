@@ -2,7 +2,6 @@
 
 import "./globals.css";
 import { useState } from "react";
-import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import "rc-slider/assets/index.css";
 import Slider from "rc-slider";
@@ -16,11 +15,14 @@ function SliderWithLabel({ label }: { label: string }) {
     },
   };
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col gap-2">
       <label>{label}</label>
       <div className="flex flex-row gap-4">
         <Slider
           marks={marks}
+          onChangeComplete={(value) => {
+            console.log(value);
+          }}
           dotStyle={{
             scale: 2,
             height: "8pt",
@@ -34,33 +36,33 @@ function SliderWithLabel({ label }: { label: string }) {
 
 function SliderArea() {
   return (
-    <div className="flex flex-col gap-12 p-8 rounded-lg border-2 border-opacity-10 bg-background grow-[6] border-foreground">
+    <section className="flex flex-col gap-8 grow">
       <SliderWithLabel label="Energy" />
       <SliderWithLabel label="Loudness" />
       <SliderWithLabel label="Danceability" />
-    </div>
+    </section>
   );
 }
 
 function ButtonArea() {
   return (
-    <div className="flex flex-col gap-4 justify-evenly items-center p-4 grow-[1]">
-      <Button className="py-8 px-16 w-1/4" variant={"outline"}>
+    <section className="flex flex-col gap-4 justify-center items-center min-w-[150px]">
+      <Button variant={"outline"} className="w-full">
         Advanced Filters
       </Button>
-      <Button className="py-8 px-16 w-1/4">Generate</Button>
-    </div>
+      <Button className="w-full">Generate</Button>
+    </section>
   );
 }
 
 function MiddleSection() {
   return (
-    <>
-      <div className="flex py-8 px-36 w-full">
+    <div className="p-8 w-full max-w-4xl">
+      <div className="flex flex-col gap-6 p-6 rounded-lg border shadow-sm md:flex-row">
         <SliderArea />
         <ButtonArea />
       </div>
-    </>
+    </div>
   );
 }
 
