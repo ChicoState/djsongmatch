@@ -10,15 +10,9 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
 import { Song } from "@/db/schema";
-
-const queryClient = new QueryClient();
 
 interface SearchBarSectionProps {
   setInputSong: (song: Song) => void;
@@ -38,41 +32,39 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <div className="py-8 w-full max-w-4xl">
-        <div className="w-1/2">
-          <Command className="border border-border">
-            <CommandInput
-              onFocus={() => setOpen(true)}
-              onBlur={() => setOpen(false)}
-              onValueChange={setInputValue}
-              placeholder={"Search for a song!"}
-              value={inputValue}
-            />
-            {open && (
-              <CommandList>
-                <CommandEmpty>No results found.</CommandEmpty>
-                {songs.map((song: Song) => {
-                  return (
-                    <CommandItem
-                      key={song.songId}
-                      value={`${song.artist} - ${song.title}`}
-                      onMouseDown={() => {
-                        setValue(`${song.artist} - ${song.title}`);
-                        setInputValue(`${song.artist} - ${song.title}`);
-                        setInputSong(song);
-                      }}
-                    >
-                      {song.artist} - {song.title}
-                    </CommandItem>
-                  );
-                })}
-              </CommandList>
-            )}
-          </Command>
-        </div>
+    <div className="py-8 w-full max-w-4xl">
+      <div className="w-1/2">
+        <Command className="border border-border">
+          <CommandInput
+            onFocus={() => setOpen(true)}
+            onBlur={() => setOpen(false)}
+            onValueChange={setInputValue}
+            placeholder={"Search for a song!"}
+            value={inputValue}
+          />
+          {open && (
+            <CommandList>
+              <CommandEmpty>No results found.</CommandEmpty>
+              {songs.map((song: Song) => {
+                return (
+                  <CommandItem
+                    key={song.songId}
+                    value={`${song.artist} - ${song.title}`}
+                    onMouseDown={() => {
+                      setValue(`${song.artist} - ${song.title}`);
+                      setInputValue(`${song.artist} - ${song.title}`);
+                      setInputSong(song);
+                    }}
+                  >
+                    {song.artist} - {song.title}
+                  </CommandItem>
+                );
+              })}
+            </CommandList>
+          )}
+        </Command>
       </div>
-    </QueryClientProvider>
+    </div>
   );
 }
 
