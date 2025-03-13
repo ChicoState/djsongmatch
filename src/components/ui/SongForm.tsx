@@ -37,8 +37,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
   }, [data]);
 
   return (
-    <div className="flex flex-col gap-4 grow-1">
-      <p className="text-2xl text-center text-foreground">Search for a song!</p>
+    <div className="w-1/2">
       <SongAutocomplete
         onSelectAction={(selectedSong: Song) => {
           setSongId(selectedSong.songId);
