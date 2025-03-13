@@ -15,12 +15,11 @@ function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
   const [value, setValue] = useState(defaultValue);
   return (
     <div className="flex flex-col gap-2">
-      <Slider defaultValue={defaultValue} onValueChange={setValue} />
       <div className="w-full max-w-4xl">
         {label}
         <div className="relative">
           <div
-            className="absolute w-px h-5 opacity-85 bottom-[30px] bg-muted-foreground"
+            className="absolute w-px h-5 opacity-85 -bottom-[27px] bg-muted-foreground"
             style={{ left: `${markValue}%`, transform: "translateX(-50%)" }}
           >
             <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
@@ -29,6 +28,7 @@ function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
           </div>
         </div>
       </div>
+      <Slider defaultValue={defaultValue} onValueChange={setValue} />
     </div>
   );
 }
