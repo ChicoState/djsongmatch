@@ -3,32 +3,40 @@
 import "./globals.css";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import "rc-slider/assets/index.css";
-import Slider from "rc-slider";
 
-function SliderWithLabel({ label }: { label: string }) {
-  const [value, setValue] = useState([50]);
-  const [checked, setChecked] = useState(false);
-  const marks = {
-    30: {
-      label: "Old Song",
-    },
-  };
+interface SliderProps {
+  label: string;
+  defaultValue: number;
+  markValue: number;
+}
+
+function SliderWithLabel({ label, defaultValue = 50, markValue }: SliderProps) {
+  // do NOT ask me how this works
+  // only god knows
+  const [value, setValue] = useState(defaultValue);
   return (
     <div className="flex flex-col gap-2">
-      <label>{label}</label>
-      <div className="flex flex-row gap-4">
-        <Slider
-          marks={marks}
-          onChangeComplete={(value) => {
-            console.log(value);
-          }}
-          dotStyle={{
-            scale: 2,
-            height: "8pt",
-            width: "1px",
-          }}
-        />
+      <div className="w-full max-w-4xl">
+        {label}
+        <div className="relative">
+          <input
+            type="range"
+            min="0"
+            max="100"
+            value={value}
+            onChange={(e) => setValue(Number.parseInt(e.target.value))}
+            className="w-full h-2 rounded-lg appearance-none cursor-pointer bg-muted"
+          />
+
+          <div
+            className="absolute w-px h-5 opacity-70 bottom-[0.5] bg-muted-foreground"
+            style={{ left: `${markValue}%`, transform: "translateX(-50%)" }}
+          >
+            <div className="absolute -top-6 left-1/2 text-sm font-medium -translate-x-1/2">
+              <span className="whitespace-nowrap">Input Song</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -37,9 +45,9 @@ function SliderWithLabel({ label }: { label: string }) {
 function SliderArea() {
   return (
     <section className="flex flex-col gap-8 grow">
-      <SliderWithLabel label="Energy" />
-      <SliderWithLabel label="Loudness" />
-      <SliderWithLabel label="Danceability" />
+      <SliderWithLabel label="Energy" defaultValue={50} markValue={30} />
+      <SliderWithLabel label="Loudness" defaultValue={42} markValue={73} />
+      <SliderWithLabel label="Danceability" defaultValue={69} markValue={62} />
     </section>
   );
 }
@@ -58,7 +66,7 @@ function ButtonArea() {
 function MiddleSection() {
   return (
     <div className="p-8 w-full max-w-4xl">
-      <div className="flex flex-col gap-6 p-6 rounded-lg border border-border md:flex-row shadow-xs">
+      <div className="flex flex-col gap-6 p-6 rounded-lg border md:flex-row border-border shadow-xs">
         <SliderArea />
         <ButtonArea />
       </div>
