@@ -44,7 +44,9 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
           />
           {open && (
             <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
+              {value != inputValue && (
+                <CommandEmpty>No results found.</CommandEmpty>
+              )}
               {songs.map((song: Song) => {
                 return (
                   <CommandItem
