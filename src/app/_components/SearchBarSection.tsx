@@ -20,7 +20,11 @@ import { Song } from "@/db/schema";
 
 const queryClient = new QueryClient();
 
-function SearchBarSection() {
+interface SearchBarSectionProps {
+  setInputSong: (song: Song) => void;
+}
+
+function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
   const [open, setOpen] = useState(false);
   const [inputValue, setInputValue] = useState("");
   const [value, setValue] = useState("");
@@ -56,6 +60,7 @@ function SearchBarSection() {
                       onMouseDown={() => {
                         setValue(`${song.artist} - ${song.title}`);
                         setInputValue(`${song.artist} - ${song.title}`);
+                        setInputSong(song);
                       }}
                     >
                       {song.artist} - {song.title}

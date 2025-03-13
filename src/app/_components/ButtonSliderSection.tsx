@@ -4,11 +4,12 @@ import "@/app/globals.css";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import { Song } from "@/db/schema";
 
 interface SliderProps {
   label: string;
   defaultValue: number[];
-  markValue: number;
+  markValue: number | null;
 }
 
 function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
@@ -16,32 +17,58 @@ function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full max-w-4xl">
-        {label}
-        <div className="relative">
-          <div
-            className="absolute w-px h-5 opacity-85 -bottom-[27px] bg-muted-foreground"
-            style={{ left: `${markValue}%`, transform: "translateX(-50%)" }}
-          >
-            <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
-              <span className="whitespace-nowrap">Input Song</span>
+        {markValue != null && (
+          <div className="relative">
+            <div
+              className="absolute w-px h-5 opacity-85 -bottom-[27px] bg-muted-foreground"
+              style={{
+                left: `${markValue * 100}%`,
+                transform: "translateX(-50%)",
+              }}
+            >
+              <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
+                <span className="whitespace-nowrap">Input Song</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
-      <Slider defaultValue={defaultValue} onValueChange={setValue} />
+      <Slider
+        defaultValue={defaultValue}
+        onValueChange={setValue}
+        min={0}
+        max={1}
+        step={0.01}
+      />
+      {label}
     </div>
   );
 }
 
-function SliderArea() {
+function SliderArea({ inputSong }: { inputSong: Song | null }) {
   return (
     <section className="flex flex-col gap-8 grow">
-      <SliderWithLabel label="Energy" defaultValue={[50]} markValue={30} />
-      <SliderWithLabel label="Loudness" defaultValue={[42]} markValue={73} />
+      <SliderWithLabel
+        label="Energy"
+        defaultValue={[0.5]}
+        markValue={inputSong && inputSong.energy ? inputSong.energy : null}
+      />
+      <SliderWithLabel
+        label="Loudness"
+        defaultValue={[0.42]}
+        markValue={
+          inputSong && inputSong.loudness
+            ? // temp solution until data gets normalized
+              (inputSong.loudness + 47.359) / 48.278
+            : null
+        }
+      />
       <SliderWithLabel
         label="Danceability"
-        defaultValue={[69]}
-        markValue={62}
+        defaultValue={[0.69]}
+        markValue={
+          inputSong && inputSong.danceability ? inputSong.danceability : null
+        }
       />
     </section>
   );
@@ -58,11 +85,11 @@ function ButtonArea() {
   );
 }
 
-function ButtonSliderSection() {
+function ButtonSliderSection({ inputSong }: { inputSong: Song | null }) {
   return (
     <section className="pt-8 w-full max-w-4xl">
       <div className="flex flex-col gap-6 p-8 rounded-lg border md:flex-row border-border shadow-xs">
-        <SliderArea />
+        <SliderArea inputSong={inputSong} />
         <ButtonArea />
       </div>
     </section>
