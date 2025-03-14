@@ -22,6 +22,7 @@ def create_database(df):
         Time_Signature INT,
         `Key` INT, -- Musical key as integer (e.g., 0 = C, 1 = C#, etc.)
         Mode INT, -- Mode: 0 = Minor, 1 = Major
+        Key_String VARCHAR(10), -- Key and mode as string (e.g., "C Maj")
         Camelot_Key INT, -- Camelot key as integer
         Tempo FLOAT,
         Danceability FLOAT,
@@ -43,9 +44,10 @@ def create_database(df):
     for _, row in df.iterrows():
         c.execute(
             """
-            INSERT INTO music_data (Song_ID, Title, Artist, Year, Duration, Time_Signature, `Key`, Mode, Camelot_Key, Tempo, Danceability, Energy, Loudness, 
-            Loudness_dB, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Popularity, Genre)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            INSERT INTO music_data (Song_ID, Title, Artist, Year, Duration, Time_Signature, `Key`, Mode, 
+            Key_String, Camelot_Key, Tempo, Danceability, Energy, Loudness, Loudness_dB, Speechiness, 
+            Acousticness, Instrumentalness, Liveness, Valence, Popularity, Genre)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
                 row["Song_ID"],
@@ -56,6 +58,7 @@ def create_database(df):
                 row["Time_Signature"],
                 row["Key"],
                 row["Mode"],
+                row["Key_String"],
                 row["Camelot_Key"],
                 row["Tempo"],
                 row["Danceability"],

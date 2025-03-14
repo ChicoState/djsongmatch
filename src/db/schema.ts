@@ -10,6 +10,7 @@ export const musicData = sqliteTable("music_data", {
     timeSignature: text("Time_Signature", { length: 10 }),
     key: integer("Key"),
     mode: integer("Mode"),
+    keyString: text("Key_String", { length: 10 }),
     camelotKey: integer("Camelot_Key"),
     tempo: real("Tempo"),
     danceability: real("Danceability"),

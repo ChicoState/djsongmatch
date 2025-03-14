@@ -67,8 +67,35 @@ def add_camelot_key(df):
     }
     
     # Map Key-Mode to Camelot keys
-    df['Camelot_Key'] = (df['Key'] + (df['Mode'] * 12)).map(musical_key_to_camelot)
+    df['Camelot_Key'] = (df['Key'] + (abs(df['Mode']-1) * 12)).map(musical_key_to_camelot)
     
+    return df
+
+def add_key_string(df):
+    
+    key_map = {
+        0: 'C',
+        1: 'C#/Db',
+        2: 'D',
+        3: 'D#/Eb',
+        4: 'E',
+        5: 'F',
+        6: 'F#/Gb',
+        7: 'G',
+        8: 'G#/Ab',
+        9: 'A',
+        10: 'A#/Bb',
+        11: 'B'
+    }
+
+    mode_map = {
+        0: 'min',
+        1: 'Maj'
+    }
+
+    # Apply the mappings to the Key and Mode columns to create the Key_String column
+    df['Key_String'] = df['Key'].map(key_map) + " " + df['Mode'].map(mode_map)
+
     return df
 
 def main():
@@ -81,13 +108,22 @@ def main():
     # Add the Camelot key
     df = add_camelot_key(df)
 
+    # Add the Key_String column
+    df = add_key_string(df)
+
     # Add Song_ID column
     df = df.reset_index().rename(columns={'index': 'Song_ID'})
 
     # Reorder DataFrame columns
-    df = df[['Song_ID', 'Track', 'Artist', 'Year', 'Duration', 'Time_Signature', 'Key', 'Mode', 'Camelot_Key', 
-             'Tempo', 'Danceability', 'Energy', 'Loudness', 'Loudness_dB', 'Speechiness', 
-             'Acousticness', 'Instrumentalness', 'Liveness', 'Valence', 'Popularity', 'Genre']]
+    df = df[['Song_ID', 'Track', 'Artist', 'Year', 'Duration', 'Time_Signature', 'Key', 'Mode', 
+             'Key_String', 'Camelot_Key', 'Tempo', 'Danceability', 'Energy', 'Loudness', 
+             'Loudness_dB', 'Speechiness', 'Acousticness', 'Instrumentalness', 'Liveness', 'Valence', 
+             'Popularity', 'Genre']]
+    
+    # print(df[['Song_ID', 'Track', 'Artist', 'Time_Signature', 'Key', 'Mode', 
+    #          'Key_String', 'Camelot_Key', 'Loudness', 'Loudness_dB']][df['Mode']==1].head())
+    # print(df[['Song_ID', 'Track', 'Artist', 'Time_Signature', 'Key', 'Mode', 
+    #          'Key_String', 'Camelot_Key', 'Loudness', 'Loudness_dB']][df['Mode']==0].head())
 
     # Save the processed DataFrame to a new CSV file
     df.to_csv(os.path.join(PROCESSED_CSV_FILE), index=False)
