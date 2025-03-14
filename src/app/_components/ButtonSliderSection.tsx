@@ -24,7 +24,7 @@ function SliderMarker({
       {markValue != null && (
         <div className="relative">
           <div
-            className="absolute w-px h-5 transition-all duration-300 ease-in-out opacity-85 bg-muted-foreground"
+            className="absolute w-px h-5 transition-all duration-300 ease-in-out animate-in opacity-85 bg-muted-foreground"
             style={{
               left: `${markValue * 100}%`,
               transform: "translateX(-50%) translateY(10%)",
