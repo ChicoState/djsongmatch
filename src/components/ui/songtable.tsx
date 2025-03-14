@@ -27,13 +27,13 @@ export default function SongTable({ songs }: SongTableProps) {
     <table className="w-full border border-gray-500 border-collapse">
       {/* Table column width */}
       <colgroup>
-        <col className="w-6/12" />
+        <col className="w-5/12" />
         {/* Title: 5/12 of space */}
         <col className="w-4/12" />
         {/* Artist: 4/12 of space */}
         <col className="w-1/12" />
         {/* BPM: 1/12 of space */}
-        <col className="w-1/12" />
+        <col className="w-2/12" />
         {/* Key: 2/12 of space */}
       </colgroup>
       {/* Table header */}
@@ -63,8 +63,9 @@ export default function SongTable({ songs }: SongTableProps) {
               {song.key != null && keyMap[song.key]}
 
               {/* Song.Mode = 0 is minor, 1 is Major*/}
-              {song.mode != null && song.mode === 0 && "m"}
-              {/*Adds an "m" if the song is minor, otherwise nothing*/}
+              {song.mode != null && song.mode === 0 && " min"}
+              {song.mode != null && song.mode === 1 && " Maj"}
+              {/*Adds "min" if the song is minor, adds "Maj" if the song is major*/}
             </td>
           </tr>
         ))}
