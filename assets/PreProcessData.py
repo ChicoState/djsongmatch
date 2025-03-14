@@ -34,43 +34,42 @@ Camelot Key 2B is represented as 14, etc.
 Returns the DataFrame with the new 'Camelot_Key' column.
 '''
 def add_camelot_key(df):
+    
     # Mapping of musical keys to Camelot keys based on mode (minor/major)
     musical_key_to_camelot = {
         # Major keys (Mode = 1)
-        0: 20,      # 8B ~ C
-        1: 15,      # 3B ~ C# / Db
-        2: 22,      # 10B ~ D
-        3: 17,      # 5B ~ D# / Eb
-        4: 24,      # 12B ~ E
-        5: 19,      # 7B ~ F
-        6: 14,      # 2B ~ F# / Gb
-        7: 21,      # 9B ~ G
-        8: 16,      # 4B ~ G# / Ab
-        9: 23,      # 11B ~ A
-        10: 18,     # 6B ~ A# / Bb
-        11: 13,     # 1B ~ B
+        0: 20,      # C :       8B
+        1: 15,      # C# / Db : 3B
+        2: 22,      # D :       10B
+        3: 17,      # D# / Eb : 5B
+        4: 24,      # E :       12B
+        5: 19,      # F :       7B
+        6: 14,      # F# / Gb : 2B
+        7: 21,      # G :       9B
+        8: 16,      # G# / Ab : 4B
+        9: 23,      # A :       11B
+        10: 18,     # A# / Bb : 6B
+        11: 13,     # B :       1B
 
         # Minor keys (Mode = 0)
-        12: 5,      # 5A ~ C
-        13: 12,     # 12A ~ C# / Db
-        14: 7,      # 7A ~ D
-        15: 2,      # 2A ~ D# / Eb
-        16: 9,      # 9A ~ E
-        17: 4,      # 4A ~ F
-        18: 11,     # 11A ~ F# / Gb
-        19: 6,      # 6A ~ G
-        20: 1,      # 1A ~ G# / Ab
-        21: 8,      # 8A ~ A
-        22: 3,      # 3A ~ A# / Bb
-        23: 10,     # 10A ~ B
+        12: 5,      # C :       5A
+        13: 12,     # C# / Db : 12A
+        14: 7,      # D :       7A
+        15: 2,      # D# / Eb : 2A
+        16: 9,      # E :       9A
+        17: 4,      # F :       4A
+        18: 11,     # F# / Gb : 11A
+        19: 6,      # G :       6A
+        20: 1,      # G# / Ab : 1A
+        21: 8,      # A :       8A
+        22: 3,      # A# / Bb : 3A
+        23: 10,     # B :       10A
     }
     
-    # Map KeyMode to Camelot keys
+    # Map Key-Mode to Camelot keys
     df['Camelot_Key'] = (df['Key'] + (df['Mode'] * 12)).map(musical_key_to_camelot)
     
     return df
-
-
 
 def main():
     # Read the CSV file
@@ -82,7 +81,7 @@ def main():
     # Add the Camelot key
     df = add_camelot_key(df)
 
-    # Reorder DataFrame columns to match the INSERT statement
+    # Reorder DataFrame columns
     df = df[['Track', 'Artist', 'Year', 'Duration', 'Time_Signature', 'Key', 'Mode', 'Camelot_Key', 
              'Tempo', 'Danceability', 'Energy', 'Loudness', 'Loudness_dB', 'Speechiness', 
              'Acousticness', 'Instrumentalness', 'Liveness', 'Valence', 'Popularity', 'Genre']]
