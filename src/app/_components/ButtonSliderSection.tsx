@@ -12,27 +12,39 @@ interface SliderProps {
   markValue: number | null;
 }
 
+function SliderMarker({
+  label,
+  markValue,
+}: {
+  label: string;
+  markValue: number | null;
+}) {
+  return (
+    <div className="w-full max-w-4xl">
+      {markValue != null && (
+        <div className="relative">
+          <div
+            className="absolute w-px h-5 opacity-85 bg-muted-foreground"
+            style={{
+              left: `${markValue * 100}%`,
+              transform: "translateX(-50%) translateY(10%)",
+            }}
+          >
+            <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
+              <span className="whitespace-nowrap">{label}</span>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
   const [value, setValue] = useState(defaultValue);
   return (
     <div className="flex flex-col gap-2">
-      <div className="w-full max-w-4xl">
-        {markValue != null && (
-          <div className="relative">
-            <div
-              className="absolute w-px h-5 opacity-85 bg-muted-foreground"
-              style={{
-                left: `${markValue * 100}%`,
-                transform: "translateX(-50%) translateY(10%)",
-              }}
-            >
-              <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
-                <span className="whitespace-nowrap">Input Song</span>
-              </div>
-            </div>
-          </div>
-        )}
-      </div>
+      <SliderMarker label="Input Song" markValue={markValue} />
       <Slider
         defaultValue={defaultValue}
         onValueChange={setValue}
