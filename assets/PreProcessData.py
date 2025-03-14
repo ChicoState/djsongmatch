@@ -13,14 +13,15 @@ Returns a new DataFrame that contains the same feature columns as the original, 
 replaces the values of the above features with normalized values.
 '''
 def normalize_features(df):
-    features = ['Danceability', 'Energy', 'Loudness','Speechiness', 'Acousticness', 
+    features = ['Danceability', 'Energy', 'Loudness', 'Speechiness', 'Acousticness', 
             'Instrumentalness', 'Liveness', 'Valence']
+    
     scaler = MinMaxScaler()
-    df2 = df.copy()
-    df2['Loudness_dB'] = df['Loudness'] # Keep the original Loudness column, which is in dB, but rename it
-    df2[features] = scaler.fit_transform(df[features])
+    
+    df['Loudness_dB'] = df['Loudness'] # Keep the original Loudness column, which is in dB, but rename it
+    df[features] = scaler.fit_transform(df[features]) # Normalize the selected features
 
-    return df2
+    return df
 
 '''
 Function to add a new column 'Camelot_Key' to the DataFrame based on the 'Key' and 'Mode' columns.
