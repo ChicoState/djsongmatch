@@ -81,8 +81,11 @@ def main():
     # Add the Camelot key
     df = add_camelot_key(df)
 
+    # Add Song_ID column
+    df = df.reset_index().rename(columns={'index': 'Song_ID'})
+
     # Reorder DataFrame columns
-    df = df[['Track', 'Artist', 'Year', 'Duration', 'Time_Signature', 'Key', 'Mode', 'Camelot_Key', 
+    df = df[['Song_ID', 'Track', 'Artist', 'Year', 'Duration', 'Time_Signature', 'Key', 'Mode', 'Camelot_Key', 
              'Tempo', 'Danceability', 'Energy', 'Loudness', 'Loudness_dB', 'Speechiness', 
              'Acousticness', 'Instrumentalness', 'Liveness', 'Valence', 'Popularity', 'Genre']]
 

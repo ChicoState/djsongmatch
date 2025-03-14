@@ -14,7 +14,7 @@ def create_database(df):
 
     table_query = """
         CREATE TABLE music_data (
-        SongID INTEGER PRIMARY KEY AUTOINCREMENT,
+        Song_ID INTEGER PRIMARY KEY,
         Title VARCHAR(255),
         Artist VARCHAR(255),
         Year INT, -- Year of release (assuming integer year)
@@ -43,11 +43,12 @@ def create_database(df):
     for _, row in df.iterrows():
         c.execute(
             """
-            INSERT INTO music_data (Title, Artist, Year, Duration, Time_Signature, `Key`, Mode, Camelot_Key, Tempo, Danceability, Energy, Loudness, 
+            INSERT INTO music_data (Song_ID, Title, Artist, Year, Duration, Time_Signature, `Key`, Mode, Camelot_Key, Tempo, Danceability, Energy, Loudness, 
             Loudness_dB, Speechiness, Acousticness, Instrumentalness, Liveness, Valence, Popularity, Genre)
-            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
             """,
             (
+                row["Song_ID"],
                 row["Track"], # renamed to Title
                 row["Artist"],
                 row["Year"],
