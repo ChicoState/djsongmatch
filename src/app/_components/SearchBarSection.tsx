@@ -15,6 +15,9 @@ import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
 
 interface SearchBarSectionProps {
+  /**
+   * @param setInputSong - A function that gets called when the user selects a song from the search results
+  */
   setInputSong: (song: Song) => void;
 }
 
@@ -42,6 +45,8 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
             placeholder={"Search for a song!"}
             value={inputValue}
           />
+
+          {/* Only show the choices if the user has the input focused */}
           {open && (
             <CommandList>
               {value != inputValue && (
