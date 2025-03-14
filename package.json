@@ -9,10 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
-        "@emotion/react": "^11.14.0",
-        "@emotion/styled": "^11.14.0",
         "@libsql/client": "^0.14.0",
-        "@mui/material": "^6.4.7",
         "@radix-ui/react-dialog": "^1.1.6",
         "@radix-ui/react-dropdown-menu": "^2.1.6",
         "@radix-ui/react-slider": "^1.2.3",
