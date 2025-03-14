@@ -1,26 +1,38 @@
 "use client";
 
 import "@/app/globals.css";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Song } from "@/db/schema";
+import { useState } from "react";
 
-interface SliderProps {
+interface SliderMarkerProps {
+    /**
+   * @param label - The label above the slider
+   * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
+   *
+   */
+  label: string;
+  markValue: number | null;
+}
+
+interface SongSliderProps {
+  /**
+   * @param label - The label above the slider
+   * @param defaultValue - The default value of the slider
+   * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
+   */
   label: string;
   defaultValue: number[];
   markValue: number | null;
 }
 
-function SliderMarker({
-  label,
-  markValue,
-}: {
-  label: string;
-  markValue: number | null;
-}) {
+function SliderMarker({ label, markValue }: SliderMarkerProps) {
   return (
     <div className="w-full max-w-4xl">
+
+      {/* markValue could be null, meaning an input song is not selected*/}
+      {/* if no input song, don't display markers */}
       {markValue != null && (
         <div className="relative">
           <div
@@ -40,13 +52,14 @@ function SliderMarker({
   );
 }
 
-function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
+function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
   const [value, setValue] = useState(defaultValue);
+
   return (
     <div className="flex flex-col gap-2">
       <SliderMarker label="Input Song" markValue={markValue} />
       <Slider
-        defaultValue={defaultValue}
+        value={value}
         onValueChange={setValue}
         min={0}
         max={1}
@@ -60,12 +73,12 @@ function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
 function SliderArea({ inputSong }: { inputSong: Song | null }) {
   return (
     <section className="flex flex-col gap-8 grow">
-      <SliderWithLabel
+      <SongSlider
         label="Energy"
         defaultValue={[0.5]}
         markValue={inputSong && inputSong.energy ? inputSong.energy : null}
       />
-      <SliderWithLabel
+      <SongSlider
         label="Loudness"
         defaultValue={[0.42]}
         markValue={
@@ -75,7 +88,7 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
             : null
         }
       />
-      <SliderWithLabel
+      <SongSlider
         label="Danceability"
         defaultValue={[0.69]}
         markValue={
