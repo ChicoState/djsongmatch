@@ -1,7 +1,7 @@
 "use client";
 import "./globals.css";
 import SongForm from "@/components/ui/SongForm";
-import SongTable from "@/components/ui/songtable";
+import SongTable from "@/components/ui/SongTable";
 import { Song } from "@/db/schema";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
