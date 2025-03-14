@@ -17,7 +17,7 @@ import { searchSongs } from "../actions";
 interface SearchBarSectionProps {
   /**
    * @param setInputSong - A function that gets called when the user selects a song from the search results
-  */
+   */
   setInputSong: (song: Song) => void;
 }
 

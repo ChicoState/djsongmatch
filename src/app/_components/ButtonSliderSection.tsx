@@ -7,7 +7,7 @@ import { Song } from "@/db/schema";
 import { useState } from "react";
 
 interface SliderMarkerProps {
-    /**
+  /**
    * @param label - The label above the slider
    * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
    *
@@ -30,7 +30,6 @@ interface SongSliderProps {
 function SliderMarker({ label, markValue }: SliderMarkerProps) {
   return (
     <div className="w-full max-w-4xl">
-
       {/* markValue could be null, meaning an input song is not selected*/}
       {/* if no input song, don't display markers */}
       {markValue != null && (
@@ -81,12 +80,7 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
       <SongSlider
         label="Loudness"
         defaultValue={[0.42]}
-        markValue={
-          inputSong && inputSong.loudness
-            ? // temp solution until data gets normalized
-              (inputSong.loudness + 47.359) / 48.278
-            : null
-        }
+        markValue={inputSong && inputSong.loudness ? inputSong.loudness : null}
       />
       <SongSlider
         label="Danceability"
