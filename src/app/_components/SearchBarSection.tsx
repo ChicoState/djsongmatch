@@ -10,9 +10,9 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
-import { Song } from "@/db/schema";
 
 interface SearchBarSectionProps {
   setInputSong: (song: Song) => void;

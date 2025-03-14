@@ -1,10 +1,10 @@
 "use client";
 import "@/app/globals.css";
 
+import { Song } from "@/db/schema";
+import { useState } from "react";
 import ButtonSliderSection from "./_components/ButtonSliderSection";
 import SearchBarSection from "./_components/SearchBarSection";
-import { useState } from "react";
-import { Song } from "@/db/schema";
 
 export default function App() {
   const [inputSong, setInputSong] = useState<Song | null>(null);
