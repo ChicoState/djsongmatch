@@ -20,10 +20,10 @@ function SliderWithLabel({ label, defaultValue, markValue }: SliderProps) {
         {markValue != null && (
           <div className="relative">
             <div
-              className="absolute w-px h-5 opacity-85 -bottom-[27px] bg-muted-foreground"
+              className="absolute w-px h-5 opacity-85 bg-muted-foreground"
               style={{
                 left: `${markValue * 100}%`,
-                transform: "translateX(-50%)",
+                transform: "translateX(-50%) translateY(10%)",
               }}
             >
               <div className="absolute -top-5 left-1/2 text-sm font-medium -translate-x-1/2">
