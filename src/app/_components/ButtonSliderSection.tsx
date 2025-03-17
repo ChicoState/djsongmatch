@@ -52,7 +52,7 @@ function SliderMarker({ label, markValue }: SliderMarkerProps) {
 }
 
 function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
-  const [value, setValue] = useState(defaultValue);
+  const [value, setValue] = useState([0]);
 
   /*
    * The fn inside `useEffect()` runs every time the component is mounted.
@@ -60,7 +60,7 @@ function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
    */
   useEffect(() => {
     const storageValue = window.localStorage.getItem(label);
-    if (storageValue === null) return;
+    if (storageValue === null) setValue(defaultValue);
     else setValue([parseFloat(storageValue)]);
   }, []);
 
