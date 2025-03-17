@@ -64,12 +64,18 @@ function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
     else setValue([parseFloat(storageValue)]);
   }, []);
 
+  function handleValueCommit(newValue: number[]) {
+    // newValue[0] assumes we only have one Thumb on the Slider
+    window.localStorage.setItem(label, newValue[0].toString());
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <SliderMarker label="Input Song" markValue={markValue} />
       <Slider
         value={value}
         onValueChange={setValue}
+        onValueCommit={handleValueCommit}
         min={0}
         max={1}
         step={0.01}
