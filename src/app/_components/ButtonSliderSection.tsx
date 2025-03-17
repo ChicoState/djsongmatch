@@ -4,7 +4,7 @@ import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Song } from "@/db/schema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SliderMarkerProps {
   /**
@@ -53,6 +53,16 @@ function SliderMarker({ label, markValue }: SliderMarkerProps) {
 
 function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
   const [value, setValue] = useState(defaultValue);
+
+  /*
+   * The fn inside `useEffect()` runs every time the component is mounted.
+   * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
+   */
+  useEffect(() => {
+    const storageValue = window.localStorage.getItem(label);
+    if (storageValue === null) return;
+    else setValue([parseFloat(storageValue)]);
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
