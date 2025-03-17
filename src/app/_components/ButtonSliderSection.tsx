@@ -13,18 +13,20 @@ interface SliderMarkerProps {
    *
    */
   label: string;
-  markValue: number | null;
+  markValue?: number | null;
 }
 
 interface SongSliderProps {
   /**
-   * @param label - The label above the slider
    * @param defaultValue - The default value of the slider
+   * @param label - The label above the slider
    * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
+   * @param tooltip - The message to display when hovering over the tooltip
    */
-  label: string;
   defaultValue: number[];
+  label: string;
   markValue: number | null;
+  tooltip?: string | null;
 }
 
 function SliderMarker({ label, markValue }: SliderMarkerProps) {
@@ -51,7 +53,12 @@ function SliderMarker({ label, markValue }: SliderMarkerProps) {
   );
 }
 
-function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
+function SongSlider({
+  label,
+  defaultValue,
+  markValue,
+  tooltip = null,
+}: SongSliderProps) {
   const [value, setValue] = useState(defaultValue);
 
   return (
