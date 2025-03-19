@@ -3,7 +3,14 @@
 import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Song } from "@/db/schema";
+import { CircleHelpIcon } from "lucide-react";
 import { useState } from "react";
 
 interface SliderMarkerProps {
@@ -13,18 +20,20 @@ interface SliderMarkerProps {
    *
    */
   label: string;
-  markValue: number | null;
+  markValue?: number | null;
 }
 
 interface SongSliderProps {
   /**
-   * @param label - The label above the slider
    * @param defaultValue - The default value of the slider
+   * @param label - The label above the slider
    * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
+   * @param tooltip - The message to display when hovering over the tooltip
    */
-  label: string;
   defaultValue: number[];
+  label: string;
   markValue: number | null;
+  tooltip?: string | null;
 }
 
 function SliderMarker({ label, markValue }: SliderMarkerProps) {
@@ -51,7 +60,12 @@ function SliderMarker({ label, markValue }: SliderMarkerProps) {
   );
 }
 
-function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
+function SongSlider({
+  label,
+  defaultValue,
+  markValue,
+  tooltip = null,
+}: SongSliderProps) {
   const [value, setValue] = useState(defaultValue);
 
   return (
@@ -64,7 +78,23 @@ function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
         max={1}
         step={0.01}
       />
-      {label}
+      <div className="flex gap-1 items-center">
+        {label}
+
+        {/* Only show icon when tooltip !== null*/}
+        {tooltip !== null && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelpIcon size={18} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="w-max max-w-3xs">{tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
     </div>
   );
 }
@@ -76,11 +106,13 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
         label="Energy"
         defaultValue={[0.5]}
         markValue={inputSong && inputSong.energy ? inputSong.energy : null}
+        tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
       />
       <SongSlider
         label="Loudness"
         defaultValue={[0.42]}
         markValue={inputSong && inputSong.loudness ? inputSong.loudness : null}
+        tooltip={null}
       />
       <SongSlider
         label="Danceability"
@@ -88,6 +120,7 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
         markValue={
           inputSong && inputSong.danceability ? inputSong.danceability : null
         }
+        tooltip="short"
       />
     </section>
   );
