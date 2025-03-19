@@ -3,7 +3,14 @@
 import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { Song } from "@/db/schema";
+import { CircleHelpIcon } from "lucide-react";
 import { useState } from "react";
 
 interface SliderMarkerProps {
@@ -71,7 +78,23 @@ function SongSlider({
         max={1}
         step={0.01}
       />
-      {label}
+      <div className="flex gap-1 items-center">
+        {label}
+
+        {/* Only show icon when tooltip !== null*/}
+        {tooltip !== null && (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger>
+                <CircleHelpIcon size={18} />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p className="w-max max-w-3xs">{tooltip}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        )}
+      </div>
     </div>
   );
 }
@@ -83,11 +106,13 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
         label="Energy"
         defaultValue={[0.5]}
         markValue={inputSong && inputSong.energy ? inputSong.energy : null}
+        tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
       />
       <SongSlider
         label="Loudness"
         defaultValue={[0.42]}
         markValue={inputSong && inputSong.loudness ? inputSong.loudness : null}
+        tooltip={null}
       />
       <SongSlider
         label="Danceability"
@@ -95,6 +120,7 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
         markValue={
           inputSong && inputSong.danceability ? inputSong.danceability : null
         }
+        tooltip="short"
       />
     </section>
   );
