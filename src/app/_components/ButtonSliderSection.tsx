@@ -37,10 +37,13 @@ interface SongSliderProps {
 }
 
 function SliderMarker({ label, markValue }: SliderMarkerProps) {
+  /**
+   * SliderMarker is a component that displays a marker on the slider.
+   * - A marker is a visual indicator that renders a "tick" and a label above the slider.
+   * - The marker is only displayed when markValue is not null.
+   */
   return (
     <div className="w-full max-w-4xl">
-      {/* markValue could be null, meaning an input song is not selected*/}
-      {/* if no input song, don't display markers */}
       {markValue != null && (
         <div className="relative">
           <div
@@ -66,6 +69,13 @@ function SongSlider({
   markValue,
   tooltip = null,
 }: SongSliderProps) {
+  /**
+   * SongSlider is a component that displays a slider with a label and a tooltip.
+   * - The slider is used to adjust the value of the song metric
+   * - The label is displayed above the slider.
+   * - The tooltip is displayed when the user hovers over the slider.
+   */
+
   const [value, setValue] = useState(defaultValue);
 
   return (
@@ -78,7 +88,7 @@ function SongSlider({
         max={1}
         step={0.01}
       />
-      <div className="flex gap-1 items-center">
+      <div className="flex overflow-hidden gap-1 items-center">
         {label}
 
         {/* Only show icon when tooltip !== null*/}
@@ -88,8 +98,11 @@ function SongSlider({
               <TooltipTrigger>
                 <CircleHelpIcon size={18} />
               </TooltipTrigger>
-              <TooltipContent>
-                <p className="w-max max-w-3xs">{tooltip}</p>
+              <TooltipContent
+                sideOffset={4}
+                className="p-2 max-w-lg translate-y-3 w-fit text-pretty"
+              >
+                {tooltip}
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
@@ -100,6 +113,10 @@ function SongSlider({
 }
 
 function SliderArea({ inputSong }: { inputSong: Song | null }) {
+  /**
+   * SliderArea is a component that contains all of the Slider components on the main page
+   */
+
   return (
     <section className="flex flex-col gap-8 grow">
       <SongSlider
@@ -127,6 +144,9 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
 }
 
 function ButtonArea() {
+  /**
+   * ButtonArea is a component that contains the two buttons on the main page
+   */
   return (
     <section className="flex flex-col gap-4 justify-center items-center min-w-[150px]">
       <Button variant={"outline"} className="w-full">
@@ -138,6 +158,9 @@ function ButtonArea() {
 }
 
 function ButtonSliderSection({ inputSong }: { inputSong: Song | null }) {
+  /**
+   * ButtonSliderSection is a component that contains the SliderArea and ButtonArea components
+   */
   return (
     <section className="pt-8 w-full max-w-4xl">
       <div className="flex flex-col gap-6 p-8 rounded-lg border md:flex-row border-border shadow-xs">
