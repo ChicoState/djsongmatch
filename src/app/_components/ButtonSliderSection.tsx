@@ -3,7 +3,7 @@
 import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
-import { Song } from "@/db/schema";
+import { Song } from "@/db/ts/schema";
 import { useState } from "react";
 
 interface SliderMarkerProps {
