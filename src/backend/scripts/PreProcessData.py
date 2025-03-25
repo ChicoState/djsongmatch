@@ -1,9 +1,11 @@
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-import os
+from pathlib import Path
 
-CSV_FILE = os.path.join(os.path.dirname(__file__), "ClassicHit.csv")
-PROCESSED_CSV_FILE = os.path.join(os.path.dirname(__file__), "Processed_ClassicHit.csv")
+PROJECT_ROOT = Path(__file__).parent.parent.parent  # src
+CSV_INPUT = PROJECT_ROOT / "db" / "ClassicHit.csv"
+CSV_OUTPUT = PROJECT_ROOT / "db" / "Processed_ClassicHit.csv"
+
 
 ''' 
 Function to normalize features ['Danceability', 'Energy', 'Loudness',
@@ -100,7 +102,7 @@ def add_key_string(df):
 
 def main():
     # Read the CSV file
-    df = pd.read_csv(CSV_FILE)
+    df = pd.read_csv(CSV_INPUT)
 
     # Normalize the features
     df = normalize_features(df)
@@ -126,7 +128,7 @@ def main():
     #          'Key_String', 'Camelot_Key', 'Loudness', 'Loudness_dB']][df['Mode']==0].head())
 
     # Save the processed DataFrame to a new CSV file
-    df.to_csv(os.path.join(PROCESSED_CSV_FILE), index=False)
+    df.to_csv(CSV_OUTPUT, index=False)
 
 if __name__ == "__main__":
     main()

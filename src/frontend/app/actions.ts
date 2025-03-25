@@ -2,7 +2,7 @@
 // entire file uses server ACTIONS, 
 // do NOT export components in this file, only functions
 
-import { musicData, Song } from "@/db/schema";
+import { musicData, Song } from "@/frontend/lib/db/schema";
 import { and, eq, like, ne, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 

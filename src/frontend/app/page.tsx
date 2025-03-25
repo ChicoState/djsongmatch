@@ -1,7 +1,7 @@
 "use client";
 import "@/app/globals.css";
 
-import { Song } from "@/db/schema";
+import { Song } from "@/frontend/lib/db/schema";
 import { useState } from "react";
 import ButtonSliderSection from "./_components/ButtonSliderSection";
 import SearchBarSection from "./_components/SearchBarSection";

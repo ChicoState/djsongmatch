@@ -1,6 +1,6 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Integer, String, Float, ForeignKey
+from sqlalchemy import Integer, String, Float, ForeignKey, UniqueConstraint
 from typing import List
 
 class Base(DeclarativeBase):
@@ -11,6 +11,9 @@ Class to define the 'songs' table in the database.
 '''
 class Song(Base):
     __tablename__ = 'songs'
+    __table_args__ = (
+        UniqueConstraint('song_id', name='uq_song_id'),
+    )
     
     song_id: Mapped[int] = mapped_column(Integer, primary_key=True)
     title: Mapped[str] = mapped_column(String(255))

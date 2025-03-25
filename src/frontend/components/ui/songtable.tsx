@@ -1,4 +1,4 @@
-import { Song } from "@/db/schema";
+import { Song } from "@/frontend/lib/db/schema";
 import "dotenv/config";
 
 interface SongTableProps {

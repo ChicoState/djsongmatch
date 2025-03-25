@@ -10,7 +10,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Song } from "@/db/schema";
+import { Song } from "@/frontend/lib/db/schema";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
 
