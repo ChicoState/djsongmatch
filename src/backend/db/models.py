@@ -1,15 +1,11 @@
-from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Integer, String, Float, ForeignKey, UniqueConstraint
 from typing import List
+from api.extensions import db
 
-class Base(DeclarativeBase):
-    pass
-
-'''
-Class to define the 'songs' table in the database.
-'''
-class Song(Base):
+class Song(db.Model):
+    '''Class to define the 'songs' table in the database.'''
+    
     __tablename__ = 'songs'
     __table_args__ = (
         UniqueConstraint('song_id', name='uq_song_id'),
@@ -39,10 +35,9 @@ class Song(Base):
     def __repr__(self):
         return f"<Song(id={self.song_id}, title={self.title}, artist={self.artist}, year={self.year})>"
 
-'''
-Class to define the 'camelot_keys' table in the database.
-'''
-class CamelotKey(Base):
+class CamelotKey(db.Model):
+    '''Class to define the 'camelot_keys' table in the database.'''
+    
     __tablename__ = 'camelot_keys'
     
     id: Mapped[int] = mapped_column(Integer, primary_key=True)

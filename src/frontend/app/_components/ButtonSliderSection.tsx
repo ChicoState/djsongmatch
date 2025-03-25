@@ -1,8 +1,8 @@
 "use client";
 
 import "@/app/globals.css";
-import { Button } from "@/components/ui/button";
-import { Slider } from "@/components/ui/slider";
+import { Button } from "@/frontend/components/ui/button";
+import { Slider } from "@/frontend/components/ui/slider";
 import { Song } from "@/frontend/lib/db/schema";
 import { useState } from "react";
 

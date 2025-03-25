@@ -2,21 +2,21 @@
 FROM node:18 AS builder
 
 # Set working directory
-WORKDIR /app
+WORKDIR /service
 
 # Ensure all necessary environment variables are set
 ENV NODE_ENV=development
 
 COPY package.json package-lock.json ./
 
-RUN npm install
+# Copy the rest of the project files
+COPY . .
+
+RUN npm install --include=dev
 
 # Conditionally install @libsql/linux-arm64-musl only on ARM64 builds.
 ARG TARGETARCH
 RUN if [ "$TARGETARCH" = "arm64" ]; then npm install @libsql/linux-arm64-musl; fi
-
-# Copy the rest of the project files
-COPY . .
 
 EXPOSE 3000
 

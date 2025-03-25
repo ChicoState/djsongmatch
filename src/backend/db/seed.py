@@ -1,9 +1,8 @@
+from pathlib import Path
 import pandas as pd
 from sqlalchemy.orm import Session
-from database import engine
-from models import Song, CamelotKey
-from database import insert_songs, insert_camelot_keys, init_db, get_db
-from pathlib import Path
+from db.database import insert_songs, insert_camelot_keys, init_db, get_db
+from db.models import Song, CamelotKey
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent # src
 PROCESSED_CSV_PATH = PROJECT_ROOT / "db" / "Processed_ClassicHit.csv"

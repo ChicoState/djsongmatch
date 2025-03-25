@@ -2,7 +2,7 @@ import pathlib
 from typing import Generator
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker, Session
-from models import Base, CamelotKey, Song
+from db.models import Base, CamelotKey, Song
 from pathlib import Path
 
 PROJECT_ROOT = Path(__file__).parent.parent.parent # src
