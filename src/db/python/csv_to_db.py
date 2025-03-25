@@ -135,9 +135,16 @@ def main():
     df = df.drop(columns=["Key", "Mode"])
     df = df.rename(columns={col: col.lower() for col in df.columns})
 
+    # WARNING: reset_db() will delete all data in the database
+    # (I'm doing this so that we don't have key contraints inserting song_ids that already exist)
+    # TODO: Create better system of assigning song_ids, possibly autoincrementing or uuid
     reset_db()
+
     engine = sqlalchemy.create_engine(DEFAULT_DATABASE_URL, echo=True)
 
+    # Insert the DataFrame into the database,
+    # if the table already exists, append the data to the existing table
+    # Don't include the df index, since it's not an attribute in the model
     df.to_sql("song", engine, if_exists="append", index=False)
 
 
