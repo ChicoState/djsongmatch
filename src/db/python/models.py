@@ -6,7 +6,9 @@ from typing import List
 class Base(DeclarativeBase):
     pass
 
-
+'''
+Class to define the 'songs' table in the database.
+'''
 class Song(Base):
     __tablename__ = 'songs'
     
@@ -34,6 +36,9 @@ class Song(Base):
     def __repr__(self):
         return f"<Song(id={self.song_id}, title={self.title}, artist={self.artist}, year={self.year})>"
 
+'''
+Class to define the 'camelot_keys' table in the database.
+'''
 class CamelotKey(Base):
     __tablename__ = 'camelot_keys'
     
