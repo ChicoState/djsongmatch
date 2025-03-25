@@ -1,7 +1,7 @@
 import { drizzle } from "drizzle-orm/libsql";
 import { NextRequest, NextResponse } from "next/server";
-import { musicData } from "../../../../drizzle/schema";
 import { eq } from "drizzle-orm";
+import SongTable from "@/components/ui/songtable";
 
 const db = drizzle("file:./assets/ClassicHit.db");
 
@@ -11,8 +11,8 @@ export async function GET(request: NextRequest) {
     if (!id) {
         return new Response("Missing songId", { status: 400 });
     }
-    const song = await db.select().from(musicData).where(
-        eq(musicData.songId, id)
+    const song = await db.select().from(SongTable).where(
+        eq(SongTable.songId, id)
     ).limit(1);
 
     return NextResponse.json(song);
