@@ -1,6 +1,6 @@
 flask
-pandas
-numpy
-scikit-learn
 matplotlib
+numpy
+pandas
+scikit-learn
 sqlalchemy
