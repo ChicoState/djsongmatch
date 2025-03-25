@@ -1,9 +1,9 @@
 "use client";
 
 import "@/app/globals.css";
-import { Button } from "@/frontend/components/ui/button";
-import { Slider } from "@/frontend/components/ui/slider";
-import { Song } from "@/frontend/lib/db/schema";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
+import { Song } from "@/lib/db/schema";
 import { useState } from "react";
 
 interface SliderMarkerProps {
@@ -96,7 +96,7 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
 function ButtonArea() {
   return (
     <section className="flex flex-col gap-4 justify-center items-center min-w-[150px]">
-      <Button variant={"outline"} className="w-full">
+      <Button className="w-full">
         Advanced Filters
       </Button>
       <Button className="w-full">Generate</Button>

@@ -1,0 +1,17 @@
+{
+  "devDependencies": {
+    "@types/next": "^8.0.7",
+    "@types/node": "^22.13.13",
+    "@types/react": "^19.0.12"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.1",
+    "@radix-ui/react-dropdown-menu": "^2.1.6",
+    "@radix-ui/react-slider": "^1.2.3",
+    "@radix-ui/react-slot": "^1.1.2",
+    "class-variance-authority": "^0.7.1",
+    "cmdk": "^1.1.1",
+    "drizzle-orm": "^0.41.0",
+    "lucide-react": "^0.483.0"
+  }
+}
