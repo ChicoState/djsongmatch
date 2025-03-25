@@ -3,7 +3,7 @@ import sys
 
 import pandas as pd
 import sqlalchemy
-from database import DEFAULT_DATABASE_URL, init_db
+from database import DEFAULT_DATABASE_URL, reset_db
 from models import Song
 from sklearn.preprocessing import MinMaxScaler
 
@@ -135,7 +135,7 @@ def main():
     df = df.drop(columns=["Key", "Mode"])
     df = df.rename(columns={col: col.lower() for col in df.columns})
 
-    init_db()
+    reset_db()
     engine = sqlalchemy.create_engine(DEFAULT_DATABASE_URL, echo=True)
 
     df.to_sql("song", engine, if_exists="append", index=False)
