@@ -32,7 +32,7 @@ class Song(Base):
     camelot_key: Mapped["CamelotKey"] = relationship(back_populates="songs")
 
     def __repr__(self):
-        return f"<Song(id={self.id}, title={self.title}, artist={self.artist}, year={self.year})>"
+        return f"<Song(id={self.song_id}, title={self.title}, artist={self.artist}, year={self.year})>"
 
 class CamelotKey(Base):
     __tablename__ = 'camelot_keys'
