@@ -1,8 +1,10 @@
+/*
+ * Client is archived for now ...
+ *
 "use client";
 import { getSameKey, getSong } from "@/app/actions";
 import { Song } from "@/db/schema";
 import { useQuery } from "@tanstack/react-query";
-import Form from "next/form";
 import { useEffect, useState } from "react";
 import SongAutocomplete from "./SongAutocomplete";
 
@@ -37,8 +39,7 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
   }, [data]);
 
   return (
-    <div className="flex flex-col gap-4 grow-[1]">
-      <p className="text-2xl text-center text-foreground">Search for a song!</p>
+    <div className="w-1/2">
       <SongAutocomplete
         onSelectAction={(selectedSong: Song) => {
           setSongId(selectedSong.songId);
@@ -47,3 +48,4 @@ export default function SongForm({ onFetchDataAction }: SongFormProps) {
     </div>
   );
 }
+*/
