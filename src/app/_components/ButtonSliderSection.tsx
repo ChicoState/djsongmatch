@@ -4,30 +4,27 @@ import "@/app/globals.css";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
 import { Song } from "@/db/schema";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SliderMarkerProps {
-  /**
-   * @param label - The label above the slider
-   * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
-   *
-   */
   label: string;
   markValue: number | null;
 }
 
 interface SongSliderProps {
-  /**
-   * @param label - The label above the slider
-   * @param defaultValue - The default value of the slider
-   * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
-   */
   label: string;
   defaultValue: number[];
   markValue: number | null;
 }
 
 function SliderMarker({ label, markValue }: SliderMarkerProps) {
+  /**
+   * SliderMarker component displays a marker on the slider, indicating a specific point.
+   * The marker is styled to match the slider's thumb.
+   *
+   * @param label - The label to display next to the marker (e.g. "Input Song").
+   * @param markValue - The value to mark on the slider (passed to SongSlider).
+   */
   return (
     <div className="w-full max-w-4xl">
       {/* markValue could be null, meaning an input song is not selected*/}
@@ -52,7 +49,31 @@ function SliderMarker({ label, markValue }: SliderMarkerProps) {
 }
 
 function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
-  const [value, setValue] = useState(defaultValue);
+  /**
+   * SongSlider component allows users to adjust a value using a slider,
+   * displaying the value with the given label. The value is saved to
+   * local storage, so if the user leaves and comes back, their value will persist.
+   *
+   * @param label - The label to display next to the slider (e.g. "Energy").
+   * @param defaultValue - The initial value of the slider if no value is saved in localStorage.
+   * @param markValue - A value to mark a specific point on the slider (passed to SliderMarker).
+   */
+  const [value, setValue] = useState([0]);
+
+  /*
+   * The fn inside `useEffect()` runs every time the component is mounted.
+   * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
+   */
+  useEffect(() => {
+    const storageValue = window.localStorage.getItem(label);
+    if (storageValue === null) setValue(defaultValue);
+    else setValue([parseFloat(storageValue)]);
+  }, []);
+
+  function handleValueCommit(newValue: number[]) {
+    // newValue[0] assumes we only have one Thumb on the Slider
+    window.localStorage.setItem(label, newValue[0].toString());
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -60,6 +81,7 @@ function SongSlider({ label, defaultValue, markValue }: SongSliderProps) {
       <Slider
         value={value}
         onValueChange={setValue}
+        onValueCommit={handleValueCommit}
         min={0}
         max={1}
         step={0.01}
