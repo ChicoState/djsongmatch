@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { musicData } from "../../../../drizzle/schema";
 import { eq } from "drizzle-orm";
 
-const db = drizzle("file:./assets/ClassicHit.db");
+const db = drizzle("file:db.db");
 
 export async function GET(request: NextRequest) {
     const searchParams = request.nextUrl.searchParams;
