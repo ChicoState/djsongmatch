@@ -113,7 +113,7 @@ function SongSlider({
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>
-                <CircleHelpIcon size={18} />
+                <CircleHelpIcon size={18} className="text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent
                 sideOffset={4}
