@@ -72,6 +72,8 @@ function SongSlider({
    * displaying the value with the given label. The value is saved to
    * localStorage, so if the user leaves and comes back, their value will persist.
    *
+   * The localStorage key is `slider.<sliderLabel>`
+   *
    * @param label - The label to display next to the slider (e.g. "Energy").
    * @param defaultValue - The initial value of the slider if no value is saved in localStorage.
    * @param markValue - A value to mark a specific point on the slider (passed to SliderMarker).
@@ -84,14 +86,30 @@ function SongSlider({
    * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
    */
   useEffect(() => {
-    const storageValue = window.localStorage.getItem(label);
-    if (storageValue === null) setValue(defaultValue);
-    else setValue([parseFloat(storageValue)]);
+    const storageValue = window.localStorage.getItem(`slider.${label}`);
+    if (storageValue === null) {
+      console.log(
+        `localStorage slider.${label} was null. Using default slider value: ${defaultValue}`,
+      );
+      setValue(defaultValue);
+    } else {
+      const storageValueFloat = parseFloat(storageValue);
+
+      if (isNaN(storageValueFloat)) {
+        console.log(
+          `ERROR: Could not parse slider.${label} into a float! Using default value: ${defaultValue}`,
+        );
+        setValue(defaultValue);
+      } else {
+        setValue([parseFloat(storageValue)]);
+      }
+    }
   }, []);
 
   function handleValueCommit(newValue: number[]) {
+    // localStorage key is `slider.<sliderLabel>`
+    window.localStorage.setItem(`slider.${label}`, newValue[0].toString());
     // newValue[0] assumes we only have one Thumb on the Slider
-    window.localStorage.setItem(label, newValue[0].toString());
   }
 
   return (
