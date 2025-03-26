@@ -11,7 +11,7 @@ COPY . .
 
 EXPOSE 5000
 
-ENV FLASK_APP=songRecAlgorithm.py
+ENV FLASK_APP=flaskTest.py
 ENV FLASK_ENV=development
 
 # Run Flask
