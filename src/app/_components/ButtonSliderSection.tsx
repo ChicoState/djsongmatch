@@ -11,14 +11,9 @@ import {
 } from "@/components/ui/tooltip";
 import { Song } from "@/db/schema";
 import { CircleHelpIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface SliderMarkerProps {
-  /**
-   * @param label - The label above the slider
-   * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
-   *
-   */
   label: string;
   markValue?: number | null;
 }
@@ -38,9 +33,12 @@ interface SongSliderProps {
 
 function SliderMarker({ label, markValue }: SliderMarkerProps) {
   /**
-   * SliderMarker is a component that displays a marker on the slider.
-   * - A marker is a visual indicator that renders a "tick" and a label above the slider.
-   * - The marker is only displayed when markValue is not null.
+   * SliderMarker component displays a marker on the slider, indicating a specific point.
+   * The marker is styled to match the slider's thumb.
+   * A marker is only displayed when markValue is not null
+   *
+   * @param label - The label to display next to the marker (e.g. "Input Song").
+   * @param markValue - The value to mark on the slider (passed to SongSlider).
    */
   return (
     <div className="w-full max-w-4xl">
@@ -70,13 +68,31 @@ function SongSlider({
   tooltip = null,
 }: SongSliderProps) {
   /**
-   * SongSlider is a component that displays a slider with a label and a tooltip.
-   * - The slider is used to adjust the value of the song metric
-   * - The label is displayed above the slider.
-   * - The tooltip is displayed when the user hovers over the slider.
+   * SongSlider component allows users to adjust a value using a slider,
+   * displaying the value with the given label. The value is saved to
+   * localStorage, so if the user leaves and comes back, their value will persist.
+   *
+   * @param label - The label to display next to the slider (e.g. "Energy").
+   * @param defaultValue - The initial value of the slider if no value is saved in localStorage.
+   * @param markValue - A value to mark a specific point on the slider (passed to SliderMarker).
+   * @param tooltip - A string to display when hovering over the question mark (optional)
    */
+  const [value, setValue] = useState([0]);
 
-  const [value, setValue] = useState(defaultValue);
+  /*
+   * The fn inside `useEffect()` runs every time the component is mounted.
+   * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
+   */
+  useEffect(() => {
+    const storageValue = window.localStorage.getItem(label);
+    if (storageValue === null) setValue(defaultValue);
+    else setValue([parseFloat(storageValue)]);
+  }, []);
+
+  function handleValueCommit(newValue: number[]) {
+    // newValue[0] assumes we only have one Thumb on the Slider
+    window.localStorage.setItem(label, newValue[0].toString());
+  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -84,6 +100,7 @@ function SongSlider({
       <Slider
         value={value}
         onValueChange={setValue}
+        onValueCommit={handleValueCommit}
         min={0}
         max={1}
         step={0.01}
