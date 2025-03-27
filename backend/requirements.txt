@@ -1,7 +1,9 @@
 flask
+flask-sqlalchemy
 ipykernel
 jupyter
 matplotlib
 numpy
 pandas
 scikit-learn
+sqlalchemy
