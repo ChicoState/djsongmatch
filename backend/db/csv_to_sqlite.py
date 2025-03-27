@@ -1,8 +1,8 @@
 import csv
 import sqlite3
 
-CSV_FILE = "ClassicHit.csv"
-DB_FILE = "ClassicHit.db"
+CSV_FILE = "../ClassicHit.csv"
+DB_FILE = "../../db.db"
 
 all_rows = []
 with open(CSV_FILE, "r") as f:
