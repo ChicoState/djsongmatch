@@ -1,6 +1,8 @@
 from flask import Flask
 from api.extensions import db
 from pathlib import Path
+from .routes.songs import songs_bp
+from .routes.camelot_keys import camelot_keys_bp
 
 # def create_app(config_object="settings.py"): # can create settings.py
 def create_app():
@@ -20,9 +22,8 @@ def create_app():
     # Initialize extensions
     db.init_app(app)
     
-    # Register blueprints (if any)
-    # Ex:
-    # from .routes.songs import songs_bp
-    # app.register_blueprint(songs_bp, url_prefix='/api/songs')
+    # Register blueprints
+    app.register_blueprint(songs_bp, url_prefix='/api/songs')
+    app.register_blueprint(camelot_keys_bp, url_prefix='/api/camelot_keys')
     
     return app
