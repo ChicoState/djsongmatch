@@ -6,7 +6,7 @@ import { musicData, Song } from "@/db/schema";
 import { and, eq, like, ne, or, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/libsql";
 
-const db = drizzle("file:./assets/ClassicHit.db");
+const db = drizzle("file:db.db");
 
 // constants for song.mode
 const MINOR = 0;
