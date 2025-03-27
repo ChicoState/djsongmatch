@@ -1,5 +1,7 @@
 flask
-pandas
-numpy
-scikit-learn
+ipykernel
+jupyter
 matplotlib
+numpy
+pandas
+scikit-learn
