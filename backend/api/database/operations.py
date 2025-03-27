@@ -1,7 +1,7 @@
 # database/operations.py
 from sqlalchemy.exc import IntegrityError
 from typing import List
-from api.models import Song, CamelotKey
+from api.database.models import Song, CamelotKey
 from api.extensions import db
 
 def insert_songs(songs: List[Song]) -> int:

@@ -3,7 +3,7 @@ from pathlib import Path
 from api import create_app
 from api.database.operations import init_camelot_keys, insert_songs
 from api.database.management import reset_db
-from api.models import Song
+from api.database.models import Song
 
 PROJECT_ROOT = Path(__file__).parent.parent
 PROCESSED_CSV_PATH = PROJECT_ROOT / "assets" / "Processed_ClassicHit.csv"
