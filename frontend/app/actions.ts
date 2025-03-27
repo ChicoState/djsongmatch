@@ -8,10 +8,6 @@ import { drizzle } from "drizzle-orm/libsql";
 
 const db = drizzle("file:db.db");
 
-// constants for song.mode
-const MINOR = 0;
-const MAJOR = 1
-
 export async function getSong(songId: number) {
     const song = db
         .select()
