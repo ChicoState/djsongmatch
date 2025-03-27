@@ -6,7 +6,7 @@ export default defineConfig({
     schema: './frontend/db/schema.ts',
     dialect: 'sqlite',
     dbCredentials: {
-        url: 'file:./db.db', // Bad practice, use ENV variables in the future
+        url: 'file:../db.db', // Bad practice, use ENV variables in the future
     },
 });
 
