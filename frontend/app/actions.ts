@@ -2,35 +2,31 @@
 // entire file uses server ACTIONS, 
 // do NOT export components in this file, only functions
 
-import { musicData, Song } from "@/db/schema";
-import { and, eq, like, ne, or, sql } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/libsql";
+import { songs, Song } from "@/db/schema";
+import { and, eq, like, or } from "drizzle-orm";
+import { db } from "@/db/index";
 
-const db = drizzle("file:db.db");
-
-export async function getSong(songId: number) {
-    const song = db
+export async function getSong(songId: number): Promise<Song | undefined> {
+    return db
         .select()
-        .from(musicData)
+        .from(songs)
         .where(
-            eq(musicData.songId, Number(songId.toString()))
+            eq(songs.songId, Number(songId.toString()))
         ).get();
-
-    return song;
 }
 
-export async function searchSongs(query: string) {
+export async function searchSongs(query: string): Promise<Song[]> {
     const words = query.split(" ");
     const conditions = words.map((word) => {
         return or(
-            like(musicData.title, `%${word}%`),
-            like(musicData.artist, `%${word}%`)
+            like(songs.title, `%${word}%`),
+            like(songs.artist, `%${word}%`)
         );
     });
 
     return db
         .select()
-        .from(musicData)
+        .from(songs)
         .where(
             and(...conditions)
         )
