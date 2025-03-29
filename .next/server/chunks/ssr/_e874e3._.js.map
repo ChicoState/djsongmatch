@@ -1,0 +1,9 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///app/src/app/layout.tsx"],"sourcesContent":["export default function RootLayout({\n  children,\n}: Readonly<{\n  children: React.ReactNode;\n}>) {\n  return (\n    <html lang=\"en\">\n      <body className=\"bg-background\">\n        <main className=\"flex flex-col gap-12 p-12 h-screen\">\n          <h1 className=\"self-center text-6xl text-foreground\">\n            DJ Song Match!\n          </h1>\n          {children}\n        </main>\n      </body>\n    </html>\n  );\n}\n"],"names":[],"mappings":";;;;;AAAe,SAAS,WAAW,EACjC,QAAQ,EAGR;IACA,qBACE,8OAAC;QAAK,MAAK;kBACT,cAAA,8OAAC;YAAK,WAAU;sBACd,cAAA,8OAAC;gBAAK,WAAU;;kCACd,8OAAC;wBAAG,WAAU;kCAAuC;;;;;;oBAGpD;;;;;;;;;;;;;;;;;AAKX"}},
+    {"offset": {"line": 46, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}},
+    {"offset": {"line": 57, "column": 0}, "map": {"version":3,"sources":["file:///app/node_modules/next/src/server/route-modules/app-page/vendored/rsc/react-jsx-dev-runtime.ts"],"sourcesContent":["module.exports = require('../../module.compiled').vendored[\n  'react-rsc'\n].ReactJsxDevRuntime\n"],"names":["module","exports","require","vendored","ReactJsxDevRuntime"],"mappings":";AAAAA,OAAOC,OAAO,GAAGC,QAAQ,0HAAyBC,QAAQ,CACxD,YACD,CAACC,kBAAkB","ignoreList":[0]}},
+    {"offset": {"line": 59, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

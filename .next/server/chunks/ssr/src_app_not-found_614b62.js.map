@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 7, "column": 0}, "map": {"version":3,"sources":["file:///app/src/app/not-found.js"],"sourcesContent":["export default function NotFound() {\n    return <h1>Page Not Found</h1>;\n  }\n  "],"names":[],"mappings":";;;;;AAAe,SAAS;IACpB,qBAAO,8OAAC;kBAAG;;;;;;AACb"}},
+    {"offset": {"line": 21, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

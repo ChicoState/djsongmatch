@@ -1,0 +1,38 @@
+/* [project]/app/globals.css [app-client] (css) */
+@custom-variant dark (& :is(. dark * ));
+
+@plugin "tailwindcss-animate";
+
+@theme {
+  --color-background: #fff; --color-foreground: #030712; --color-card: #fff; --color-card-foreground: #030712; --color-popover: #fff; --color-popover-foreground: #030712; --color-primary: #7c3aed; --color-primary-foreground: #f9fafb; --color-secondary: #f3f4f6; --color-secondary-foreground: #111827; --color-muted: #f3f4f6; --color-muted-foreground: #6b7280; --color-accent: #f3f4f6; --color-accent-foreground: #111827; --color-destructive: #ef4444; --color-destructive-foreground: #f9fafb; --color-border: #e5e7eb; --color-input: #e5e7eb; --color-ring: #7c3aed; --color-radius: .5rem; --color-chart-1: #e76e50; --color-chart-2: #2a9d90; --color-chart-3: #274754; --color-chart-4: #e8c468; --color-chart-5: #f4a462;
+}
+
+.dark {
+  --color-background: #030712;
+  --color-foreground: #f9fafb;
+  --color-card: #030712;
+  --color-card-foreground: #f9fafb;
+  --color-popover: #030712;
+  --color-popover-foreground: #f9fafb;
+  --color-primary: #6d28d9;
+  --color-primary-foreground: #f9fafb;
+  --color-secondary: #1f2937;
+  --color-secondary-foreground: #f9fafb;
+  --color-muted: #1f2937;
+  --color-muted-foreground: #9ca3af;
+  --color-accent: #1f2937;
+  --color-accent-foreground: #f9fafb;
+  --color-destructive: #7f1d1d;
+  --color-destructive-foreground: #f9fafb;
+  --color-border: #1f2937;
+  --color-input: #1f2937;
+  --color-ring: #6d28d9;
+  --color-chart-1: #2662d9;
+  --color-chart-2: #2eb88a;
+  --color-chart-3: #e88c30;
+  --color-chart-4: #af57db;
+  --color-chart-5: #e23670;
+}
+
+
+/*# sourceMappingURL=app_globals_73c377.css.map*/

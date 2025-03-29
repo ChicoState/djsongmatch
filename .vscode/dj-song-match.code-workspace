@@ -1,0 +1,19 @@
+{
+    "folders": [
+      {
+        "path": "frontend"
+      },
+      {
+        "path": "backend"
+      }
+    ],
+    "settings": {
+      "editor.formatOnSave": true,
+      "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true
+      },
+      "python.pythonPath": "/usr/local/bin/python"
+    }
+  }
+  

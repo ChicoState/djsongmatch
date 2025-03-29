@@ -1,0 +1,7 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 15, "column": 0}, "map": {"version":3,"sources":["file:///app/src/app/layout.tsx"],"sourcesContent":["\"use client\";\n\nimport { QueryClient, QueryClientProvider } from \"@tanstack/react-query\";\nimport { useState } from \"react\";\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  const [queryClient] = useState(() => new QueryClient());\n\n  return (\n    <html lang=\"en\">\n      <body className=\"bg-background\">\n        <QueryClientProvider client={queryClient}>\n          <main className=\"flex flex-col gap-12 p-12 h-screen\">\n            <h1 className=\"self-center text-6xl text-foreground\">\n              DJ Song Match!\n            </h1>\n            {children}\n          </main>\n        </QueryClientProvider>\n      </body>\n    </html>\n  );\n}\n"],"names":[],"mappings":";;;;AAGA;AADA;AAAA;AAFA;;;;AAKe,SAAS,WAAW,EACjC,QAAQ,EACgC;IACxC,MAAM,CAAC,YAAY,GAAG,CAAA,GAAA,qMAAA,CAAA,WAAQ,AAAD,EAAE,IAAM,IAAI,6KAAA,CAAA,cAAW;IAEpD,qBACE,8OAAC;QAAK,MAAK;kBACT,cAAA,8OAAC;YAAK,WAAU;sBACd,cAAA,8OAAC,sLAAA,CAAA,sBAAmB;gBAAC,QAAQ;0BAC3B,cAAA,8OAAC;oBAAK,WAAU;;sCACd,8OAAC;4BAAG,WAAU;sCAAuC;;;;;;wBAGpD;;;;;;;;;;;;;;;;;;;;;;AAMb"}},
+    {"offset": {"line": 68, "column": 0}, "map": {"version":3,"sources":[],"names":[],"mappings":"A"}}]
+}

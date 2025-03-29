@@ -4,31 +4,35 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: nextjs_app
+    working_dir: /workspace/frontend
+    user: "${UID}:${GID}" 
+    volumes:
+      - ./frontend:/workspace/frontend:cached
+      - node_modules:/workspace/frontend/node_modules
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - ./db.db:/app/db.db
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-    command: ["sh", "-c", "npm run dev"]
+    depends_on:
+      - backend
+    command: sh -c "npm install && npm run dev"
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: python_backend
+    working_dir: /workspace/backend
+    volumes:
+      - ./backend:/workspace/backend:cached
+      - ./db.db:/workspace/backend/db.db
     ports:
       - "5001:5001"
-    volumes:
-      - ./backend:/app
-      - ./db.db:/app/db.db
     environment:
       - FLASK_ENV=development
       - FLASK_APP=flaskTest.py
-    command: ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
+    command: flask run --host=0.0.0.0 --port=5001
 
+volumes:
+  node_modules:

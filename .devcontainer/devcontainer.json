@@ -1,0 +1,19 @@
+{
+  "name": "DJ Song Match",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "frontend",
+  "workspaceFolder": "/workspace/frontend",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "runServices": ["frontend", "backend"],
+  "shutdownAction": "stopCompose",
+  "extensions": [
+    "ms-python.python",
+    "esbenp.prettier-vscode"
+  ],
+  "postCreateCommand": "npm install",
+  "customizations": {
+    "vscode": {
+      "workspaceFile": "/workspace/.vscode/dj-song-match.code-workspace"
+    }
+  }
+}
