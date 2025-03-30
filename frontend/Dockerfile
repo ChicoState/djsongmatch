@@ -4,21 +4,27 @@ FROM node:18 AS builder
 # Set working directory
 WORKDIR /app
 
-# Ensure all necessary environment variables are set
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Set environment variable
 ENV NODE_ENV=development
 
-COPY package.json package-lock.json ./
+# Copy only dependency-related files first (to leverage Docker cache)
+COPY package.json pnpm-lock.yaml ./
 
-RUN npm install
+# Install dependencies
+RUN pnpm install
 
-# Conditionally install @libsql/linux-arm64-musl only on ARM64 builds.
+# Conditionally install @libsql/linux-arm64-musl only on ARM64 builds
 ARG TARGETARCH
-RUN if [ "$TARGETARCH" = "arm64" ]; then npm install @libsql/linux-arm64-musl; fi
+RUN if [ "$TARGETARCH" = "arm64" ]; then pnpm add @libsql/linux-arm64-musl; fi
 
-# Copy the rest of the project files
+# Copy the rest of the project
 COPY . .
 
-EXPOSE 3000
+# Optionally expose (can remove if Docker Compose handles this)
+# EXPOSE 3000
 
-# Start the Next.js server in development mode
-CMD ["npm", "run", "dev"]
+# Optional CMD (can be removed if Docker Compose specifies it)
+# CMD ["pnpm", "dev"]
