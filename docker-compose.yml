@@ -10,7 +10,6 @@ services:
       - backend
     volumes:
       - ./frontend:/app/frontend
-      - /app/frontend/node_modules
       - ./db.db:/app/db.db
     environment:
       - NODE_ENV=development
