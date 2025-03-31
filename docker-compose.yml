@@ -9,7 +9,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app/frontend
+      - ./frontend:/app
+      - /app/node_modules
       - ./db.db:/app/db.db
     environment:
       - NODE_ENV=development
