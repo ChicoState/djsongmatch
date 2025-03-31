@@ -3,10 +3,10 @@ import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
     out: './drizzle',
-    schema: './frontend/db/schema.ts',
+    schema: './db/schema.ts',
     dialect: 'sqlite',
     dbCredentials: {
-        url: 'file:../db.db', // Bad practice, use ENV variables in the future
+        url: process.env.DATABASE_URL || "/app/db.db",
     },
 });
 
