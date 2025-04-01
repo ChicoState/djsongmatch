@@ -6,11 +6,11 @@ app = Flask(__name__)
 @app.route("/")
 def home():
     songId = request.args.get("songId")
-    print(f"songId: {songId}")
+    print(f"Frontend gave us songId: {songId}")
     if songId is None:
         return jsonify(
             {
-                "message": "Missing songId parameter",
+                "message": "Missing songId parameter from frontend",
             }
         )
     else:
