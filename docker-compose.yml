@@ -9,8 +9,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
       - ./db.db:/app/db.db
     environment:
       - NODE_ENV=development
@@ -24,7 +24,7 @@ services:
     ports:
       - "5001:5001"
     volumes:
-      - ./backend:/app
+      - ./backend:/app/backend
       - ./db.db:/app/db.db
     environment:
       - FLASK_ENV=development
