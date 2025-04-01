@@ -15,8 +15,7 @@ services:
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-    command: ["sh", "-c", "npm run dev"]
-
+    command: ["sh", "-c", "pnpm dev"]
   backend:
     build:
       context: ./backend
@@ -31,4 +30,3 @@ services:
       - FLASK_ENV=development
       - FLASK_APP=flaskTest.py
     command: ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
-

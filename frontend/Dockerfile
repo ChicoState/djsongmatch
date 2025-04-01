@@ -1,24 +1,12 @@
-# Use Node.js 18 as the base image
-FROM node:18 AS builder
-
-# Set working directory
+FROM node:20-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
 WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
 
-# Ensure all necessary environment variables are set
-ENV NODE_ENV=development
+FROM base AS deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-COPY package.json package-lock.json ./
-
-RUN npm install
-
-# Conditionally install @libsql/linux-arm64-musl only on ARM64 builds.
-ARG TARGETARCH
-RUN if [ "$TARGETARCH" = "arm64" ]; then npm install @libsql/linux-arm64-musl; fi
-
-# Copy the rest of the project files
-COPY . .
-
-EXPOSE 3000
-
-# Start the Next.js server in development mode
-CMD ["npm", "run", "dev"]
+FROM base
+COPY --from=deps /app/node_modules ./node_modules
