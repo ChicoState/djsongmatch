@@ -1,14 +1,25 @@
-import pandas as pd
-import numpy as np
-
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def home():
-    return jsonify({"message": "Flask backend is running!"})
+    songId = request.args.get("songId")
+    print(f"songId: {songId}")
+    if songId is None:
+        return jsonify(
+            {
+                "message": "Missing songId parameter",
+            }
+        )
+    else:
+        return jsonify(
+            {
+                "message": f"Pretend that flask gave you data for songId: {songId}",
+            },
+        )
+
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
-import numpy as np
+    app.run(debug=True, host="0.0.0.0", port=5001)
