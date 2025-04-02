@@ -1,7 +1,7 @@
 services:
   frontend:
     build:
-      context: .
+      context: ./frontend
       dockerfile: Dockerfile
     container_name: nextjs_app
     ports:
@@ -9,24 +9,24 @@ services:
     depends_on:
       - backend
     volumes:
-      - .:/app
-      - /app/node_modules
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+      - ./db.db:/app/db.db
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-    command: ["sh", "-c", "npm run dev"]
-
+    command: ["sh", "-c", "pnpm dev"]
   backend:
     build:
-      context: ./src/backend
+      context: ./backend
       dockerfile: Dockerfile
     container_name: python_backend
     ports:
       - "5001:5001"
     volumes:
-      - ./src/backend:/app
+      - ./backend:/app/backend
+      - ./db.db:/app/db.db
     environment:
       - FLASK_ENV=development
       - FLASK_APP=flaskTest.py
     command: ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
-
