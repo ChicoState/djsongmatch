@@ -1,34 +1,51 @@
-import { sqliteTable, integer, real, text } from "drizzle-orm/sqlite-core"
-import { InferSelectModel } from "drizzle-orm"
+import type { InferSelectModel } from "drizzle-orm";
+import {
+  doublePrecision,
+  foreignKey,
+  integer,
+  pgTable,
+  serial,
+  varchar,
+} from "drizzle-orm/pg-core";
 
-export const camelotKeys = sqliteTable("camelot_keys", {
-    id: integer().primaryKey().notNull(),
-    key: integer(),
-    mode: integer(),
-    keyStr: text("key_str", { length: 10 }),
+export const camelotKeys = pgTable("camelot_keys", {
+  id: serial().primaryKey().notNull(),
+  key: integer(),
+  mode: integer(),
+  keyStr: varchar("key_str", { length: 10 }),
 });
 
-export const songs = sqliteTable("songs", {
-    songId: integer("song_id").primaryKey().notNull(),
-    title: text({ length: 255 }),
-    artist: text({ length: 255 }),
+export const songs = pgTable(
+  "songs",
+  {
+    songId: serial("song_id").primaryKey().notNull(),
+    title: varchar({ length: 255 }),
+    artist: varchar({ length: 255 }),
     year: integer(),
     duration: integer(),
     timeSignature: integer("time_signature"),
-    camelotKeyId: integer("camelot_key_id").references(() => camelotKeys.id),
-    tempo: real(),
-    danceability: real(),
-    energy: real(),
-    loudness: real(),
-    loudnessDB: real("loudness_dB"),
-    speechiness: real(),
-    acousticness: real(),
-    instrumentalness: real(),
-    liveness: real(),
-    valence: real(),
+    camelotKeyId: integer("camelot_key_id"),
+    tempo: doublePrecision(),
+    danceability: doublePrecision(),
+    energy: doublePrecision(),
+    loudness: doublePrecision(),
+    loudnessDB: doublePrecision("loudness_dB"),
+    speechiness: doublePrecision(),
+    acousticness: doublePrecision(),
+    instrumentalness: doublePrecision(),
+    liveness: doublePrecision(),
+    valence: doublePrecision(),
     popularity: integer(),
-    genre: text({ length: 30 }),
-});
+    genre: varchar({ length: 30 }),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.camelotKeyId],
+      foreignColumns: [camelotKeys.id],
+      name: "songs_camelot_key_id_fkey",
+    }),
+  ],
+);
 
 export type CamelotKey = InferSelectModel<typeof camelotKeys>;
 export type Song = InferSelectModel<typeof songs>;
