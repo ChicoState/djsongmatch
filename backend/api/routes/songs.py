@@ -24,7 +24,7 @@ def _serialize_song(song: Song):
         # can modify if needed
     }
 
-@song_bp.route('/', methods=['GET'])
+@songs_bp.route('/', methods=['GET'])
 # @internal_only # TODO - create decorators.py to restrict route for internal use only
 def get_all_songs():
     """Get all songs (for debugging/admin)"""
@@ -34,7 +34,7 @@ def get_all_songs():
     except SQLAlchemyError as e:
         return jsonify({'error': str(e)}), 500
 
-@song_bp.route('/<int:song_id>', methods=['GET'])
+@songs_bp.route('/<int:song_id>', methods=['GET'])
 def get_song(song_id: int):
     """Get a specific song"""
     try:
@@ -47,7 +47,7 @@ def get_song(song_id: int):
     except SQLAlchemyError as e:
         return jsonify({'error': str(e)}), 500
 
-@song_bp.route('/<int:song_id>/recommendations', methods=['GET'])
+@songs_bp.route('/<int:song_id>/recommendations', methods=['GET'])
 def get_song_recommendations(song_id: int):
     """Get recommended songs with compatible keys and similar BPM"""
     try:
