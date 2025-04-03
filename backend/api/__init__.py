@@ -8,7 +8,7 @@ Core Responsibilities:
 4. Ensures database tables exist
 
 Configuration Options:
-- 'default': Basic configuration
+- 'default': Derived from config.py config[default]
 - 'development': Debug mode, auto-reloader
 - 'production': Optimized for deployment
 
