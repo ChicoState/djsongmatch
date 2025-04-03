@@ -11,7 +11,6 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
-      - ./db.db:/app/db.db
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
@@ -25,7 +24,6 @@ services:
       - "5001:5001"
     volumes:
       - ./backend:/app/backend
-      - ./db.db:/app/db.db
     environment:
       - FLASK_ENV=development
       - FLASK_APP=flaskTest.py
