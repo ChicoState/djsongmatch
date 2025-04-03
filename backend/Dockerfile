@@ -7,14 +7,10 @@ WORKDIR /app
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a jupyter kernel for the Python environment
-RUN python3 -m ipykernel install --user --name=backend_kernel
-
-COPY . .
-
 EXPOSE 5001
 
-ENV FLASK_APP=flaskTest.py
+# Environment variables
+ENV FLASK_APP=api
 ENV FLASK_ENV=development
 
 # Run Flask

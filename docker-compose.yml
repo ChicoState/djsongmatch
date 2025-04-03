@@ -11,6 +11,7 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
+      - ./.env:/app/.env
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
@@ -24,7 +25,8 @@ services:
       - "5001:5001"
     volumes:
       - ./backend:/app/backend
+      - ./.env:/app/.env
     environment:
       - FLASK_ENV=development
-      - FLASK_APP=flaskTest.py
+      - FLASK_APP=api
     command: ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
