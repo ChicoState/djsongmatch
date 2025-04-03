@@ -2,8 +2,8 @@ import pandas as pd
 from pathlib import Path
 from api import create_app
 from api.database.operations import init_camelot_keys, insert_songs
-from api.database.management import reset_db
 from api.database.models import Song
+from api.extensions import db
 
 PROJECT_ROOT = Path(__file__).parent.parent
 PROCESSED_CSV_PATH = PROJECT_ROOT / "assets" / "Processed_ClassicHit.csv"
@@ -16,7 +16,8 @@ def seed_from_csv(csv_path: str):
     app = create_app() # Create Flask app instance
 
     with app.app_context():  # Establish application context
-        reset_db()
+        db.drop_all()
+        db.create_all()
 
         # Initialize Camelot Keys
         init_camelot_keys()
