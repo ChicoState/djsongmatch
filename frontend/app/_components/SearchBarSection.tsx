@@ -10,7 +10,8 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Song } from "@/db/schema";
+import type { Song } from "@/db/schema";
+import { useDebounce } from "@/lib/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
 
@@ -22,16 +23,35 @@ interface SearchBarSectionProps {
 }
 
 function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
+  /* Whether the search bar is focused or not */
   const [open, setOpen] = useState(false);
+
+  /* What the user has typed in the search bar */
   const [inputValue, setInputValue] = useState("");
+
+  /* What the user has selected from the search results */
   const [value, setValue] = useState("");
 
+  /* Second param of useDebounce is how many milliseconds
+   * should the input wait since the user stopped typing
+   * before triggering the search. This is to prevent
+   * the database from being hit too often.
+   */
+  const debouncedInput = useDebounce(inputValue, 150);
+
   const { data: songs = [] } = useQuery({
-    queryKey: ["songList", inputValue],
+    /* Only search the database debouncedInput changes */
+    queryKey: ["songList", debouncedInput],
+
     queryFn: () => {
-      return searchSongs(inputValue);
+      return searchSongs(debouncedInput);
     },
-    enabled: inputValue.trim().length >= 3,
+
+    /* Keep the previous data until the database returns new data */
+    placeholderData: (previousData) => previousData,
+
+    /* Only search database when user has typed something */
+    enabled: inputValue.trim().length > 0,
   });
 
   return (
@@ -49,6 +69,7 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
           {/* Only show the choices if the user has the input focused */}
           {open && (
             <CommandList>
+              {/* Used to remove the "No results found" message when the user selects a song */}
               {value != inputValue && (
                 <CommandEmpty>No results found.</CommandEmpty>
               )}

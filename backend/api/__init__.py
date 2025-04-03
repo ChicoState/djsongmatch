@@ -1,29 +1,65 @@
+"""
+Flask Application Factory
+
+Core Responsibilities:
+1. Creates and configures Flask application instances
+2. Initializes extensions (SQLAlchemy, etc.)
+3. Registers API blueprints
+4. Ensures database tables exist
+
+Configuration Options:
+- 'default': Derived from config.py config[default]
+- 'development': Debug mode, auto-reloader
+- 'production': Optimized for deployment
+
+Initialization Flow:
+1. Load configuration
+2. Setup database
+3. Register routes
+4. Verify tables
+
+Example Usage:
+    # Basic server startup
+    from api import create_app
+    app = create_app('development')
+    app.run(host='0.0.0.0', port=5001)
+
+    # Database operations
+    with app.app_context():
+        from api.extensions import db
+        db.session.query(...)
+"""
 from flask import Flask
+from config import config
 from api.extensions import db
-from pathlib import Path
-from .routes.songs import songs_bp
-from .routes.camelot_keys import camelot_keys_bp
 
-# def create_app(config_object="settings.py"): # can create settings.py
-def create_app():
-    """Application factory pattern"""
+def create_app(config_name="default"):
+    """
+    Application factory main entry point
+    Args:
+        config_name: Configuration profile name ('default'|'development'|'production')
+    Returns:
+        Flask: Configured application instance
+    """
     app = Flask(__name__)
-    
-    # Configure
-    # app.config.from_pyfile(config_object) # add if using a settings.py file
-    BASE_DIR = Path(__file__).parent.parent.parent
-    DB_PATH = BASE_DIR / "db.db"
 
-    # Ensure instance directory exists
-    DB_PATH.parent.mkdir(exist_ok=True)
-    app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{DB_PATH}"
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-    
-    # Initialize extensions
+    # Load configuration from config.py
+    app.config.from_object(config[config_name])
+
+    # Initialize the SQLAlchemy database connection with the Flask application
+    # This binds the db instance to this specific Flask app configuration
     db.init_app(app)
-    
-    # Register blueprints
-    app.register_blueprint(songs_bp, url_prefix='/api/songs')
-    app.register_blueprint(camelot_keys_bp, url_prefix='/api/camelot_keys')
-    
+
+    # Register API routes (blueprints)
+    from .routes.camelot_keys import camelot_keys_bp
+    from .routes.songs import songs_bp
+
+    app.register_blueprint(songs_bp, url_prefix="/api/songs")
+    app.register_blueprint(camelot_keys_bp, url_prefix="/api/camelot_keys")
+
+    # Create database tables (if they don't exist)
+    with app.app_context():
+        from api.database.models import Song, CamelotKey
+        db.create_all() # Creates tables based on models
+
     return app

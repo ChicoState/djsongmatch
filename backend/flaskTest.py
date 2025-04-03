@@ -1,14 +1,15 @@
-import pandas as pd
-import numpy as np
+# Retired
 
-from flask import Flask, jsonify
+# import pandas as pd
+# import numpy as np
 
-app = Flask(__name__)
+# from flask import Flask, jsonify
 
-@app.route("/")
-def home():
-    return jsonify({"message": "Flask backend is running!"})
+# app = Flask(__name__)
 
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5001)
-import numpy as np
+# @app.route("/")
+# def home():
+#     return jsonify({"message": "Flask backend is running!"})
+
+# if __name__ == "__main__":
+#     app.run(debug=True, host="0.0.0.0", port=5001)

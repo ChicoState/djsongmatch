@@ -1,34 +1,38 @@
 "use server";
-// entire file uses server ACTIONS, 
+// entire file uses server ACTIONS,
 // do NOT export components in this file, only functions
 
-import { songs, Song } from "@/db/schema";
-import { and, eq, like, or } from "drizzle-orm";
 import { db } from "@/db/index";
+import { type Song, songs } from "@/db/schema";
+import { eq, or, sql } from "drizzle-orm";
 
 export async function getSong(songId: number): Promise<Song | undefined> {
-    return db
-        .select()
-        .from(songs)
-        .where(
-            eq(songs.songId, Number(songId.toString()))
-        ).get();
+  return db.query.songs.findFirst({
+    where: eq(songs.songId, songId),
+  });
 }
 
 export async function searchSongs(query: string): Promise<Song[]> {
-    const words = query.split(" ");
-    const conditions = words.map((word) => {
-        return or(
-            like(songs.title, `%${word}%`),
-            like(songs.artist, `%${word}%`)
-        );
-    });
+  query = query.trim();
+  const words = query.split(" ");
 
-    return db
-        .select()
-        .from(songs)
-        .where(
-            and(...conditions)
-        )
-        .limit(100)
+  /*
+   * In postgres tsquery, "word:*" means find anything that starts with word
+   * For example: "campfi:*" would find anything that starts with "campfi"
+   */
+  const prefixQueryParts = words.map((word) => `${word}:*`);
+
+  /* Make it so that the search matches any of the words the user typed*/
+  const prefixQuery = prefixQueryParts.join(" | ");
+
+  return db
+    .select()
+    .from(songs)
+    .where(
+      or(
+        sql`to_tsvector('english', ${songs.title}) @@ to_tsquery('english', ${prefixQuery})`,
+        sql`to_tsvector('english', ${songs.artist}) @@ to_tsquery('english', ${prefixQuery})`,
+      ),
+    )
+    .limit(100);
 }
