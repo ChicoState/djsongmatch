@@ -1,6 +1,3 @@
-"use client";
-
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,9 +7,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { MoreVertical } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
-import HelpPage from "@/components/ui/help"; 
+import Help from "./Help";
 
-function Settings({ toggleHelp }: { toggleHelp: () => void }) {
+function Settings() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
@@ -20,7 +17,6 @@ function Settings({ toggleHelp }: { toggleHelp: () => void }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="bg-background text-foreground" align="end">
         <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem onClick={toggleHelp}>Help</DropdownMenuItem>
         <DropdownMenuItem>Log in</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -28,8 +24,6 @@ function Settings({ toggleHelp }: { toggleHelp: () => void }) {
 }
 
 export default function TopNav() {
-  const [showHelp, setShowHelp] = useState(false);
-
   return (
     <div>
       {/* Top Navigation Bar */}
@@ -37,17 +31,17 @@ export default function TopNav() {
         <h1 className="text-3xl">DJ Song Match</h1>
         <div className="flex gap-4 items-center">
           <DarkModeToggle />
+          <Help />
           <Button variant="outline">Export</Button>
-          <Settings toggleHelp={() => setShowHelp((prev) => !prev)} />
+          <Settings />
         </div>
       </nav>
-
-      {/* Render Help Page if showHelp is true */}
-      {showHelp && (
-        <div className="p-4">
-          <HelpPage onClose={() => setShowHelp(false)} />
-        </div>
-      )}
     </div>
   );
 }
+    // {/* Render Help Page if showHelp is true */}
+    // {showHelp && (
+    //   <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+    //       <HelpPage onClose={() => setShowHelp(false)} />
+    //     </div>
+    // )}
