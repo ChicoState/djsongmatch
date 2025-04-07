@@ -14,7 +14,12 @@ Configuration:
     - CSV_PATH: Points to Processed_ClassicHit.csv in assets/
     - Uses development config from create_app()
 """
+import sys
 from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
 from api import create_app
 from api.database.seed import (
     seed_camelot_keys,
@@ -22,7 +27,6 @@ from api.database.seed import (
 )
 from api.extensions import db
 
-PROJECT_ROOT = Path(__file__).parent.parent
 CSV_PATH = PROJECT_ROOT / "assets" / "Processed_ClassicHit.csv"
 
 def main():
