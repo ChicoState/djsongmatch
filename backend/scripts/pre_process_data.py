@@ -2,9 +2,9 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).parent.parent
-CSV_INPUT = PROJECT_ROOT / "assets" / "ClassicHit.csv"
-CSV_OUTPUT = PROJECT_ROOT / "assets" / "Processed_ClassicHit.csv"
+BACKEND_ROOT = Path(__file__).parent.parent
+CSV_INPUT = BACKEND_ROOT / "assets" / "ClassicHit.csv"
+CSV_OUTPUT = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"
 
 
 ''' 
