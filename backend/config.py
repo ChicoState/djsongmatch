@@ -16,8 +16,13 @@ Configuration Options:
     - `default`: Defaults to development configuration
 
 Usage Example:
-    from backend.config import config
-    app.config.from_object(config['development'])
+    from backend.config import selected_config
+    app.config.from_object(selected_config)
+
+Setting FLASK_ENV:
+    - Locally: Add FLASK_ENV to the `.env` file (e.g., FLASK_ENV=development)
+    - Docker: Set FLASK_ENV in the `docker-compose.yml` file under `environment`
+    - Terminal: Export FLASK_ENV before running the app (e.g., export FLASK_ENV=production)
 """
 
 import os
