@@ -25,21 +25,19 @@ Example Usage:
         songs = db.session.query(Song).all()
 """
 from flask import Flask
-from backend.config import config
+from backend.config import selected_config
 from backend.api.extensions import db
 
-def create_app(config_name="default"):
+def create_app():
     """
     Application factory main entry point
-    Args:
-        config_name: Configuration profile name ('default'|'development'|'production')
     Returns:
         Flask: Configured application instance
     """
     app = Flask(__name__)
 
-    # Load configuration from config.py
-    app.config.from_object(config[config_name])
+    # Load dynamically selected configuration from config.py
+    app.config.from_object(selected_config)
 
     # Initialize the SQLAlchemy database connection with the Flask application
     # This binds the db instance to this specific Flask app configuration
@@ -52,9 +50,10 @@ def create_app(config_name="default"):
     app.register_blueprint(songs_bp, url_prefix="/api/songs")
     app.register_blueprint(camelot_keys_bp, url_prefix="/api/camelot_keys")
 
-    # Create database tables (if they don't exist)
-    with app.app_context():
-        from backend.api.database.models import Song, CamelotKey
-        db.create_all() # Creates tables based on models
+    # Create database tables if they don't exist (development only)
+    if app.config["ENV"] == "development":
+        with app.app_context():
+            from backend.api.database.models import Song, CamelotKey
+            db.create_all() # Creates tables based on models
 
     return app
