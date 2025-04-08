@@ -1,5 +1,5 @@
 from typing import List, Dict, Optional
-from api.database.models import CamelotKey
+from backend.api.database.models import CamelotKey
 
 class CamelotKeysService:
     @staticmethod

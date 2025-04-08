@@ -1,7 +1,7 @@
 from typing import List, Optional
-from sqlalchemy.orm import Mapped, relationship
-from api.extensions import db
+from sqlalchemy.orm import Mapped
 from sqlalchemy import Integer, String, Float, ForeignKey, UniqueConstraint
+from backend.api.extensions import db
 
 class Song(db.Model):
     '''Class to define the 'songs' table in the database.'''

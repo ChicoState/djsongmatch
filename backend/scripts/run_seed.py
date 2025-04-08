@@ -1,8 +1,8 @@
 """
 Database Seeding Command Line Interface
 
-Usage:
-    python scripts/run_seed.py
+Usage (must run as a module for imports to work correctly):
+    python3 -m backend.scripts.run_seed
 
 Description:
     Initializes a fresh database with:
@@ -14,20 +14,17 @@ Configuration:
     - CSV_PATH: Points to Processed_ClassicHit.csv in assets/
     - Uses development config from create_app()
 """
-import sys
 from pathlib import Path
 
-PROJECT_ROOT = Path(__file__).parent.parent
-sys.path.insert(0, str(PROJECT_ROOT))
-
-from api import create_app
-from api.database.seed import (
+from backend.api import create_app
+from backend.api.database.seed import (
     seed_camelot_keys,
     seed_songs_from_csv
 )
-from api.extensions import db
+from backend.api.extensions import db
 
-CSV_PATH = PROJECT_ROOT / "assets" / "Processed_ClassicHit.csv"
+BACKEND_ROOT = Path(__file__).parent.parent
+CSV_PATH = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"
 
 def main():
     """Execute full database seeding pipeline"""

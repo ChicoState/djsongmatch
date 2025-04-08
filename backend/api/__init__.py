@@ -3,8 +3,8 @@ Flask Application Factory
 
 Core Responsibilities:
 1. Creates and configures Flask application instances
-2. Initializes extensions (SQLAlchemy, etc.)
-3. Registers API blueprints
+2. Initializes extensions with Flask (SQLAlchemy, etc.)
+3. Registers API routes (blueprints)
 4. Ensures database tables exist
 
 Configuration Options:
@@ -12,26 +12,21 @@ Configuration Options:
 - 'development': Debug mode, auto-reloader
 - 'production': Optimized for deployment
 
-Initialization Flow:
-1. Load configuration
-2. Setup database
-3. Register routes
-4. Verify tables
-
 Example Usage:
     # Basic server startup
-    from api import create_app
+    from backend.api import create_app
     app = create_app('development')
     app.run(host='0.0.0.0', port=5001)
 
     # Database operations
     with app.app_context():
-        from api.extensions import db
-        db.session.query(...)
+        from backend.api.extensions import db
+        # Example: Query all songs
+        songs = db.session.query(Song).all()
 """
 from flask import Flask
-from config import config
-from api.extensions import db
+from backend.config import config
+from backend.api.extensions import db
 
 def create_app(config_name="default"):
     """
@@ -59,7 +54,7 @@ def create_app(config_name="default"):
 
     # Create database tables (if they don't exist)
     with app.app_context():
-        from api.database.models import Song, CamelotKey
+        from backend.api.database.models import Song, CamelotKey
         db.create_all() # Creates tables based on models
 
     return app

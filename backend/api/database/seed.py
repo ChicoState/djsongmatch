@@ -22,8 +22,8 @@ Note: Requires an active Flask application context and initialized SQLAlchemy in
 import pandas as pd
 from typing import List
 from sqlalchemy.exc import IntegrityError
-from api.extensions import db
-from .models import Song, CamelotKey
+from backend.api.extensions import db
+from backend.api.database.models import Song, CamelotKey
 
 # Standard Camelot data
 # IDs are mapped using the Camelot wheel numbering system:
