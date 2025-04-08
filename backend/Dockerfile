@@ -3,24 +3,25 @@ FROM python:3.11-slim
 
 # Container's working directory
 #   All following commands (COPY, RUN, CMD, etc) execute here
-#   Maps to ./backend on host via docker-compose volumes
 WORKDIR /app
 
-# Copy requirements.txt and install dependencies
-COPY requirements.txt ./
+COPY ./backend/requirements.txt ./requirements.txt
+
+# Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copy the backend code into the container
+COPY ./backend ./backend
 
 # Expose network port for Flask development server
 EXPOSE 5001
 
 # Environment variables
-#   - FLASK_APP: Points to our create_app() function in api/__init__.py
-#   - FLASK_ENV: Enable development mode (debug + auto-reload)
+#   - FLASK_APP: Points to our create_app() function in backend/api/__init__.py
 #   - PYTHONUNBUFFERED: Better log output
-ENV FLASK_APP=api
-ENV FLASK_ENV=development
+ENV FLASK_APP=backend.api:create_app
 ENV PYTHONUNBUFFERED=1
 
 # Run Flask
-#   Note: create_app() is automatically called during flask run
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
+# CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
+CMD ["python", "-m", "backend.api"]

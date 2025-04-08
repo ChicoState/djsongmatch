@@ -23,6 +23,11 @@ from flask import Flask
 from backend.config import selected_config
 from backend.api.extensions import db
 
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 def create_app():
     """
     Application factory main entry point
@@ -33,6 +38,8 @@ def create_app():
 
     # Load dynamically selected configuration from config.py
     app.config.from_object(selected_config)
+    logger.info(f"Starting app with configuration: {selected_config.__name__}")
+    logger.info(f"Debug mode: {app.debug}")
 
     # Initialize the SQLAlchemy database connection with the Flask application
     # This binds the db instance to this specific Flask app configuration
@@ -52,3 +59,7 @@ def create_app():
             db.create_all() # Creates tables based on models
 
     return app
+
+if __name__ == "__main__":
+    app = create_app()
+    app.run(host="0.0.0.0", port=5001, debug=True)

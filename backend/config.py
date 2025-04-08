@@ -51,6 +51,7 @@ class DevelopmentConfig(Config):
         DEBUG (bool): Enables debug mode
     """
     DEBUG = True
+    ENV = "development"
 
 class ProductionConfig(Config):
     """
@@ -59,6 +60,7 @@ class ProductionConfig(Config):
         DEBUG (bool): Disables debug mode
     """
     DEBUG = False
+    ENV = "production"
 
 # Configuration dictionary for environment selection
 config = {
