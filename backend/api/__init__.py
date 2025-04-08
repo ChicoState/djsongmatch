@@ -7,11 +7,6 @@ Core Responsibilities:
 3. Registers API routes (blueprints)
 4. Ensures database tables exist
 
-Configuration Options:
-- 'default': Derived from config.py config[default]
-- 'development': Debug mode, auto-reloader
-- 'production': Optimized for deployment
-
 Example Usage:
     # Basic server startup
     from backend.api import create_app

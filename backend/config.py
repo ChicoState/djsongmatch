@@ -35,7 +35,6 @@ class Config:
     Attributes:
         SQLALCHEMY_DATABASE_URI (str): Database connection string
         SQLALCHEMY_TRACK_MODIFICATIONS (bool): Disable SQLAlchemy event system
-        FLASK_ENV (str): Flask environment ('development' or 'production')
     """
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
