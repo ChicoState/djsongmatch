@@ -30,7 +30,7 @@ export default function Help() {
                             <li>Search for songs using the search bar.</li>
                             <li>Move the sliders to adjust levels to designated levels.</li>
                             <li>Click "Generate" to see matching songs.</li>
-                            <li>Use "Export" to add custom music files.</li>
+                            <li>Use "Export" to save your song recommendations.</li>
                         </ul>
                     </div>
                 </>
