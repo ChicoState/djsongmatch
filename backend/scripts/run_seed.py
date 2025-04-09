@@ -28,7 +28,7 @@ CSV_PATH = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"
 
 def main():
     """Execute full database seeding pipeline"""
-    app = create_app(config_name='development')
+    app = create_app()
     with app.app_context():
         print("Resetting database...")
         db.drop_all()
