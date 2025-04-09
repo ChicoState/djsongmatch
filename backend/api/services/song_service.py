@@ -1,6 +1,6 @@
 from typing import List
-from api.database.models import Song
-from api.services.camelot_keys_service import CamelotKeysService
+from backend.api.database.models import Song
+from backend.api.services.camelot_keys_service import CamelotKeysService
 
 class SongService:
     @staticmethod

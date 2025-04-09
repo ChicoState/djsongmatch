@@ -1,9 +1,9 @@
 from flask import Blueprint, jsonify
 from sqlalchemy.exc import SQLAlchemyError
-# from api.decorators import internal_only  # TODO - create decorators.py
-from api.database.models import Song
-from api.services.song_service import SongService
-from api.services.camelot_keys_service import CamelotKeysService
+# from backend.api.decorators import internal_only  # TODO - create decorators.py
+from backend.api.database.models import Song
+from backend.api.services.song_service import SongService
+from backend.api.services.camelot_keys_service import CamelotKeysService
 
 songs_bp = Blueprint('songs', __name__)
 

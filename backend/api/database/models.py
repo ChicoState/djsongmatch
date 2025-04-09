@@ -1,7 +1,7 @@
 from typing import List, Optional
-from sqlalchemy.orm import Mapped, relationship
-from api.extensions import db
+from sqlalchemy.orm import Mapped
 from sqlalchemy import Integer, String, Float, ForeignKey, UniqueConstraint
+from backend.api.extensions import db
 
 class Song(db.Model):
     '''Class to define the 'songs' table in the database.'''
@@ -12,25 +12,25 @@ class Song(db.Model):
     )
     
     # Columns
-    song_id: Mapped[int] = db.Column(Integer, primary_key=True)
-    title: Mapped[str] = db.Column(String(255))
-    artist: Mapped[str] = db.Column(String(255))
-    year: Mapped[int] = db.Column(Integer)
-    duration: Mapped[int] = db.Column(Integer)
-    time_signature: Mapped[int] = db.Column(Integer)
-    camelot_key_id: Mapped[int] = db.Column(Integer, ForeignKey('camelot_keys.id'))
-    tempo: Mapped[float] = db.Column(Float)
-    danceability: Mapped[float] = db.Column(Float)
-    energy: Mapped[float] = db.Column(Float)
-    loudness: Mapped[float] = db.Column(Float)
-    loudness_dB: Mapped[float] = db.Column(Float)
-    speechiness: Mapped[float] = db.Column(Float)
-    acousticness: Mapped[float] = db.Column(Float)
-    instrumentalness: Mapped[float] = db.Column(Float)
-    liveness: Mapped[float] = db.Column(Float)
-    valence: Mapped[float] = db.Column(Float)
-    popularity: Mapped[int] = db.Column(Integer)
-    genre: Mapped[Optional[str]] = db.Column(String(30))  # Nullable
+    song_id: Mapped[int] = db.Column(Integer, primary_key=True, nullable=False)
+    title: Mapped[str] = db.Column(String(255), nullable=False)
+    artist: Mapped[str] = db.Column(String(255), nullable=False)
+    year: Mapped[int] = db.Column(Integer, nullable=False)
+    duration: Mapped[int] = db.Column(Integer, nullable=False)
+    time_signature: Mapped[int] = db.Column(Integer, nullable=False)
+    camelot_key_id: Mapped[int] = db.Column(Integer, ForeignKey('camelot_keys.id'), nullable=False)
+    tempo: Mapped[float] = db.Column(Float, nullable=False)
+    danceability: Mapped[float] = db.Column(Float, nullable=False)
+    energy: Mapped[float] = db.Column(Float, nullable=False)
+    loudness: Mapped[float] = db.Column(Float, nullable=False)
+    loudness_dB: Mapped[float] = db.Column(Float, nullable=False)
+    speechiness: Mapped[float] = db.Column(Float, nullable=False)
+    acousticness: Mapped[float] = db.Column(Float, nullable=False)
+    instrumentalness: Mapped[float] = db.Column(Float, nullable=False)
+    liveness: Mapped[float] = db.Column(Float, nullable=False)
+    valence: Mapped[float] = db.Column(Float, nullable=False)
+    popularity: Mapped[int] = db.Column(Integer, nullable=False)
+    genre: Mapped[Optional[str]] = db.Column(String(30), nullable=False)
     
     # Relationships
     camelot_key: Mapped["CamelotKey"] = db.relationship(back_populates="songs")
