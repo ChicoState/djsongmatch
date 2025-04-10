@@ -4,7 +4,7 @@
 
 import { db } from "@/db/index";
 import { type Song, songs } from "@/db/schema";
-import { eq, or, sql } from "drizzle-orm";
+import { and, eq, ilike, or, sql } from "drizzle-orm";
 
 export async function getSong(songId: number): Promise<Song | undefined> {
   return db.query.songs.findFirst({
@@ -12,27 +12,29 @@ export async function getSong(songId: number): Promise<Song | undefined> {
   });
 }
 
+export async function getSongRecommendations(): Promise<Song[]> {
+  /* mock data, in future get from flask */
+  return db
+    .select()
+    .from(songs)
+    .orderBy(sql`RANDOM ()`)
+    .limit(10);
+}
+
 export async function searchSongs(query: string): Promise<Song[]> {
-  query = query.trim();
-  const words = query.split(" ");
+  const words = query
+    .trim()
+    .split(" ")
+    .filter((word) => word.length > 0);
 
-  /*
-   * In postgres tsquery, "word:*" means find anything that starts with word
-   * For example: "campfi:*" would find anything that starts with "campfi"
-   */
-  const prefixQueryParts = words.map((word) => `${word}:*`);
-
-  /* Make it so that the search matches any of the words the user typed*/
-  const prefixQuery = prefixQueryParts.join(" | ");
+  const conditions = words.map((word) => {
+    /* Match case insensitively to either title or artist */
+    return or(ilike(songs.title, `${word}%`), ilike(songs.artist, `${word}%`));
+  });
 
   return db
     .select()
     .from(songs)
-    .where(
-      or(
-        sql`to_tsvector('english', ${songs.title}) @@ to_tsquery('english', ${prefixQuery})`,
-        sql`to_tsvector('english', ${songs.artist}) @@ to_tsquery('english', ${prefixQuery})`,
-      ),
-    )
+    .where(and(...conditions))
     .limit(100);
 }
