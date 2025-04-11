@@ -60,7 +60,7 @@ export default function RecommendationTable() {
       className={cn(
         "flex flex-col gap-2 items-center w-full transition-opacity duration-300",
         /* If the user hasn't chosen a song yet, fade out the table */
-        songId === null && "opacity-25",
+        songs.length === 0 && "opacity-25",
       )}
     >
       <h2 className="text-2xl">Our Recommendations</h2>
