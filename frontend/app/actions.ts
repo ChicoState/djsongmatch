@@ -12,7 +12,7 @@ export async function getSong(songId: number): Promise<Song | undefined> {
   });
 }
 
-export async function getSongRecommendations(): Promise<Song[]> {
+export async function getSongRecommendations(songId: number): Promise<Song[]> {
   /* mock data, in future get from flask */
   return db
     .select()
