@@ -24,6 +24,7 @@ interface RecommendationTableProps {
 }
 
 export default function RecommendationTable() {
+  /* searchParams is like `http://localhost:3000/?songId=1` */
   const searchParams = useSearchParams();
   const songId = searchParams.get("songId");
 
@@ -36,10 +37,21 @@ export default function RecommendationTable() {
   });
 
   const addSong = (song: Song) => {
+    /* Get the previous state of the playlist from localStorage */
     const songsStr = window.localStorage.getItem("playlist");
+
+    /* localStorage returns a string, so we need to parse it into a JSON array */
     const songs: SongWithUuid[] = songsStr !== null ? JSON.parse(songsStr) : [];
+
+    /* We need to generate a unique UUID for the song, so we could add the same song
+     * with the same songId to the playlist multiple times, but could still tell them apart */
     songs.push(generateSongUuid(song));
+
+    /* Update localStorage with the new playlist */
     window.localStorage.setItem("playlist", JSON.stringify(songs));
+
+    /* Send an event that the <PlaylistTable /> component can listen for
+     * that indicates that a song was added to the playlist */
     window.dispatchEvent(new Event("addSongPlaylist"));
   };
 
@@ -47,6 +59,7 @@ export default function RecommendationTable() {
     <div
       className={cn(
         "flex flex-col gap-2 items-center w-full transition-opacity duration-300",
+        /* If the user hasn't chosen a song yet, fade out the table */
         songId === null && "opacity-25",
       )}
     >

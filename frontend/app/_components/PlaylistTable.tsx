@@ -17,31 +17,79 @@ import { useEffect, useState } from "react";
 import TitleArtist from "./TitleArtist";
 
 export default function PlaylistTable() {
+  /* Which songs are in the playlist */
   const [playlist, setPlaylist] = useState<SongWithUuid[]>([]);
+
+  /* These two states are purely for animation */
+  const [addInProgress, setAddInProgress] = useState<SongWithUuid[]>([]);
   const [removeInProgress, setRemoveInProgress] = useState<SongWithUuid[]>([]);
 
   useEffect(() => {
+    /*
+     * getPlaylist() updates the playlist in React with whatever is in localStorage.
+     * See when this gets called below.
+     */
     const getPlaylist = () => {
+      /* Fetch the playlist from localStorage */
       const playlistStr = window.localStorage.getItem("playlist");
-      const playlist: SongWithUuid[] =
+      const newPlaylist: SongWithUuid[] =
         playlistStr !== null ? JSON.parse(playlistStr) : [];
-      setPlaylist(playlist);
+
+      /* Find which songs are newly being added to the playlist */
+      const newSongs = newPlaylist.filter(
+        (song) => !playlist.some((s) => s.uuid === song.uuid),
+      );
+
+      /* Update React with the new playlist */
+      setPlaylist(newPlaylist);
+
+      /* For each new song, add it to the addInProgress array to give it a slight animation */
+      newSongs.forEach((song) => {
+        setAddInProgress([...addInProgress, song]);
+
+        /* setTimeout is used to give the animation time to play */
+        setTimeout(() => {
+          /* Since the animation is done, we can remove the song from the addInProgress array */
+          setAddInProgress(addInProgress.filter((s) => s.uuid !== song.uuid));
+        }, 100);
+      });
     };
+
+    /* Get the playlist from localStorage on mount */
     getPlaylist();
+
+    /*
+     * This "addSongPlaylist" event gets sent by <RecommendationsTable /> when a song is added to the playlist.
+     * Every time this event is triggered, we want to update the playlist in React with getPlaylist()
+     */
     window.addEventListener("addSongPlaylist", getPlaylist);
     return () => {
+      /*
+       * When the component unmounts, remove the event listener.
+       * This is because it re-adds the event listener every time the component re-renders.
+       */
       window.removeEventListener("addSongPlaylist", getPlaylist);
     };
   }, []);
 
   const removeSong = (song: SongWithUuid) => {
+    /* Add the song to the removeInProgress array to give it a slight animation */
     setRemoveInProgress([...removeInProgress, song]);
+
+    /* setTimeout is used to give the animation time to play */
     setTimeout(() => {
+      /* The most up to date playlist (with the removed song) */
       const newPlaylist = playlist.filter((s) => s.uuid !== song.uuid);
+
+      /* Update localStorage with the new playlist without the song */
       window.localStorage.setItem("playlist", JSON.stringify(newPlaylist));
+
+      /* Update React with the new playlist without the song */
       setPlaylist(newPlaylist);
+
+      /* Successfully has been removed, so we can remove it from the removeInProgress array */
       setRemoveInProgress(removeInProgress.filter((s) => s.uuid !== song.uuid));
-    }, 200);
+    }, 100);
   };
 
   return (
@@ -66,8 +114,11 @@ export default function PlaylistTable() {
             return (
               <TableRow
                 className={cn(
-                  "text-lg opacity-100 transition-all duration-200",
-                  removeInProgress.includes(song) ? "scale-75 opacity-25" : "",
+                  "text-lg opacity-100 transition-all duration-100",
+                  addInProgress.includes(song) ||
+                    removeInProgress.includes(song)
+                    ? "scale-75 opacity-25"
+                    : "",
                 )}
                 key={song.uuid}
               >
