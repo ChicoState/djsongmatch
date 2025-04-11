@@ -22,14 +22,14 @@ export async function getSongRecommendations(songId: number): Promise<Song[]> {
 }
 
 export async function searchSongs(query: string): Promise<Song[]> {
-  const words = query
-    .trim()
-    .split(" ")
-    .filter((word) => word.length > 0);
+  const words = query.split(" ");
 
   const conditions = words.map((word) => {
     /* Match case insensitively to either title or artist */
-    return or(ilike(songs.title, `${word}%`), ilike(songs.artist, `${word}%`));
+    return or(
+      ilike(songs.title, `%${word}%`),
+      ilike(songs.artist, `%${word}%`),
+    );
   });
 
   return db
