@@ -6,21 +6,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Song } from "@/db/schema";
-import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { type SongWithUuid, cn } from "@/lib/utils";
 import { CircleMinusIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import TitleArtist from "./TitleArtist";
 
 export default function PlaylistTable() {
-  /* Fade the table when a song isn't chosen yet */
-  const tableOpacity = "opacity-100";
-
-  const [playlist, setPlaylist] = useState<Song[]>([]);
+  const [playlist, setPlaylist] = useState<SongWithUuid[]>([]);
+  const [removeInProgress, setRemoveInProgress] = useState<SongWithUuid[]>([]);
 
   useEffect(() => {
     const getPlaylist = () => {
       const playlistStr = window.localStorage.getItem("playlist");
-      const playlist: Song[] =
+      const playlist: SongWithUuid[] =
         playlistStr !== null ? JSON.parse(playlistStr) : [];
       setPlaylist(playlist);
     };
@@ -31,51 +34,70 @@ export default function PlaylistTable() {
     };
   }, []);
 
-  const removeSong = (playlistIndex: number) => {
-    const playlistStr = window.localStorage.getItem("playlist");
-    const playlist: Song[] =
-      playlistStr !== null ? JSON.parse(playlistStr) : [];
-    playlist.splice(playlistIndex, 1);
-    window.localStorage.setItem("playlist", JSON.stringify(playlist));
-    setPlaylist(playlist);
+  const removeSong = (song: SongWithUuid) => {
+    setRemoveInProgress([...removeInProgress, song]);
+    setTimeout(() => {
+      const newPlaylist = playlist.filter((s) => s.uuid !== song.uuid);
+      window.localStorage.setItem("playlist", JSON.stringify(newPlaylist));
+      setPlaylist(newPlaylist);
+      setRemoveInProgress(removeInProgress.filter((s) => s.uuid !== song.uuid));
+    }, 200);
   };
 
   return (
-    <Table
+    <div
       className={cn(
-        "transition-opacity duration-300 border border-border",
-        tableOpacity,
+        "flex flex-col gap-2 items-center w-full transition-opacity duration-300",
+        playlist.length === 0 && "opacity-25",
       )}
     >
-      <TableHeader>
-        <TableRow className="text-xl">
-          <TableHead className="font-bold">Track</TableHead>
-          <TableHead className="font-bold text-right">Key</TableHead>
-          <TableHead className="font-bold text-right">BPM</TableHead>
-          <TableHead className="w-[16px]"></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {playlist.map((song, index) => {
-          return (
-            <TableRow className="text-lg" key={`${song.songId}.${index}`}>
-              <TableCell>{song.title}</TableCell>
-              <TableCell className="text-right">{song.camelotKeyId}</TableCell>
-              <TableCell className="text-right">
-                {Math.round(song.tempo)}
-              </TableCell>
-              <TableCell className="pr-4 pl-8">
-                <div title="Remove from playlist">
-                  <CircleMinusIcon
-                    onMouseDown={() => removeSong(index)}
-                    className="cursor-pointer text-destructive"
-                  />
-                </div>
-              </TableCell>
-            </TableRow>
-          );
-        })}
-      </TableBody>
-    </Table>
+      <h2 className="text-2xl">Your Playlist</h2>
+      <Table className="border border-border">
+        <TableHeader>
+          <TableRow className="text-xl text-secondary-foreground bg-secondary hover:bg-secondary">
+            <TableHead className="font-bold">Track</TableHead>
+            <TableHead className="font-bold text-right">Key</TableHead>
+            <TableHead className="font-bold text-right">BPM</TableHead>
+            <TableHead className="w-[16px]"></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {playlist.map((song) => {
+            return (
+              <TableRow
+                className={cn(
+                  "text-lg opacity-100 transition-all duration-200",
+                  removeInProgress.includes(song) ? "scale-75 opacity-25" : "",
+                )}
+                key={song.uuid}
+              >
+                <TableCell>
+                  <TitleArtist title={song.title} artist={song.artist} />
+                </TableCell>
+                <TableCell className="text-right">
+                  {song.camelotKeyId}
+                </TableCell>
+                <TableCell className="text-right">
+                  {Math.round(song.tempo)}
+                </TableCell>
+                <TableCell className="pr-4 pl-8">
+                  <Tooltip disableHoverableContent={true}>
+                    <TooltipTrigger>
+                      <CircleMinusIcon
+                        onMouseDown={() => removeSong(song)}
+                        className="transition-all duration-200 cursor-pointer hover:scale-110 text-destructive hover:text-destructive/80"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={8}>
+                      <p className="text-lg">Remove from playlist</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
