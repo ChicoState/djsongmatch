@@ -1,7 +1,7 @@
 "use client";
 
 import "@/app/globals.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Command,
@@ -71,6 +71,17 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
     router.push(pathname + "?" + newParams.toString());
   };
 
+  /* Basically pointer to the CommandList element */
+  const CommandListRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (CommandListRef.current) {
+      /* Every time the user input changes, scroll to the top of the list.
+       * The most relevant song is probably at the top */
+      CommandListRef.current.scrollTop = 0;
+    }
+  }, [inputValue]);
+
   return (
     <div className="py-8 w-full max-w-4xl">
       <div className="relative w-1/2">
@@ -85,7 +96,10 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
 
           {/* Only show the choices if the user has the input focused */}
           {open && (
-            <CommandList className="absolute top-full w-full border bg-background text-foreground z-[50] border-border">
+            <CommandList
+              ref={CommandListRef}
+              className="absolute top-full w-full border bg-background text-foreground z-[50] border-border"
+            >
               {/* Used to remove the "No results found" message when the user selects a song */}
               {value != inputValue && (
                 <CommandEmpty>No results found.</CommandEmpty>
