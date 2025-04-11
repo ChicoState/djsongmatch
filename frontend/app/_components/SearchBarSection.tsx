@@ -1,7 +1,7 @@
 "use client";
 
 import "@/app/globals.css";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import {
   Command,
@@ -13,6 +13,7 @@ import {
 import type { Song } from "@/db/schema";
 import { useDebounce } from "@/lib/hooks";
 import { useQuery } from "@tanstack/react-query";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { searchSongs } from "../actions";
 
 interface SearchBarSectionProps {
@@ -54,9 +55,36 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
     enabled: inputValue.trim().length > 0,
   });
 
+  const pathname = usePathname();
+  const router = useRouter();
+  const params = useSearchParams();
+
+  const handleSelect = (song: Song) => {
+    /* When user chooses an item from the search results */
+    setValue(`${song.artist} - ${song.title}`);
+    setInputValue(`${song.artist} - ${song.title}`);
+    setInputSong(song);
+
+    /* Update params */
+    const newParams = new URLSearchParams(params.toString());
+    newParams.set("songId", song.songId.toString());
+    router.push(pathname + "?" + newParams.toString());
+  };
+
+  /* Basically pointer to the CommandList element */
+  const CommandListRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (CommandListRef.current) {
+      /* Every time the user input changes, scroll to the top of the list.
+       * The most relevant song is probably at the top */
+      CommandListRef.current.scrollTop = 0;
+    }
+  }, [inputValue]);
+
   return (
     <div className="py-8 w-full max-w-4xl">
-      <div className="w-1/2">
+      <div className="relative w-1/2">
         <Command className="border border-border">
           <CommandInput
             onFocus={() => setOpen(true)}
@@ -68,7 +96,10 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
 
           {/* Only show the choices if the user has the input focused */}
           {open && (
-            <CommandList>
+            <CommandList
+              ref={CommandListRef}
+              className="absolute top-full w-full border bg-background text-foreground z-[50] border-border"
+            >
               {/* Used to remove the "No results found" message when the user selects a song */}
               {value != inputValue && (
                 <CommandEmpty>No results found.</CommandEmpty>
@@ -78,11 +109,11 @@ function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
                   <CommandItem
                     key={song.songId}
                     value={`${song.artist} - ${song.title}`}
-                    onMouseDown={() => {
-                      setValue(`${song.artist} - ${song.title}`);
-                      setInputValue(`${song.artist} - ${song.title}`);
-                      setInputSong(song);
-                    }}
+                    /* I have no idea why onSelect isn't
+                     * registering mouse clicks as selection.
+                     * Just use both :P */
+                    onSelect={() => handleSelect(song)}
+                    onMouseDown={() => handleSelect(song)}
                   >
                     {song.artist} - {song.title}
                   </CommandItem>

@@ -9,8 +9,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Song } from "@/db/schema";
+import type { Song } from "@/db/schema";
 import { CircleHelpIcon } from "lucide-react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface SliderMarkerProps {
@@ -81,6 +82,10 @@ function SongSlider({
    */
   const [value, setValue] = useState([0]);
 
+  const pathname = usePathname();
+  const router = useRouter();
+  const params = useSearchParams();
+
   /*
    * The fn inside `useEffect()` runs every time the component is mounted.
    * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
@@ -93,7 +98,7 @@ function SongSlider({
       );
       setValue(defaultValue);
     } else {
-      const storageValueFloat = parseFloat(storageValue);
+      const storageValueFloat = Number.parseFloat(storageValue);
 
       if (isNaN(storageValueFloat)) {
         console.log(
@@ -101,15 +106,18 @@ function SongSlider({
         );
         setValue(defaultValue);
       } else {
-        setValue([parseFloat(storageValue)]);
+        setValue([Number.parseFloat(storageValue)]);
       }
     }
   }, []);
 
   function handleValueCommit(newValue: number[]) {
-    // localStorage key is `slider.<sliderLabel>`
+    /* localStorage key is `slider.<sliderLabel>` */
     window.localStorage.setItem(`slider.${label}`, newValue[0].toString());
-    // newValue[0] assumes we only have one Thumb on the Slider
+    const newParams = new URLSearchParams(params.toString());
+    newParams.set(label, newValue[0].toString());
+    router.push(pathname + "?" + newParams.toString());
+    /* newValue[0] assumes we only have one Thumb on the Slider */
   }
 
   return (
