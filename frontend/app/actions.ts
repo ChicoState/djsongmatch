@@ -18,7 +18,7 @@ export async function getSongRecommendations(songId: number): Promise<Song[]> {
     .select()
     .from(songs)
     .orderBy(sql`RANDOM ()`)
-    .limit(10);
+    .limit(30);
 }
 
 export async function searchSongs(query: string): Promise<Song[]> {
