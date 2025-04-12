@@ -26,9 +26,11 @@ import TitleArtist from "./TitleArtist";
 
 function SortableSongRow({
   song,
+  index,
   removeSong,
 }: {
   song: SongWithUuid;
+  index: number;
   removeSong: (song: SongWithUuid) => void;
 }) {
   /**
@@ -58,6 +60,7 @@ function SortableSongRow({
           <GripVerticalIcon className="cursor-grab" />
         </div>
       </TableCell>
+      <TableCell className="text-center">{index + 1}</TableCell>
       <TableCell>
         <TitleArtist title={song.title} artist={song.artist} />
       </TableCell>
@@ -147,7 +150,7 @@ export default function PlaylistTable() {
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 items-center w-full transition-opacity duration-300",
+        "flex flex-col gap-2 items-center w-full transition-opacity duration-300 h-192",
         playlist.length === 0 && "opacity-25",
       )}
     >
@@ -158,9 +161,10 @@ export default function PlaylistTable() {
           strategy={verticalListSortingStrategy}
         >
           <Table className="border border-border">
-            <TableHeader>
-              <TableRow className="text-xl text-secondary-foreground bg-secondary hover:bg-secondary">
+            <TableHeader className="relative">
+              <TableRow className="sticky top-0 text-xl text-secondary-foreground bg-secondary hover:bg-secondary">
                 <TableHead className="font-bold"></TableHead>
+                <TableHead className="text-center">#</TableHead>
                 <TableHead className="font-bold">Track</TableHead>
                 <TableHead className="font-bold text-right">Key</TableHead>
                 <TableHead className="font-bold text-right">BPM</TableHead>
@@ -168,11 +172,12 @@ export default function PlaylistTable() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {playlist.map((song) => {
+              {playlist.map((song, index) => {
                 return (
                   <SortableSongRow
                     key={song.uuid}
                     song={song}
+                    index={index}
                     removeSong={removeSong}
                   />
                 );

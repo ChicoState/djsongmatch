@@ -58,16 +58,16 @@ export default function RecommendationTable() {
   return (
     <div
       className={cn(
-        "flex flex-col gap-2 items-center w-full transition-opacity duration-300",
+        "flex flex-col gap-2 items-center w-full transition-opacity duration-300 h-192",
         /* If the user hasn't chosen a song yet, fade out the table */
         songs.length === 0 && "opacity-25",
       )}
     >
       <h2 className="text-2xl">Our Recommendations</h2>
-      <Table className="overflow-scroll border border-border">
-        <TableHeader>
-          <TableRow className="text-xl bg-secondary text-secondary-foreground hover:bg-secondary">
-            <TableHead className="font-bold">Track</TableHead>
+      <Table className="border border-border">
+        <TableHeader className="relative">
+          <TableRow className="sticky top-0 text-xl bg-secondary text-secondary-foreground hover:bg-secondary">
+            <TableHead className="sticky font-bold">Track</TableHead>
             <TableHead className="font-bold text-right">Key</TableHead>
             <TableHead className="font-bold text-right">BPM</TableHead>
             <TableHead className="w-[16px]"></TableHead>
