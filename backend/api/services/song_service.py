@@ -14,7 +14,7 @@ class SongService:
         return Song.query.get(song_id)
 
     @staticmethod
-    def get_recommendations(base_song_id: int, start_year=0, end_year=10000, limit: int = 10) -> List[Song]:
+    def get_recommendations(base_song_id: int, start_year: int=0, end_year: int=10000, limit: int=10) -> List[Song]:
         """
         Get recommended songs with:
         - Compatible Camelot key
