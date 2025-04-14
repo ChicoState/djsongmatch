@@ -1,17 +1,19 @@
-import TopNav from "./_components/TopNav";
-import { Providers } from "./providers";
+
+export const metadata = {
+  title: 'DJ Song Match',
+  description: 'Just a Next.js App',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="bg-background">
-        <Providers>
-          <TopNav />
-          {children}
-        </Providers>
+    <html lang="en">
+      <body>
+        {children}
       </body>
     </html>
-  );
+  )
 }
