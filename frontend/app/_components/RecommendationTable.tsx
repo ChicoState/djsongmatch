@@ -11,7 +11,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { Song } from "@/db/schema";
+import { camelotKeys, type Song } from "@/db/schema";
 import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
@@ -28,7 +28,7 @@ export default function RecommendationTable() {
   const searchParams = useSearchParams();
   const songId = searchParams.get("songId");
 
-  const { data: songs = [] } = useQuery({
+  const { data: songs = []} = useQuery({
     queryKey: ["songRecommendations", songId],
     queryFn: () => {
       return getSongRecommendations(Number.parseInt(songId!));
@@ -84,7 +84,7 @@ export default function RecommendationTable() {
                   <TitleArtist title={song.title} artist={song.artist} />
                 </TableCell>
                 <TableCell className="text-right">
-                  {song.camelotKeyId}
+                  {song.camelotKeyStr}
                 </TableCell>
                 <TableCell className="text-right">
                   {Math.round(song.tempo)}

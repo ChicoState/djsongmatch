@@ -48,4 +48,7 @@ export const songs = pgTable(
 );
 
 export type CamelotKey = InferSelectModel<typeof camelotKeys>;
-export type Song = InferSelectModel<typeof songs>;
+export type Song = InferSelectModel<typeof songs> & {
+  compatibilityType?: string; // Optional field for compatibility type from the backend
+  camelotKeyStr?: string; // Optional field for the key string from the backend
+};

@@ -27,7 +27,7 @@ class SongService:
 
         # Get compatible key IDs
         compatible_keys = CamelotKeysService.get_compatible_keys(base_song.camelot_key_id)
-        compatible_key_ids = [key['id'] for key in compatible_keys]
+        compatible_key_ids = [key.id for key in compatible_keys]
 
         return Song.query.filter(
             Song.camelot_key_id.in_(compatible_key_ids),

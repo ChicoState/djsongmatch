@@ -20,6 +20,7 @@ Example Usage:
         songs = db.session.query(Song).all()
 """
 from flask import Flask
+from flask_cors import CORS
 from backend.config import selected_config
 from backend.api.extensions import db
 
@@ -40,6 +41,9 @@ def create_app():
     app.config.from_object(selected_config)
     logger.info(f"Starting app with configuration: {selected_config.__name__}")
     logger.info(f"Debug mode: {app.debug}")
+
+    # Enable CORS (Cross-Origin Resource Sharing) to allow frontend to make requests to Flask backend
+    CORS(app)
 
     # Initialize the SQLAlchemy database connection with the Flask application
     # This binds the db instance to this specific Flask app configuration

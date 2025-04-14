@@ -13,12 +13,21 @@ export async function getSong(songId: number): Promise<Song | undefined> {
 }
 
 export async function getSongRecommendations(songId: number): Promise<Song[]> {
-  /* mock data, in future get from flask */
-  return db
-    .select()
-    .from(songs)
-    .orderBy(sql`RANDOM ()`)
-    .limit(30);
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/songs/${songId}/recommendations`, {
+      method: "GET",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch recommendations: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    return data; 
+  } catch (error) {
+    console.error("Error fetching song recommendations:", error);
+    return [];
+  }
 }
 
 export async function searchSongs(query: string): Promise<Song[]> {
