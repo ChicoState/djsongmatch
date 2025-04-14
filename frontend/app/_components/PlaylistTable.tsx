@@ -64,7 +64,7 @@ function SortableSongRow({
       <TableCell>
         <TitleArtist title={song.title} artist={song.artist} />
       </TableCell>
-      <TableCell className="text-right">{song.camelotKeyId}</TableCell>
+      <TableCell className="text-right">{song.camelotKeyStr}</TableCell>
       <TableCell className="text-right">{Math.round(song.tempo)}</TableCell>
       <TableCell className="pr-4 pl-8">
         <Tooltip disableHoverableContent={true}>
