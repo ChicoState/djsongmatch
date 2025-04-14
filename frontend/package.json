@@ -9,6 +9,7 @@
         "lint": "next lint"
     },
     "dependencies": {
+	"firebase": "^10.7.0",
         "@babel/runtime": "^7.26.10",
         "@libsql/client": "^0.14.0",
         "@radix-ui/react-dialog": "^1.1.6",
