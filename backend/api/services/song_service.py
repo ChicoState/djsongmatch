@@ -14,7 +14,7 @@ class SongService:
         return Song.query.get(song_id)
 
     @staticmethod
-    def get_recommendations(base_song_id: int, limit: int = 10) -> List[Song]:
+    def get_recommendations(base_song_id: int, start_year=0, end_year=10000, limit: int = 10) -> List[Song]:
         """
         Get recommended songs with:
         - Compatible Camelot key
@@ -32,6 +32,7 @@ class SongService:
         return Song.query.filter(
             Song.camelot_key_id.in_(compatible_key_ids),
             Song.tempo.between(base_song.tempo - 5, base_song.tempo + 5),
+            Song.year.between(start_year, end_year),
             Song.song_id != base_song_id
         ).order_by(
             Song.popularity.desc()
