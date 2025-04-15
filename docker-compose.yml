@@ -4,26 +4,36 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: nextjs_app
+    working_dir: /app/frontend
     ports:
       - "3000:3000"
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
+      - ./frontend:/app/frontend:cached
+      - frontend_node_modules:/app/frontend/node_modules
       - ./.env:/app/.env
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-    command: ["sh", "-c", "pnpm dev"]
+      - WATCHPACK_POLLING=true
+    command: ["sh", "-c", "pnpm install && pnpm dev"]
+
   backend:
     build:
       context: .
       dockerfile: ./backend/Dockerfile
     container_name: python_backend
+    working_dir: /app/backend
     ports:
       - "5001:5001"
     volumes:
+      - ./backend:/app/backend:cached
       - ./.env:/app/.env
     environment:
       - FLASK_ENV=development
+      - FLASK_APP=backend.api:create_app
+      - PYTHONUNBUFFERED=1
+
+volumes:
+  frontend_node_modules:
