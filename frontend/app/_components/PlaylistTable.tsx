@@ -131,6 +131,7 @@ export default function PlaylistTable() {
     setPlaylist(newPlaylist);
   };
 
+  /* Function called to clear your playlist */
   const clearPlaylist = () => {
     window.localStorage.setItem("playlist", JSON.stringify([]));
     setPlaylist([]);
@@ -159,7 +160,23 @@ export default function PlaylistTable() {
         playlist.length === 0 && "opacity-25",
       )}
     >
-      <h2 className="text-2xl">Your Playlist</h2>
+      <div className="flex items-center w-full">
+        <div className="flex-1" />
+        <h2 className="flex-1 text-2xl text-center">Your Playlist</h2>
+        <div className="flex-1 flex justify-end">
+          <Tooltip disableHoverableContent={true}>
+            <TooltipTrigger>
+              <TrashIcon 
+                onMouseDown={clearPlaylist}  
+                className="transition-all duration-200 cursor-pointer hover:scale-110 text-destructive hover:text-destructive/80"
+              />
+            </TooltipTrigger>
+            <TooltipContent side="top" sideOffset={8}>
+              <p className="text-lg">Clear playlist</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+      </div>
       <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
         <SortableContext
           items={playlist.map((song) => song.uuid)}
