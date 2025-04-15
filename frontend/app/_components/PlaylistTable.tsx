@@ -131,6 +131,11 @@ export default function PlaylistTable() {
     setPlaylist(newPlaylist);
   };
 
+  const clearPlaylist = () => {
+    window.localStorage.setItem("playlist", JSON.stringify([]));
+    setPlaylist([]);
+  };
+
   /* Use useCallback to memoize the handleDragEnd function */
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     /**
