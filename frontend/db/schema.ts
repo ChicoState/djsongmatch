@@ -10,33 +10,33 @@ import {
 
 export const camelotKeys = pgTable("camelot_keys", {
   id: serial().primaryKey().notNull(),
-  key: integer(),
-  mode: integer(),
-  keyStr: varchar("key_str", { length: 10 }),
+  key: integer().notNull(),
+  mode: integer().notNull(),
+  keyStr: varchar("key_str", { length: 10 }).notNull(),
 });
 
 export const songs = pgTable(
   "songs",
   {
     songId: serial("song_id").primaryKey().notNull(),
-    title: varchar({ length: 255 }),
-    artist: varchar({ length: 255 }),
-    year: integer(),
-    duration: integer(),
-    timeSignature: integer("time_signature"),
-    camelotKeyId: integer("camelot_key_id"),
-    tempo: doublePrecision(),
-    danceability: doublePrecision(),
-    energy: doublePrecision(),
-    loudness: doublePrecision(),
-    loudnessDB: doublePrecision("loudness_dB"),
-    speechiness: doublePrecision(),
-    acousticness: doublePrecision(),
-    instrumentalness: doublePrecision(),
-    liveness: doublePrecision(),
-    valence: doublePrecision(),
-    popularity: integer(),
-    genre: varchar({ length: 30 }),
+    title: varchar({ length: 255 }).notNull(),
+    artist: varchar({ length: 255 }).notNull(),
+    year: integer().notNull(),
+    duration: integer().notNull(),
+    timeSignature: integer("time_signature").notNull(),
+    camelotKeyId: integer("camelot_key_id").notNull(),
+    tempo: doublePrecision().notNull(),
+    danceability: doublePrecision().notNull(),
+    energy: doublePrecision().notNull(),
+    loudness: doublePrecision().notNull(),
+    loudnessDB: doublePrecision("loudness_dB").notNull(),
+    speechiness: doublePrecision().notNull(),
+    acousticness: doublePrecision().notNull(),
+    instrumentalness: doublePrecision().notNull(),
+    liveness: doublePrecision().notNull(),
+    valence: doublePrecision().notNull(),
+    popularity: integer().notNull(),
+    genre: varchar({ length: 30 }).notNull(),
   },
   (table) => [
     foreignKey({
@@ -48,4 +48,7 @@ export const songs = pgTable(
 );
 
 export type CamelotKey = InferSelectModel<typeof camelotKeys>;
-export type Song = InferSelectModel<typeof songs>;
+export type Song = InferSelectModel<typeof songs> & {
+  compatibilityType?: string; // Optional field for compatibility type from the backend
+  camelotKeyStr?: string; // Optional field for the key string from the backend
+};

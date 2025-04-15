@@ -11,11 +11,11 @@ def _serialize_song(song: Song):
     # @internal_only # TODO - create decorators.py to restrict route for internal use only
     """Convert Song model to API response format"""
     return {
-        'id': song.song_id,
+        'songId': song.song_id,
         'title': song.title,
         'artist': song.artist,
-        'bpm': song.tempo,
-        'key': song.camelot_key.key_str if song.camelot_key else None,
+        'tempo': song.tempo,
+        'camelotKeyStr': song.camelot_key.key_str if song.camelot_key else None,
         'popularity': song.popularity,
         'duration': song.duration,
         'energy': song.energy,
@@ -60,8 +60,8 @@ def get_song_recommendations(song_id: int):
         
         # Add compatibility type to each recommendation
         compatible_keys = {
-            k['id']: k['compatibility_type'] 
-            for k in CamelotKeysService.get_compatible_keys(base_song.camelot_key_id)
+            k['id']: k['compatibility_type']
+            for k in CamelotKeysService.get_compatible_keys(base_song.camelot_key_id, as_dict=True)
         }
         
         serialized = []
@@ -69,7 +69,7 @@ def get_song_recommendations(song_id: int):
             song_data = _serialize_song(song)
             song_data['compatibility_type'] = compatible_keys.get(song.camelot_key_id)
             serialized.append(song_data)
-        
+
         return jsonify(serialized)
     except SQLAlchemyError as e:
         return jsonify({'error': str(e)}), 500
