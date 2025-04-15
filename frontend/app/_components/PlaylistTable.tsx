@@ -20,7 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CircleMinusIcon, GripVerticalIcon } from "lucide-react";
+import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import TitleArtist from "./TitleArtist";
 
