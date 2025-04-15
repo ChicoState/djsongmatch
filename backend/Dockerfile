@@ -1,27 +1,30 @@
 # Use Python 3.11
 FROM python:3.11-slim
 
-# Container's working directory
-#   All following commands (COPY, RUN, CMD, etc) execute here
+# Set working directory
 WORKDIR /app
 
+# Install uv dependencies and uv itself
+RUN apt-get update && \
+    apt-get install -y curl build-essential && \
+    curl -LsSf https://astral.sh/uv/install.sh | sh && \
+    /root/.local/bin/uv --version && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Add uv to PATH
+ENV PATH="/root/.local/bin:$PATH"
+
+# Copy the dependency list and install using uv
 COPY ./backend/requirements.txt ./requirements.txt
+RUN uv pip install --system -r requirements.txt
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the backend code into the container
+# Copy the backend code
 COPY ./backend ./backend
 
-# Expose network port for Flask development server
 EXPOSE 5001
 
-# Environment variables
-#   - FLASK_APP: Points to our create_app() function in backend/api/__init__.py
-#   - PYTHONUNBUFFERED: Better log output
+# Environment config
 ENV FLASK_APP=backend.api:create_app
 ENV PYTHONUNBUFFERED=1
 
-# Run Flask
-# CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
 CMD ["python", "-m", "backend.api"]
