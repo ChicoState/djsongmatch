@@ -1,27 +1,6 @@
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { MoreVertical } from "lucide-react";
 import DarkModeToggle from "./DarkModeToggle";
 import Help from "./Help";
-
-function Settings() {
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger>
-        <MoreVertical className="w-5 h-5" />
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-background text-foreground" align="end">
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Log in</DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
 
 export default function TopNav() {
   return (
@@ -33,15 +12,10 @@ export default function TopNav() {
           <DarkModeToggle />
           <Help />
           <Button variant="outline">Export</Button>
-          <Settings />
+          <Button variant="outline">Settings</Button>
+          <Button variant="outline">Log in</Button>
         </div>
       </nav>
     </div>
   );
 }
-    // {/* Render Help Page if showHelp is true */}
-    // {showHelp && (
-    //   <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
-    //       <HelpPage onClose={() => setShowHelp(false)} />
-    //     </div>
-    // )}
