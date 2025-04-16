@@ -8,7 +8,7 @@ export default function Help() {
 
     return (
         <>
-            <Button onClick={() => setIsOpen(!isOpen)}>Help</Button>
+            <Button variant="outline" onClick={() => setIsOpen(!isOpen)}>Help</Button>
             {isOpen && (
                 <>
                     {/* Dimmed Background Overlay */}
