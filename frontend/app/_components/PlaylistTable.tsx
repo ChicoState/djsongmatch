@@ -20,7 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CircleMinusIcon, GripVerticalIcon } from "lucide-react";
+import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import TitleArtist from "./TitleArtist";
 
@@ -66,7 +66,7 @@ function SortableSongRow({
       </TableCell>
       <TableCell className="text-right">{song.camelotKeyStr}</TableCell>
       <TableCell className="text-right">{Math.round(song.tempo)}</TableCell>
-      <TableCell className="pr-4 pl-8">
+      <TableCell className="pr-4 pl-6">
         <Tooltip disableHoverableContent={true}>
           <TooltipTrigger>
             <CircleMinusIcon
@@ -131,6 +131,12 @@ export default function PlaylistTable() {
     setPlaylist(newPlaylist);
   };
 
+  /* Function called to clear your playlist */
+  const clearPlaylist = () => {
+    window.localStorage.setItem("playlist", JSON.stringify([]));
+    setPlaylist([]);
+  };
+
   /* Use useCallback to memoize the handleDragEnd function */
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     /**
@@ -154,7 +160,9 @@ export default function PlaylistTable() {
         playlist.length === 0 && "opacity-25",
       )}
     >
-      <h2 className="text-2xl">Your Playlist</h2>
+      <div className="flex items-center w-full">
+        <h2 className="flex-1 text-2xl text-center">Your Playlist</h2>
+      </div>
       <DndContext collisionDetection={closestCorners} onDragEnd={handleDragEnd}>
         <SortableContext
           items={playlist.map((song) => song.uuid)}
@@ -168,7 +176,19 @@ export default function PlaylistTable() {
                 <TableHead className="font-bold">Track</TableHead>
                 <TableHead className="font-bold text-right">Key</TableHead>
                 <TableHead className="font-bold text-right">BPM</TableHead>
-                <TableHead className="w-[16px]"></TableHead>
+                <TableHead className="pr-4 pl-6 w-[16px]">
+                  <Tooltip disableHoverableContent={true}>
+                    <TooltipTrigger>
+                      <TrashIcon 
+                        onMouseDown={clearPlaylist}  
+                        className="transition-all duration-200 cursor-pointer hover:scale-110 text-destructive hover:text-destructive/80"
+                      />
+                    </TooltipTrigger>
+                    <TooltipContent side="top" sideOffset={8}>
+                      <p className="text-lg">Clear playlist</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
