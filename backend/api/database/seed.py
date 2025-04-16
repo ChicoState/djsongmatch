@@ -93,6 +93,9 @@ def seed_songs_from_csv(csv_path: str) -> int:
     Returns: Number of successfully inserted songs
     """
     df = pd.read_csv(csv_path)
+
+    df = df.drop_duplicates(subset=["Artist", "Track"])
+
     songs = [
         Song(
             song_id=row['Song_ID'],
@@ -115,7 +118,7 @@ def seed_songs_from_csv(csv_path: str) -> int:
             popularity=row['Popularity'],
             genre=row['Genre']
         )
-        for _, row in df.drop_duplicates().iterrows()
+        for _, row in df.iterrows()
     ]
     return _bulk_insert_songs(songs)
 
