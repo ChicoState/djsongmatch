@@ -5,25 +5,24 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable
 
-
 WORKDIR /app
 
+# Only copy package files for dependency install
 COPY package.json pnpm-lock.yaml ./
 
 FROM base AS deps
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-# Conditionally install @libsql/linux-arm64-musl on ARM64
-ARG TARGETARCH
-RUN if [ "$TARGETARCH" = "arm64" ]; then pnpm add @libsql/linux-arm64-musl; fi
 
-# Main build stage
+# Final development stage
 FROM base
 
-# Set environment
 ENV NODE_ENV=development
 
-# Copy installed node_modules from deps stage
+WORKDIR /app
+
+# Copy deps from previous stage
 COPY --from=deps /app/node_modules ./node_modules
 
-# Copy rest of the app
-COPY . .
+# Do NOT copy source code — it will be mounted via docker-compose for hot reload
+
+CMD ["pnpm", "dev"]

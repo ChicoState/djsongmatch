@@ -19,7 +19,7 @@ export default function Help() {
                         <Button
                             variant="secondary"
                             onClick={() => setIsOpen(false)}
-                            className="absolute top-4 right-4 px-3 py-1 rounded-md hover:bg-muted"
+                            className="absolute top-4 right-4 px-3 py-1 rounded-md hover:bg-muted cursor-pointer"
                         >
                             Close Help
                         </Button>

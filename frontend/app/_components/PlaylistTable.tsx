@@ -23,6 +23,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import TitleArtist from "./TitleArtist";
+import TrashConfirm from "./TrashConfirm";
 
 function SortableSongRow({
   song,
@@ -86,6 +87,7 @@ function SortableSongRow({
 export default function PlaylistTable() {
   /* Which songs are in the playlist */
   const [playlist, setPlaylist] = useState<SongWithUuid[]>([]);
+  const [showConfirm, setShowConfirm] = useState(false);
 
   useEffect(() => {
     const getPlaylist = () => {
@@ -177,17 +179,19 @@ export default function PlaylistTable() {
                 <TableHead className="font-bold text-right">Key</TableHead>
                 <TableHead className="font-bold text-right">BPM</TableHead>
                 <TableHead className="pr-4 pl-6 w-[16px]">
-                  <Tooltip disableHoverableContent={true}>
-                    <TooltipTrigger>
-                      <TrashIcon 
-                        onMouseDown={clearPlaylist}  
-                        className="transition-all duration-200 cursor-pointer hover:scale-110 text-destructive hover:text-destructive/80"
-                      />
-                    </TooltipTrigger>
-                    <TooltipContent side="top" sideOffset={8}>
-                      <p className="text-lg">Clear playlist</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  {playlist.length > 0 && (
+                    <Tooltip disableHoverableContent={true}>
+                      <TooltipTrigger>
+                        <TrashIcon 
+                          onMouseDown={() => setShowConfirm(true)}  
+                          className="transition-all duration-200 cursor-pointer hover:scale-110 text-destructive hover:text-destructive/80"
+                        />
+                      </TooltipTrigger>
+                      <TooltipContent side="top" sideOffset={8}>
+                        <p className="text-lg">Clear playlist</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  )}
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -206,6 +210,15 @@ export default function PlaylistTable() {
           </Table>
         </SortableContext>
       </DndContext>
+
+      <TrashConfirm
+        open={showConfirm}
+        onConfirm={() => {
+          clearPlaylist();
+          setShowConfirm(false);
+        }}
+        onCancel={() => setShowConfirm(false)}
+      />
     </div>
   );
 }
