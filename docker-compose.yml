@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   frontend:
     build:
@@ -9,13 +11,15 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
+      - ./frontend:/app              # Hot reload: Mount local source into container
+      - /app/node_modules            # Prevent overwriting node_modules
       - ./.env:/app/.env
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
+      - CHOKIDAR_USEPOLLING=true     # Enable file watcher inside container
     command: ["sh", "-c", "pnpm dev"]
+
   backend:
     build:
       context: .
