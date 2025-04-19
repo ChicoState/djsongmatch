@@ -12,9 +12,32 @@ export async function getSong(songId: number): Promise<Song | undefined> {
   });
 }
 
-export async function getSongRecommendations(songId: number): Promise<Song[]> {
+export async function getSongRecommendations(
+  songId: number,
+  options?: { 
+    danceabilityContrast?: number, 
+    energyContrast?: number, 
+    loudnessContrast?: number,
+    limit?: number 
+  }
+): Promise<Song[]> {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/songs/${songId}/recommendations`, {
+    const params = new URLSearchParams();
+    if (options?.danceabilityContrast !== undefined) {
+      params.append("danceability_contrast", options.danceabilityContrast.toString());
+    }
+    if (options?.energyContrast !== undefined) {
+      params.append("energy_contrast", options.energyContrast.toString());
+    }
+    if (options?.loudnessContrast !== undefined) {
+      params.append("loudness_contrast", options.loudnessContrast.toString());
+    }
+    if (options?.limit !== undefined) {
+      params.append("limit", options.limit.toString());
+    }
+    
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/api/songs/${songId}/recommendations?${params.toString()}`;
+    const response = await fetch(url, {
       method: "GET",
     });
 
