@@ -18,6 +18,9 @@ export async function getSongRecommendations(
     danceabilityContrast?: number, 
     energyContrast?: number, 
     loudnessContrast?: number,
+    bpmPlusMinus?: number,
+    startYear?: number,
+    endYear?: number
     limit?: number 
   }
 ): Promise<Song[]> {
@@ -31,6 +34,15 @@ export async function getSongRecommendations(
     }
     if (options?.loudnessContrast !== undefined) {
       params.append("loudness_contrast", options.loudnessContrast.toString());
+    }
+    if (options?.bpmPlusMinus !== undefined) {
+      params.append("bpm_plus_minus", options.bpmPlusMinus.toString());
+    }
+    if (options?.startYear !== undefined) {
+      params.append("start_year", options.startYear.toString());
+    }
+    if (options?.endYear !== undefined) {
+      params.append("end_year", options.endYear.toString());
     }
     if (options?.limit !== undefined) {
       params.append("limit", options.limit.toString());
