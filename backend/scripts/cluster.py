@@ -11,7 +11,10 @@ from backend.api.extensions import db
 
 # PARAMETERS – feel free to adjust (e.g., number of clusters)
 N_CLUSTERS = 5
-FEATURE_COLS = ['danceability', 'energy', 'loudness']
+FEATURE_COLS = [
+    'danceability', 'energy', 'loudness', 'speechiness',
+    'acousticness', 'instrumentalness', 'liveness', 'valence'
+]
 MODEL_FILENAME = "kmeans_model.pkl"
 
 def run_clustering():
@@ -28,13 +31,23 @@ def run_clustering():
             "song_id": [],
             "danceability": [],
             "energy": [],
-            "loudness": []
+            "loudness": [],
+            "speechiness": [],
+            "acousticness": [],
+            "instrumentalness": [],
+            "liveness": [],
+            "valence": []
         }
         for s in songs:
             data["song_id"].append(s.song_id)
             data["danceability"].append(s.danceability)
             data["energy"].append(s.energy)
             data["loudness"].append(s.loudness)
+            data["speechiness"].append(s.speechiness)
+            data["acousticness"].append(s.acousticness)
+            data["instrumentalness"].append(s.instrumentalness)
+            data["liveness"].append(s.liveness)
+            data["valence"].append(s.valence)
 
         df = pd.DataFrame(data)
         X = df[FEATURE_COLS].values
