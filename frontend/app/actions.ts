@@ -18,7 +18,7 @@ export async function getSongRecommendations(
     danceabilityContrast?: number, 
     energyContrast?: number, 
     loudnessContrast?: number,
-    bpmPlusMinus?: number,
+    tempoRange?: number,
     startYear?: number,
     endYear?: number
     limit?: number 
@@ -35,14 +35,14 @@ export async function getSongRecommendations(
     if (options?.loudnessContrast !== undefined) {
       params.append("loudness_contrast", options.loudnessContrast.toString());
     }
-    if (options?.bpmPlusMinus !== undefined) {
-      params.append("bpm_plus_minus", options.bpmPlusMinus.toString());
-    }
     if (options?.startYear !== undefined) {
       params.append("start_year", options.startYear.toString());
     }
     if (options?.endYear !== undefined) {
       params.append("end_year", options.endYear.toString());
+    }
+    if (options?.tempoRange !== undefined) {
+      params.append("tempo_range", options.tempoRange.toString());
     }
     if (options?.limit !== undefined) {
       params.append("limit", options.limit.toString());

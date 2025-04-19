@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 # from backend.api.decorators import internal_only  # TODO - create decorators.py
 from backend.api.database.models import Song
@@ -49,14 +49,32 @@ def get_song(song_id: int):
 
 @songs_bp.route('/<int:song_id>/recommendations', methods=['GET'])
 def get_song_recommendations(song_id: int):
-    """Get recommended songs with compatible keys and similar BPM"""
+    """Get recommended songs based on clustering with compatible keys and similar BPM"""
+
+    # Get contrast adjustments from query parameters (default is 0.0)
+    danceability_contrast = request.args.get("danceability_contrast", default=0.0, type=float)
+    energy_contrast = request.args.get("energy_contrast", default=0.0, type=float)
+    loudness_contrast = request.args.get("loudness_contrast", default=0.0, type=float)
+    start_year = request.args.get("start_year", default=0, type=int),
+    end_year = request.args.get("end_year", default=10000, type=int),
+    tempo_range = request.args.get("tempo_range", default=0, type=int),
+    limit = request.args.get("limit", default=10, type=int)
+
     try:
         base_song = SongService.get_song(song_id)
         if not base_song:
             return jsonify({'error': 'Base song not found'}), 404
-
-        # Get recommendations (already filtered by compatible keys and tempo)
-        recommendations = SongService.get_recommendations(song_id)
+        
+        recommendations = SongService.get_recommendations(
+            base_song_id=song_id,
+            danceability_contrast=danceability_contrast,
+            energy_contrast=energy_contrast,
+            loudness_contrast=loudness_contrast,
+            start_year=start_year,
+            end_year=end_year,
+            tempo_range=tempo_range,
+            limit=limit
+        )
         
         # Add compatibility type to each recommendation
         compatible_keys = {
