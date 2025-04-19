@@ -22,6 +22,7 @@ from backend.api.database.seed import (
     seed_songs_from_csv
 )
 from backend.api.extensions import db
+from backend.scripts.cluster import run_clustering
 
 BACKEND_ROOT = Path(__file__).parent.parent
 CSV_PATH = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"
@@ -39,6 +40,11 @@ def main():
 
         print("Importing songs...")
         seed_songs_from_csv(CSV_PATH)
+
+        print("Clustering songs...")
+        run_clustering()
+
+        print("All done!")
 
 if __name__ == "__main__":
     main()
