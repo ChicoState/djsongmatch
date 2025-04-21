@@ -1,7 +1,6 @@
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -17,11 +16,14 @@ export default function SettingsDrawer() {
           className="text-secondary-foreground cursor-pointer"
         />
       </SheetTrigger>
-      <SheetContent side="right" className='p-6'>
-        <SheetHeader>
-          <SheetTitle>Settings</SheetTitle>
-        </SheetHeader>
-        <div className="mt-4 space-y-4">
+      <SheetContent side="right" className="p-6">
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <SheetTitle className="text-base font-medium">Settings</SheetTitle>
+          </div>
+
+          <div className="border-b-2 border-border" />
+
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Dark Mode</span>
             <DarkModeToggle />
