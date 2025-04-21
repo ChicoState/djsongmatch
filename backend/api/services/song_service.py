@@ -5,15 +5,6 @@ import pickle
 from backend.api.database.models import Song
 from backend.api.services.camelot_keys_service import CamelotKeysService
 
-# Load the clustering model once. Make sure cluster.py has been run and the model file exists.
-MODEL_FILENAME = "kmeans_model.pkl"
-try:
-    with open(MODEL_FILENAME, "rb") as f:
-        kmeans_model = pickle.load(f)
-except FileNotFoundError:
-    kmeans_model = None
-    print(f"Warning: {MODEL_FILENAME} not found. Run cluster.py to create the clustering model.")
-
 
 class SongService:
     @staticmethod
@@ -42,6 +33,16 @@ class SongService:
         Returns:
         - Predicted cluster as an integer.
         """
+
+        # Load the pre-trained clustering model. Make sure cluster.py has been run and the model file exists.
+        MODEL_FILENAME = "kmeans_model.pkl"
+        try:
+            with open(MODEL_FILENAME, "rb") as f:
+                kmeans_model = pickle.load(f)
+        except FileNotFoundError:
+            kmeans_model = None
+            print(f"Warning: {MODEL_FILENAME} not found. Run cluster.py to create the clustering model.")
+
         if kmeans_model is None:
             raise ValueError("Clustering model not loaded.")
         adjusted_features = [
