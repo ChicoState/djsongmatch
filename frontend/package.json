@@ -2,11 +2,12 @@
     "name": "djsongmatch",
     "version": "0.1.0",
     "private": true,
+    "type": "module",
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
         "start": "next start",
-        "lint": "next lint"
+        "lint": "eslint . --ext .js,.jsx,.ts,.tsx"
     },
     "dependencies": {
         "@babel/runtime": "^7.26.10",
@@ -46,6 +47,7 @@
         "@types/react-dom": "^18",
         "drizzle-kit": "^0.30.5",
         "esbuild": "^0.25.0",
+        "eslint": "^9.25.1",
         "postcss": "^8",
         "tailwindcss": "^4.0.13",
         "tsx": "^4.19.3",
