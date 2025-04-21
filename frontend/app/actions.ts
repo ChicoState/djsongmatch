@@ -4,7 +4,7 @@
 
 import { db } from "@/db/index";
 import { type Song, songs } from "@/db/schema";
-import { and, eq, ilike, or, sql } from "drizzle-orm";
+import { and, eq, ilike, or } from "drizzle-orm";
 
 export async function getSong(songId: number): Promise<Song | undefined> {
   return db.query.songs.findFirst({

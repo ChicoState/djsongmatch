@@ -11,7 +11,6 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { camelotKeys, type Song } from "@/db/schema";
 import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
@@ -19,9 +18,9 @@ import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
 
-interface RecommendationTableProps {
-  setPlaylist: (songs: SongWithUuid[]) => void;
-}
+// interface RecommendationTableProps {
+//   setPlaylist: (songs: SongWithUuid[]) => void;
+// }
 
 export default function RecommendationTable() {
   /* searchParams is like `http://localhost:3000/?songId=1` */

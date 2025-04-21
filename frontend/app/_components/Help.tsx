@@ -29,8 +29,8 @@ export default function Help() {
                         <ul className="list-disc pl-5 mt-3">
                             <li>Search for songs using the search bar.</li>
                             <li>Move the sliders to adjust levels to designated levels.</li>
-                            <li>Click "Generate" to see matching songs.</li>
-                            <li>Use "Export" to save your song recommendations.</li>
+                            <li>Click &quot;Generate&quot; to see matching songs.</li>
+                            <li>Use &quot;Export&quot; to save your song recommendations.</li>
                         </ul>
                     </div>
                 </>
