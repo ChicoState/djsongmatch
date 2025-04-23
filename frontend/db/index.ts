@@ -1,18 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 
-import path from "path";
-import dotenv from "dotenv";
 import * as schema from "./schema";
-
-/* Root of git repo. Contains frontend/ and backend/ */
-const projectRoot = path.resolve(__dirname, "../../../../");
-
-const envPath = path.resolve(projectRoot, ".env");
-
-dotenv.config({
-  path: envPath,
-});
 
 if (!process.env.DATABASE_URL) {
   throw new Error(
