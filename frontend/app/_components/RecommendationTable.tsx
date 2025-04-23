@@ -17,6 +17,7 @@ import { CirclePlusIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
+import { Song } from "@/db/schema";
 
 // interface RecommendationTableProps {
 //   setPlaylist: (songs: SongWithUuid[]) => void;
@@ -27,7 +28,7 @@ export default function RecommendationTable() {
   const searchParams = useSearchParams();
   const songId = searchParams.get("songId");
 
-  const { data: songs = []} = useQuery({
+  const { data: songs = [] } = useQuery({
     queryKey: ["songRecommendations", songId],
     queryFn: () => {
       return getSongRecommendations(Number.parseInt(songId!));
