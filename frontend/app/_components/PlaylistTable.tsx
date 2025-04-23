@@ -21,7 +21,8 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import TitleArtist from "./TitleArtist";
 import TrashConfirm from "./TrashConfirm";
 
@@ -119,8 +120,24 @@ export default function PlaylistTable() {
        * This is because it re-adds the event listener every time the component re-renders.
        */
       window.removeEventListener("addSongPlaylist", getPlaylist);
+      TableContainerRef.current?.scrollTo(0, 0);
     };
   }, []);
+
+  /* Reference to the container for the table.
+   * More info at @/components/ui/table.tsx and below in useEffect */
+  const TableContainerRef = useRef<HTMLDivElement>(null);
+
+  /* We need to use a separate useEffect from the one above because the table scrolls to the
+   * bottom _before_ the playlist is updated/rerendered. This means that the scroll position
+   * will incorrectly be at the second-to-last row of the table, which is not what we want.
+   * Instead, we wait for the playlist to be updated/rerender before scrolling to the bottom. */
+  useEffect(() => {
+    TableContainerRef.current?.scrollTo(
+      0,
+      TableContainerRef.current?.scrollHeight,
+    );
+  }, [playlist]);
 
   const removeSong = (song: SongWithUuid) => {
     /* The most up to date playlist (with the removed song) */
@@ -170,7 +187,10 @@ export default function PlaylistTable() {
           items={playlist.map((song) => song.uuid)}
           strategy={verticalListSortingStrategy}
         >
-          <Table className="border border-border">
+          <Table
+            refTableContainer={TableContainerRef}
+            className="border border-border"
+          >
             <TableHeader className="relative">
               <TableRow className="sticky top-0 text-xl text-secondary-foreground bg-secondary hover:bg-secondary">
                 <TableHead className="font-bold"></TableHead>
