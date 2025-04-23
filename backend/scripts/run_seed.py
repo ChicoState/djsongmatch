@@ -23,6 +23,9 @@ from backend.api.database.seed import (
 )
 from backend.api.extensions import db
 from backend.scripts.cluster import run_clustering
+import logging
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.INFO)
 
 BACKEND_ROOT = Path(__file__).parent.parent
 CSV_PATH = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"

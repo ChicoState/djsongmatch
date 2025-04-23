@@ -13,8 +13,16 @@ from flask_sqlalchemy import SQLAlchemy
 # Example usage in other files:
 #   from api.extensions import db
 #   db.create_all()  # etc.
-db = SQLAlchemy()
 
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "pool_size": 10,  # Number of connections in the pool
+    "max_overflow": 5,  # Additional connections beyond the pool size
+    "pool_timeout": 30,  # Timeout for getting a connection from the pool
+    "pool_recycle": 1800,  # Recycle connections after 30 minutes
+    "pool_pre_ping": True,  # Check if connections are alive before using them
+}
+
+db = SQLAlchemy(engine_options=SQLALCHEMY_ENGINE_OPTIONS)
 
 # -------------------------------
 # Example future extension pattern:

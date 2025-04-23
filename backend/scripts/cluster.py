@@ -16,7 +16,8 @@ FEATURE_COLS = [
     'danceability', 'energy', 'loudness', 'speechiness',
     'acousticness', 'instrumentalness', 'liveness', 'valence'
 ]
-MODEL_FILENAME = "kmeans_model.pkl"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+MODEL_FILENAME = os.path.join(SCRIPT_DIR, "../assets/kmeans_model.pkl")  # Adjust relative path
 
 def run_clustering():
     app = create_app()
@@ -112,6 +113,10 @@ def run_clustering():
         #     return
         
         # Option 3
+        # Prepare bulk update data for use in updating database
+        # cluster_updates = []
+        # for song, cluster_label in zip(songs, clusters):
+        #     cluster_updates.append({"song_id": song.song_id, "cluster": int(cluster_label)})
         # # Perform bulk update
         # db.session.bulk_update_mappings(Song, cluster_updates)
 
