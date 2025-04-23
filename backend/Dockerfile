@@ -7,8 +7,11 @@ WORKDIR /app
 
 COPY ./backend/requirements.txt ./requirements.txt
 
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install uv
+RUN pip install uv
+
+# Install dependencies with uv
+RUN uv pip install --system -r requirements.txt
 
 # Copy the backend code into the container
 COPY ./backend ./backend
