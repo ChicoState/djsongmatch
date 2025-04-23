@@ -10,7 +10,6 @@ services:
       - backend
     volumes:
       - ./frontend:/app
-      - /app/node_modules
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
