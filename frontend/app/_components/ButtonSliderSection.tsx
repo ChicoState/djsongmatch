@@ -109,7 +109,7 @@ function SongSlider({
         setValue([Number.parseFloat(storageValue)]);
       }
     }
-  }, []);
+  }, [defaultValue, label]);
 
   function handleValueCommit(newValue: number[]) {
     /* localStorage key is `slider.<sliderLabel>` */
