@@ -23,5 +23,5 @@ jobs:
         run: pnpm install
         working-directory: ./frontend
       - name: Run ESLint
-        run: pnpm exec eslint . --ext .js,.jsx,.ts,.tsx
+        run: pnpm lint
         working-directory: ./frontend/
