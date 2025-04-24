@@ -1,7 +1,31 @@
+"""
+Song Clustering Script
 
-# cluster.py
+Automatically groups songs into clusters using K-Means based on audio features, 
+persisting both database assignments and the trained model for recommendations.
+
+Key Features:
+- Batch processing with resume capability for interrupted jobs
+- Progress tracking with automatic recovery
+- Reproducible results (fixed random seed)
+- Efficient bulk database updates
+- Model and cluster persistence for recommendation service
+
+Usage:
+    # Full clustering (initial run)
+    python3 -m backend.scripts.cluster
+    
+    # Resume partial clustering
+    python3 -m backend.scripts.cluster --resume
+
+Requirements:
+- Pre-populated songs table with audio features
+- Active Flask application context
+"""
+
 import os
 import pickle
+import argparse
 import pandas as pd
 from sklearn.cluster import KMeans
 from sqlalchemy.exc import OperationalError
@@ -16,113 +40,120 @@ FEATURE_COLS = [
     'danceability', 'energy', 'loudness', 'speechiness',
     'acousticness', 'instrumentalness', 'liveness', 'valence'
 ]
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
-MODEL_FILENAME = os.path.join(SCRIPT_DIR, "../assets/kmeans_model.pkl")  # Adjust relative path
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_FILENAME = os.path.join(SCRIPT_DIR, "../assets/kmeans_model.pkl")
 
-def run_clustering():
+def run_clustering(resume=False):
+    """Run clustering with resume support using proper SQLAlchemy Core transactions"""
     app = create_app()
     with app.app_context():
         try:
-            # Query all songs from the database
-            songs = Song.query.order_by(Song.song_id).all()
+            # Query construction with resume logic
+            query = Song.query.order_by(Song.song_id)
+            if resume:
+                print("Resuming - only clustering unassigned songs")
+                query = query.filter(Song.cluster.is_(None))
+            
+            songs = query.all()
             if not songs:
-                print("No songs found in the database. Seed your songs first!")
+                print("No songs found to cluster!")
                 return
+
         except OperationalError as e:
             print(f"Database connection error: {e}")
             return
 
-        # Build a DataFrame with necessary features
-        data = {
-            "song_id": [],
-            "danceability": [],
-            "energy": [],
-            "loudness": [],
-            "speechiness": [],
-            "acousticness": [],
-            "instrumentalness": [],
-            "liveness": [],
-            "valence": []
-        }
+        # Data preparation (unchanged)
+        data = {col: [] for col in ['song_id'] + FEATURE_COLS}
         for s in songs:
-            data["song_id"].append(s.song_id)
-            data["danceability"].append(s.danceability)
-            data["energy"].append(s.energy)
-            data["loudness"].append(s.loudness)
-            data["speechiness"].append(s.speechiness)
-            data["acousticness"].append(s.acousticness)
-            data["instrumentalness"].append(s.instrumentalness)
-            data["liveness"].append(s.liveness)
-            data["valence"].append(s.valence)
+            data['song_id'].append(s.song_id)
+            for col in FEATURE_COLS:
+                data[col].append(getattr(s, col))
 
         df = pd.DataFrame(data)
         X = df[FEATURE_COLS].values
 
-        # Run KMeans clustering
+        # Clustering execution
         model = KMeans(n_clusters=N_CLUSTERS, random_state=42)
         clusters = model.fit_predict(X)
         print(f"Clustering complete. Cluster assignment counts: {pd.Series(clusters).value_counts().to_dict()}")
 
-        # Save the clustering model to a pickle file for later use (e.g., song recommendation service)
+        # Save model
         with open(MODEL_FILENAME, "wb") as f:
             pickle.dump(model, f)
         print(f"Model saved to {MODEL_FILENAME}")
 
-        # Prepare bulk update data for use in updating database
-        cluster_updates = []
-        for song, cluster_label in zip(songs, clusters):
-            cluster_updates.append({"b_song_id": song.song_id, "b_cluster": int(cluster_label)})
+        # Prepare updates with resume logic
+        cluster_updates = [
+            {"b_song_id": song.song_id, "b_cluster": int(cluster_label)}
+            for song, cluster_label in zip(songs, clusters)
+            if not resume or song.cluster is None
+        ]
 
-        print("Updating database. Note: May take a few minutes!")
+        print(f"Updating {len(cluster_updates)} songs...")
 
-        # Batch size for updates
-        BATCH_SIZE = 1000
+        # Transaction and batch processing setup
+        BATCH_SIZE = 500
+        progress_file = os.path.join(SCRIPT_DIR, "cluster_progress.txt")
+        start_batch = 0
 
-        # Perform batch updates
+        # Resume logic
+        if resume and os.path.exists(progress_file):
+            try:
+                with open(progress_file, "r") as f:
+                    start_batch = int(f.read().strip())
+                print(f"Resuming from batch {start_batch//BATCH_SIZE + 1}")
+            except Exception as e:
+                print(f"Couldn't read progress file: {e}")
+
         try:
             with db.engine.connect() as connection:
-                for i in range(0, len(cluster_updates), BATCH_SIZE):
+                # Begin transaction
+                trans = connection.begin()
+                
+                for i in range(start_batch, len(cluster_updates), BATCH_SIZE):
                     batch = cluster_updates[i:i + BATCH_SIZE]
+                    
+                    # Execute batch update
                     connection.execute(
                         Song.__table__.update()
                         .where(Song.song_id == db.bindparam("b_song_id"))
                         .values(cluster=db.bindparam("b_cluster")),
                         batch
                     )
-                    print(f"Updated batch {i // BATCH_SIZE + 1} of {len(cluster_updates) // BATCH_SIZE + 1}")
-            print("Database updated with new cluster assignments.")
+                    
+                    # Commit every 3 batches to prevent timeouts
+                    if i > 0 and i % (3 * BATCH_SIZE) == 0:
+                        trans.commit()
+                        trans = connection.begin()
+                    
+                    # Update progress
+                    with open(progress_file, "w") as f:
+                        f.write(str(i + BATCH_SIZE))
+                    print(f"Updated batch {i//BATCH_SIZE + 1} of {len(cluster_updates)//BATCH_SIZE + 1}")
+                
+                # Final commit
+                trans.commit()
+                
+                # Clean up progress file
+                if os.path.exists(progress_file):
+                    os.remove(progress_file)
+                print("✅ Database update complete!")
+
         except Exception as e:
-            print(f"Error during bulk update: {e}")
-            db.session.rollback()
+            print(f"❌ Error during batch {i//BATCH_SIZE + 1}: {e}")
+            try:
+                if 'trans' in locals():
+                    trans.rollback()
+            except Exception as rollback_error:
+                print(f"Rollback failed: {rollback_error}")
             return
 
-        # Option 2
-        # # Use raw SQL for bulk update
-        # try:
-        #     with db.engine.connect() as connection:
-        #         connection.execute(
-        #             Song.__table__.update()
-        #             .where(Song.song_id == db.bindparam("b_song_id"))
-        #             .values(cluster=db.bindparam("b_cluster")),
-        #             cluster_updates
-        #         )
-        #     print("Database updated with new cluster assignments.")
-        # except Exception as e:
-        #     print(f"Error during bulk update: {e}")
-        #     db.session.rollback()
-        #     return
-        
-        # Option 3
-        # Prepare bulk update data for use in updating database
-        # cluster_updates = []
-        # for song, cluster_label in zip(songs, clusters):
-        #     cluster_updates.append({"song_id": song.song_id, "cluster": int(cluster_label)})
-        # # Perform bulk update
-        # db.session.bulk_update_mappings(Song, cluster_updates)
-
-        # # print("Committing cluster assignments to database...")
-        # db.session.commit()
-        # print("Database updated with new cluster assignments.")
-
 if __name__ == "__main__":
-    run_clustering()
+    # Set up command-line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--resume", action="store_true", help="Only cluster unassigned songs")
+    args = parser.parse_args()
+
+    print("Starting clustering...")
+    run_clustering(resume=args.resume)
