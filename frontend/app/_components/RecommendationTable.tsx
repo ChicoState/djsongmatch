@@ -11,16 +11,28 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { camelotKeys, type Song } from "@/db/schema";
+import { type Song } from "@/db/schema";
 import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
+import { Parameter } from "./ButtonSliderSection";
 
-interface RecommendationTableProps {
-  setPlaylist: (songs: SongWithUuid[]) => void;
+function getParameterValue(
+  /**
+   * Helper function to get the value of a parameter from the searchParams
+   * and then parse it into a float. Returns null if the parameter is not present.
+   */
+  parameter: Parameter,
+  searchParams: URLSearchParams,
+): number | undefined {
+  const value = searchParams.get(parameter.valueOf());
+  if (value === null) {
+    return undefined;
+  }
+  return Number.parseFloat(value);
 }
 
 export default function RecommendationTable() {
@@ -28,10 +40,26 @@ export default function RecommendationTable() {
   const searchParams = useSearchParams();
   const songId = searchParams.get("songId");
 
-  const { data: songs = []} = useQuery({
+  const { data: songs = [] } = useQuery({
     queryKey: ["songRecommendations", songId],
     queryFn: () => {
-      return getSongRecommendations(Number.parseInt(songId!));
+      /* Should be safe to use `songId!` because this is only enabled when songId is not null */
+      const songIdNumber = Number.parseInt(songId!);
+
+      /* Get params from search paramters */
+      const danceability = getParameterValue(
+        Parameter.Danceability,
+        searchParams,
+      );
+      const energy = getParameterValue(Parameter.Energy, searchParams);
+      const loudness = getParameterValue(Parameter.Loudness, searchParams);
+
+      /* Get recommendations from Flask */
+      return getSongRecommendations(songIdNumber, {
+        danceability_contrast: danceability,
+        energy_contrast: energy,
+        loudness_contrast: loudness,
+      });
     },
     enabled: songId !== null,
   });
