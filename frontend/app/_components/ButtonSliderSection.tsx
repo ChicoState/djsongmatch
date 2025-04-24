@@ -206,7 +206,14 @@ function ButtonArea() {
       <Button variant={"outline"} className="w-full">
         Advanced Filters
       </Button>
-      <Button className="w-full">Generate</Button>
+      <Button
+        className="w-full cursor-pointer"
+        onMouseDown={() =>
+          window.dispatchEvent(new Event("generateButtonClicked"))
+        }
+      >
+        Generate
+      </Button>
     </section>
   );
 }

@@ -19,6 +19,7 @@ import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
 import { Parameter } from "./ButtonSliderSection";
+import { useEffect } from "react";
 
 function getParameterValue(
   /**
@@ -40,7 +41,7 @@ export default function RecommendationTable() {
   const searchParams = useSearchParams();
   const songId = searchParams.get("songId");
 
-  const { data: songs = [] } = useQuery({
+  const { data: songs = [], refetch } = useQuery({
     queryKey: ["songRecommendations", songId],
     queryFn: () => {
       /* Should be safe to use `songId!` because this is only enabled when songId is not null */
@@ -61,7 +62,24 @@ export default function RecommendationTable() {
         loudness_contrast: loudness,
       });
     },
-    enabled: songId !== null,
+    enabled: false,
+  });
+
+  /* This is a hacky way to make the table update when the generate button is clicked.
+   * The reason we need to do this is because the generate button is not part of the
+   * table, so we can't use the table's onClick handler to update the table.
+   * Instead, we use a window event to trigger the refetch.
+   * Better solutions are welcome.
+   */
+  useEffect(() => {
+    window.addEventListener("generateButtonClicked", () => {
+      refetch();
+    });
+    return () => {
+      window.removeEventListener("generateButtonClicked", () => {
+        refetch();
+      });
+    };
   });
 
   const addSong = (song: Song) => {
