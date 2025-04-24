@@ -44,8 +44,12 @@ export default function RecommendationTable() {
   const { data: songs = [], refetch } = useQuery({
     queryKey: ["songRecommendations", songId],
     queryFn: () => {
-      /* Should be safe to use `songId!` because this is only enabled when songId is not null */
-      const songIdNumber = Number.parseInt(songId!);
+      if (songId === null) {
+        /* TODO: Visually represent that the songId is missing */
+        console.log("WARNING: Generate button clicked without songId");
+        return;
+      }
+      const songIdNumber = Number.parseInt(songId);
 
       /* Get params from search paramters */
       const danceability = getParameterValue("danceability", searchParams);
