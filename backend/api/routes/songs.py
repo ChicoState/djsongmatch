@@ -55,10 +55,17 @@ def get_song_recommendations(song_id: int):
     danceability_contrast = request.args.get("danceability_contrast", default=0.0, type=float)
     energy_contrast = request.args.get("energy_contrast", default=0.0, type=float)
     loudness_contrast = request.args.get("loudness_contrast", default=0.0, type=float)
-    start_year = request.args.get("start_year", default=0, type=int),
-    end_year = request.args.get("end_year", default=10000, type=int),
-    tempo_range = request.args.get("tempo_range", default=0, type=int),
+    start_year = request.args.get("start_year", default=0, type=int)
+    end_year = request.args.get("end_year", default=10000, type=int)
+    tempo_range = request.args.get("tempo_range", default=0, type=int)
     limit = request.args.get("limit", default=10, type=int)
+
+    if not isinstance(tempo_range, (int, float)):
+        tempo_range = 5  # Default value
+        print(f"Warning: Invalid tempo_range, using default {tempo_range}")
+
+        if not isinstance(base_song.tempo, (int, float)):
+            raise ValueError("Base song tempo must be a number")
 
     try:
         base_song = SongService.get_song(song_id)
@@ -75,7 +82,10 @@ def get_song_recommendations(song_id: int):
             tempo_range=tempo_range,
             limit=limit
         )
-        
+        print(f"Found {len(recommendations)} recommendations for song {song_id}")
+        for i, song in enumerate(recommendations[:3]):  # Print first 3
+            print(f"Rec {i+1}: {song.title} by {song.artist} (Cluster: {song.cluster})")
+
         # Add compatibility type to each recommendation
         compatible_keys = {
             k['id']: k['compatibility_type']
