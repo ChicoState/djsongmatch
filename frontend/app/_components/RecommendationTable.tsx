@@ -29,7 +29,7 @@ function getParameterValue(
   parameter: Parameter,
   searchParams: URLSearchParams,
 ): number | undefined {
-  const value = searchParams.get(parameter.valueOf());
+  const value = searchParams.get(parameter);
   if (value === null) {
     return undefined;
   }
@@ -48,12 +48,9 @@ export default function RecommendationTable() {
       const songIdNumber = Number.parseInt(songId!);
 
       /* Get params from search paramters */
-      const danceability = getParameterValue(
-        Parameter.Danceability,
-        searchParams,
-      );
-      const energy = getParameterValue(Parameter.Energy, searchParams);
-      const loudness = getParameterValue(Parameter.Loudness, searchParams);
+      const danceability = getParameterValue("danceability", searchParams);
+      const energy = getParameterValue("energy", searchParams);
+      const loudness = getParameterValue("loudness", searchParams);
 
       /* Get recommendations from Flask */
       return getSongRecommendations(songIdNumber, {
