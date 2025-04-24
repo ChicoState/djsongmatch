@@ -1,3 +1,5 @@
+import logging
+
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 # from backend.api.decorators import internal_only  # TODO - create decorators.py
@@ -59,6 +61,15 @@ def get_song_recommendations(song_id: int):
     end_year = request.args.get("end_year", default=10000, type=int)
     tempo_range = request.args.get("tempo_range", default=0, type=int)
     limit = request.args.get("limit", default=10, type=int)
+
+    # For debugging purposes, could be removed
+    for param in ["danceability_contrast", "energy_contrast", "loudness_contrast"]:
+        if request.args.get(param) is None:
+            logging.info(f"Did not find {param} in request.args")
+        else:
+            logging.info(
+                f"Found: {param} in request.args with value of: {request.args[param]}"
+            )
 
     if not isinstance(tempo_range, (int, float)):
         tempo_range = 5  # Default value
