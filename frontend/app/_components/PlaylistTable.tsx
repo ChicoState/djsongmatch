@@ -23,7 +23,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import TitleArtist from "./TitleArtist";
 import TrashConfirm from "./TrashConfirm";
 import { usePlaylist } from "@/lib/hooks";
@@ -91,6 +91,8 @@ export default function PlaylistTable() {
   /* Which songs are in the playlist */
   const { playlist, setPlaylist } = usePlaylist();
   const [showConfirm, setShowConfirm] = useState(false);
+  const TableContainerRef = useRef<HTMLDivElement>(null);
+  const prevPlaylistLengthRef = useRef(playlist.length);
 
   const removeSong = useCallback(
     (song: SongWithUuid) => {
@@ -118,6 +120,17 @@ export default function PlaylistTable() {
     [setPlaylist],
   );
 
+  /* Scroll to the bottom when a song is added (playlist length increases) */
+  useEffect(() => {
+    if (playlist.length > prevPlaylistLengthRef.current) {
+      TableContainerRef.current?.scrollTo(
+        0,
+        TableContainerRef.current?.scrollHeight,
+      );
+    }
+    prevPlaylistLengthRef.current = playlist.length;
+  }, [playlist]);
+
   return (
     <div
       className={cn(
@@ -133,7 +146,10 @@ export default function PlaylistTable() {
           items={playlist.map((song) => song.uuid)}
           strategy={verticalListSortingStrategy}
         >
-          <Table className="border border-border">
+          <Table
+            refTableContainer={TableContainerRef}
+            className="border border-border"
+          >
             <TableHeader className="relative">
               <TableRow className="sticky top-0 text-xl text-secondary-foreground bg-secondary hover:bg-secondary">
                 <TableHead className="font-bold"></TableHead>
