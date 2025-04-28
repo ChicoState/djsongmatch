@@ -11,21 +11,26 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import type { Song } from "@/db/schema";
-import { useDebounce } from "@/lib/hooks";
+import { useDebounce, useSelectedSong } from "@/lib/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
-import { useSelectedSong } from "@/lib/contexts/SelectedSongContext";
 
 function songToLabel(song: Song) {
   return `${song.artist} - ${song.title}`;
 }
 
-function SearchBarSection() {
+/**
+ */
+export function SearchBar({
+  startingInputValue,
+}: {
+  startingInputValue?: string;
+}) {
   /* Whether the search bar is focused or not */
   const [open, setOpen] = useState(false);
 
   /* What the user has typed in the search bar */
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(startingInputValue ?? "");
 
   /* What the user has selected from the search results */
   const { selectedSong: song, setSelectedSong: setSong } = useSelectedSong();
@@ -52,7 +57,7 @@ function SearchBarSection() {
     placeholderData: (previousData) => previousData,
 
     /* Only search database when user has typed something */
-    enabled: inputValue.trim().length > 0,
+    enabled: inputValue.trim().length > 0 && inputValue != startingInputValue,
   });
 
   useEffect(() => {
@@ -64,52 +69,64 @@ function SearchBarSection() {
   }, [inputValue]);
 
   const handleSelect = useCallback((song: Song) => {
+    setInputValue(songToLabel(song));
     setSong(song);
   }, []);
 
   return (
-    <div className="py-8 w-full max-w-4xl">
-      <div className="relative w-1/2">
-        <Command className="border border-border">
-          <CommandInput
-            onFocus={() => setOpen(true)}
-            onBlur={() => setOpen(false)}
-            onValueChange={setInputValue}
-            placeholder={"Search for a song!"}
-            value={inputValue}
-          />
+    <div className="relative w-full h-full">
+      <Command className="border border-border">
+        <CommandInput
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          onValueChange={setInputValue}
+          placeholder="Search for a song!"
+          value={inputValue}
+        />
 
-          {/* Only show the choices if the user has the input focused */}
-          {open && (
-            <CommandList
-              ref={CommandListRef}
-              className="absolute top-full w-full border bg-background text-foreground z-[50] border-border"
-            >
-              {/* Used to remove the "No results found" message when the user selects a song */}
-              {song && inputValue != songToLabel(song) && (
-                <CommandEmpty>No results found.</CommandEmpty>
-              )}
-              {songs.map((song: Song) => {
-                return (
-                  <CommandItem
-                    key={song.songId}
-                    value={songToLabel(song)}
-                    /* I have no idea why onSelect isn't
-                     * registering mouse clicks as selection.
-                     * Just use both :P */
-                    onSelect={() => handleSelect(song)}
-                    onMouseDown={() => handleSelect(song)}
-                  >
-                    {songToLabel(song)}
-                  </CommandItem>
-                );
-              })}
-            </CommandList>
-          )}
-        </Command>
-      </div>
+        {/* Only show the choices if the user has the input focused */}
+        {open && (
+          <CommandList
+            ref={CommandListRef}
+            className="absolute top-full w-full border bg-background text-foreground z-[50] border-border"
+          >
+            {/* Used to remove the "No results found" message when the user selects a song */}
+            {song && inputValue != songToLabel(song) && (
+              <CommandEmpty>No results found.</CommandEmpty>
+            )}
+            {songs.map((song: Song) => {
+              return (
+                <CommandItem
+                  key={song.songId}
+                  value={songToLabel(song)}
+                  /* I have no idea why onSelect isn't
+                   * registering mouse clicks as selection.
+                   * Just use both :P */
+                  onSelect={() => handleSelect(song)}
+                  onMouseDown={() => handleSelect(song)}
+                >
+                  {songToLabel(song)}
+                </CommandItem>
+              );
+            })}
+          </CommandList>
+        )}
+      </Command>
     </div>
   );
 }
 
-export default SearchBarSection;
+export function SearchBarSection() {
+  const { selectedSong } = useSelectedSong();
+  const startingInputValue = selectedSong
+    ? songToLabel(selectedSong)
+    : undefined;
+
+  return (
+    <div className="py-8 w-full max-w-4xl">
+      <div className="w-1/2">
+        <SearchBar startingInputValue={startingInputValue} />
+      </div>
+    </div>
+  );
+}

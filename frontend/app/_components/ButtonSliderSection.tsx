@@ -11,8 +11,8 @@ import {
 } from "@/components/ui/tooltip";
 import { CircleHelpIcon } from "lucide-react";
 import { useLocalStorage } from "@uidotdev/usehooks";
-import { useSelectedSong } from "@/lib/contexts/SelectedSongContext";
 import { useState } from "react";
+import { useSelectedSong } from "@/lib/hooks";
 
 /* All possible parameters for recommendation algorithm */
 export type Parameter = "Danceability" | "Energy" | "Loudness";
@@ -121,7 +121,7 @@ function SliderArea() {
   /**
    * SliderArea is a component that contains all of the Slider components on the main page
    */
-  const { selectedSong: selectedSong } = useSelectedSong();
+  const { selectedSong } = useSelectedSong();
 
   if (selectedSong == undefined) {
     return <></>;

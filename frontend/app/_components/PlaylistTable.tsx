@@ -26,7 +26,7 @@ import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import TitleArtist from "./TitleArtist";
 import TrashConfirm from "./TrashConfirm";
-import { useIsClient, useLocalStorage } from "@uidotdev/usehooks";
+import { usePlaylist } from "@/lib/hooks";
 
 function SortableSongRow({
   song,
@@ -89,10 +89,7 @@ function SortableSongRow({
 
 export default function PlaylistTable() {
   /* Which songs are in the playlist */
-  const [playlist, setPlaylist] = useLocalStorage<SongWithUuid[]>(
-    "playlist",
-    [],
-  );
+  const { playlist, setPlaylist } = usePlaylist();
   const [showConfirm, setShowConfirm] = useState(false);
 
   const removeSong = useCallback((song: SongWithUuid) => {

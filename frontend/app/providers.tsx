@@ -1,7 +1,6 @@
 "use client";
 
 import { ThemeProvider } from "@/components/theme-provider";
-import { SelectedSongProvider } from "@/lib/contexts/SelectedSongContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState } from "react";
 
@@ -39,7 +38,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         enableSystem
         disableTransitionOnChange
       >
-        <SelectedSongProvider>{children}</SelectedSongProvider>
+        {children}
       </ThemeProvider>
     </QueryClientProvider>
   );

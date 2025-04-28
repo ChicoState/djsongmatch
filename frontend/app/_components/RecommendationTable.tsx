@@ -13,21 +13,17 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
+import { cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
-import { useEffect } from "react";
-import { useSelectedSong } from "@/lib/contexts/SelectedSongContext";
-import { useLocalStorage } from "@uidotdev/usehooks";
+import { useCallback, useEffect } from "react";
+import { usePlaylist, useSelectedSong } from "@/lib/hooks";
 
 export default function RecommendationTable() {
   const { selectedSong } = useSelectedSong();
-  const [playlist, setPlaylist] = useLocalStorage<SongWithUuid[]>(
-    "playlist",
-    [],
-  );
+  const { playlist, setPlaylist } = usePlaylist();
 
   const { data: songs = [], refetch } = useQuery({
     queryKey: ["songRecommendations", selectedSong?.songId],
@@ -48,6 +44,10 @@ export default function RecommendationTable() {
     enabled: false,
   });
 
+  const handleGenerateButtonClicked = useCallback(() => {
+    refetch();
+  }, [refetch]);
+
   /* This is a hacky way to make the table update when the generate button is clicked.
    * The reason we need to do this is because the generate button is not part of the
    * table, so we can't use the table's onClick handler to update the table.
@@ -55,13 +55,15 @@ export default function RecommendationTable() {
    * Better solutions are welcome.
    */
   useEffect(() => {
-    window.addEventListener("generateButtonClicked", () => {
-      refetch();
-    });
+    window.addEventListener(
+      "generateButtonClicked",
+      handleGenerateButtonClicked,
+    );
     return () => {
-      window.removeEventListener("generateButtonClicked", () => {
-        refetch();
-      });
+      window.removeEventListener(
+        "generateButtonClicked",
+        handleGenerateButtonClicked,
+      );
     };
   });
 
