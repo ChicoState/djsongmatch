@@ -5,7 +5,7 @@ import { useLocalStorage } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 import { SongWithUuid } from "./utils";
 
-export function useDebounce(value: any, delay: number) {
+export function useDebounce<T>(value: T, delay: number) {
   /**
    * Hook that returns a debounced value
    * @param value - The value to be debounced

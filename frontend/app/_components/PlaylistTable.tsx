@@ -92,9 +92,12 @@ export default function PlaylistTable() {
   const { playlist, setPlaylist } = usePlaylist();
   const [showConfirm, setShowConfirm] = useState(false);
 
-  const removeSong = useCallback((song: SongWithUuid) => {
-    setPlaylist(playlist.filter((s) => s.uuid !== song.uuid));
-  }, []);
+  const removeSong = useCallback(
+    (song: SongWithUuid) => {
+      setPlaylist(playlist.filter((s) => s.uuid !== song.uuid));
+    },
+    [playlist, setPlaylist],
+  );
 
   /* Use useCallback to memoize the handleDragEnd function */
   const handleDragEnd = useCallback(
@@ -112,7 +115,7 @@ export default function PlaylistTable() {
         return arrayMove(songs, originalIdx, newIdx);
       });
     },
-    [playlist],
+    [setPlaylist],
   );
 
   return (

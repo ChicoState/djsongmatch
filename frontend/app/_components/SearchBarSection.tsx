@@ -68,10 +68,13 @@ export function SearchBar({
     }
   }, [inputValue]);
 
-  const handleSelect = useCallback((song: Song) => {
-    setInputValue(songToLabel(song));
-    setSong(song);
-  }, []);
+  const handleSelect = useCallback(
+    (song: Song) => {
+      setInputValue(songToLabel(song));
+      setSong(song);
+    },
+    [setSong, setInputValue],
+  );
 
   return (
     <div className="relative w-full h-full">
