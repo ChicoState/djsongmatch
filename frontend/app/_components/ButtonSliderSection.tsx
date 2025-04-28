@@ -9,13 +9,13 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import type { Song } from "@/db/schema";
 import { CircleHelpIcon } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useLocalStorage } from "@uidotdev/usehooks";
+import { useSelectedSong } from "@/lib/contexts/SelectedSongContext";
+import { useState } from "react";
 
 /* All possible parameters for recommendation algorithm */
-export type Parameter = "danceability" | "energy" | "loudness";
+export type Parameter = "Danceability" | "Energy" | "Loudness";
 
 function SliderMarker({
   label,
@@ -62,72 +62,32 @@ function SongSlider({
 }: {
   parameter: Parameter;
   label?: string;
-  defaultValue: number[];
-  markValue: number | null;
+  defaultValue: number;
+  markValue: number | undefined;
   tooltip?: string | null;
 }) {
-  /**
-   * SongSlider component allows users to adjust a value using a slider,
-   * displaying the value with the given label. The value is saved to
-   * localStorage, so if the user leaves and comes back, their value will persist.
-   *
-   * The localStorage key is `slider.<sliderLabel>`
-   *
-   * @param parameter - The parameter for the slider (e.g. "Energy").
-   * @param label - The label to display next to the slider (defaults to parameter if not provided).
-   * @param defaultValue - The initial value of the slider if no value is saved in localStorage.
-   * @param markValue - A value to mark a specific point on the slider (passed to SliderMarker).
-   * @param tooltip - A string to display when hovering over the question mark (optional)
-   */
-  const [value, setValue] = useState([0]);
-
-  const pathname = usePathname();
-  const router = useRouter();
-  const params = useSearchParams();
-
   /* If label is null or undefined, use the parameter as the label */
-  label = label === null || label === undefined ? parameter : label;
+  label = label ? label : parameter;
 
-  /*
-   * The fn inside `useEffect()` runs every time the component is mounted.
-   * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
-   */
-  useEffect(() => {
-    const storageValue = window.localStorage.getItem(`slider.${parameter}`);
-    if (storageValue === null) {
-      console.log(
-        `localStorage slider.${parameter} was null. Using default slider value: ${defaultValue}`,
-      );
-      setValue(defaultValue);
-    } else {
-      const storageValueFloat = Number.parseFloat(storageValue);
+  /* localStorage key is `slider.<sliderLabel>` */
+  const [sliderValue, setSliderValue] = useLocalStorage(
+    `slider.${parameter}`,
+    defaultValue.toString(),
+  );
 
-      if (isNaN(storageValueFloat)) {
-        console.log(
-          `ERROR: Could not parse slider.${parameter} into a float! Using default value: ${defaultValue}`,
-        );
-        setValue(defaultValue);
-      } else {
-        setValue([Number.parseFloat(storageValue)]);
-      }
-    }
-  }, []);
+  const [value, setValue] = useState(Number.parseFloat(sliderValue));
 
   function handleValueCommit(newValue: number[]) {
-    /* localStorage key is `slider.<sliderLabel>` */
-    window.localStorage.setItem(`slider.${parameter}`, newValue[0].toString());
-    const newParams = new URLSearchParams(params.toString());
-    newParams.set(parameter, newValue[0].toString());
-    router.push(pathname + "?" + newParams.toString());
     /* newValue[0] assumes we only have one Thumb on the Slider */
+    setSliderValue(newValue[0].toString());
   }
 
   return (
     <div className="flex flex-col gap-2">
       <SliderMarker label="Input Song" markValue={markValue} />
       <Slider
-        value={value}
-        onValueChange={setValue}
+        value={[value]}
+        onValueChange={(value) => setValue(value[0])}
         onValueCommit={handleValueCommit}
         min={0}
         max={1}
@@ -157,41 +117,44 @@ function SongSlider({
   );
 }
 
-function SliderArea({ inputSong }: { inputSong: Song | null }) {
+function SliderArea() {
   /**
    * SliderArea is a component that contains all of the Slider components on the main page
    */
+  const { selectedSong: selectedSong } = useSelectedSong();
+
+  if (selectedSong == undefined) {
+    return <></>;
+  }
 
   return (
     <section className="flex flex-col gap-8 grow">
       <SongSlider
-        parameter="energy"
-        defaultValue={[0.5]}
-        markValue={inputSong && inputSong.energy ? inputSong.energy : null}
+        parameter="Energy"
+        defaultValue={0.5}
+        markValue={selectedSong.energy}
         tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
       />
       <SongSlider
-        parameter="loudness"
-        defaultValue={[0.42]}
-        markValue={inputSong && inputSong.loudness ? inputSong.loudness : null}
+        parameter="Loudness"
+        defaultValue={0.42}
+        markValue={selectedSong.loudness}
         tooltip={null}
       />
       <SongSlider
-        parameter="danceability"
-        defaultValue={[0.69]}
-        markValue={
-          inputSong && inputSong.danceability ? inputSong.danceability : null
-        }
+        parameter="Danceability"
+        defaultValue={0.69}
+        markValue={selectedSong.danceability}
         tooltip="short"
       />
     </section>
   );
 }
 
+/**
+ * ButtonArea is a component that contains the two buttons on the main page
+ */
 function ButtonArea() {
-  /**
-   * ButtonArea is a component that contains the two buttons on the main page
-   */
   return (
     <section className="flex flex-col gap-4 justify-center items-center min-w-[150px]">
       <Button variant={"outline"} className="w-full">
@@ -200,6 +163,9 @@ function ButtonArea() {
       <Button
         className="w-full cursor-pointer"
         onMouseDown={() =>
+          /* Hacky way to trigger the refetch.
+           * Used in the RecommendationTable component.
+           */
           window.dispatchEvent(new Event("generateButtonClicked"))
         }
       >
@@ -209,14 +175,11 @@ function ButtonArea() {
   );
 }
 
-function ButtonSliderSection({ inputSong }: { inputSong: Song | null }) {
-  /**
-   * ButtonSliderSection is a component that contains the SliderArea and ButtonArea components
-   */
+function ButtonSliderSection() {
   return (
     <section className="pt-8 w-full max-w-4xl">
       <div className="flex flex-col gap-6 p-8 rounded-lg border md:flex-row border-border shadow-xs">
-        <SliderArea inputSong={inputSong} />
+        <SliderArea />
         <ButtonArea />
       </div>
     </section>

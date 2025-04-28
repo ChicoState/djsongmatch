@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -11,56 +13,36 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { type Song } from "@/db/schema";
 import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
-import { Parameter } from "./ButtonSliderSection";
 import { useEffect } from "react";
-
-function getParameterValue(
-  /**
-   * Helper function to get the value of a parameter from the searchParams
-   * and then parse it into a float. Returns null if the parameter is not present.
-   */
-  parameter: Parameter,
-  searchParams: URLSearchParams,
-): number | undefined {
-  const value = searchParams.get(parameter);
-  if (value === null) {
-    return undefined;
-  }
-  return Number.parseFloat(value);
-}
+import { useSelectedSong } from "@/lib/contexts/SelectedSongContext";
+import { useLocalStorage } from "@uidotdev/usehooks";
 
 export default function RecommendationTable() {
-  /* searchParams is like `http://localhost:3000/?songId=1` */
-  const searchParams = useSearchParams();
-  const songId = searchParams.get("songId");
+  const { selectedSong } = useSelectedSong();
+  const [playlist, setPlaylist] = useLocalStorage<SongWithUuid[]>(
+    "playlist",
+    [],
+  );
 
   const { data: songs = [], refetch } = useQuery({
-    queryKey: ["songRecommendations", songId],
+    queryKey: ["songRecommendations", selectedSong?.songId],
     queryFn: () => {
-      if (songId === null) {
+      if (selectedSong === undefined) {
         /* TODO: Visually represent that the songId is missing */
         console.log("WARNING: Generate button clicked without songId");
         return;
       }
-      const songIdNumber = Number.parseInt(songId);
-
-      /* Get params from search paramters */
-      const danceability = getParameterValue("danceability", searchParams);
-      const energy = getParameterValue("energy", searchParams);
-      const loudness = getParameterValue("loudness", searchParams);
 
       /* Get recommendations from Flask */
-      return getSongRecommendations(songIdNumber, {
-        danceability_contrast: danceability,
-        energy_contrast: energy,
-        loudness_contrast: loudness,
+      return getSongRecommendations(selectedSong.songId, {
+        danceability_contrast: selectedSong.danceability,
+        energy_contrast: selectedSong.energy,
+        loudness_contrast: selectedSong.loudness,
       });
     },
     enabled: false,
@@ -82,25 +64,6 @@ export default function RecommendationTable() {
       });
     };
   });
-
-  const addSong = (song: Song) => {
-    /* Get the previous state of the playlist from localStorage */
-    const songsStr = window.localStorage.getItem("playlist");
-
-    /* localStorage returns a string, so we need to parse it into a JSON array */
-    const songs: SongWithUuid[] = songsStr !== null ? JSON.parse(songsStr) : [];
-
-    /* We need to generate a unique UUID for the song, so we could add the same song
-     * with the same songId to the playlist multiple times, but could still tell them apart */
-    songs.push(generateSongUuid(song));
-
-    /* Update localStorage with the new playlist */
-    window.localStorage.setItem("playlist", JSON.stringify(songs));
-
-    /* Send an event that the <PlaylistTable /> component can listen for
-     * that indicates that a song was added to the playlist */
-    window.dispatchEvent(new Event("addSongPlaylist"));
-  };
 
   return (
     <div
@@ -140,7 +103,9 @@ export default function RecommendationTable() {
                   <Tooltip disableHoverableContent={true}>
                     <TooltipTrigger>
                       <CirclePlusIcon
-                        onMouseDown={() => addSong(song)}
+                        onMouseDown={() =>
+                          setPlaylist([...playlist, generateSongUuid(song)])
+                        }
                         className="duration-200 cursor-pointer hover:scale-110 text-chart-2 hover:text-chart-2/80"
                       />
                     </TooltipTrigger>
