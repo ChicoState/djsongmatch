@@ -11,16 +11,29 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { camelotKeys, type Song } from "@/db/schema";
+import { type Song } from "@/db/schema";
 import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
+import { Parameter } from "./ButtonSliderSection";
+import { useEffect } from "react";
 
-interface RecommendationTableProps {
-  setPlaylist: (songs: SongWithUuid[]) => void;
+function getParameterValue(
+  /**
+   * Helper function to get the value of a parameter from the searchParams
+   * and then parse it into a float. Returns null if the parameter is not present.
+   */
+  parameter: Parameter,
+  searchParams: URLSearchParams,
+): number | undefined {
+  const value = searchParams.get(parameter);
+  if (value === null) {
+    return undefined;
+  }
+  return Number.parseFloat(value);
 }
 
 export default function RecommendationTable() {
@@ -28,12 +41,46 @@ export default function RecommendationTable() {
   const searchParams = useSearchParams();
   const songId = searchParams.get("songId");
 
-  const { data: songs = []} = useQuery({
+  const { data: songs = [], refetch } = useQuery({
     queryKey: ["songRecommendations", songId],
     queryFn: () => {
-      return getSongRecommendations(Number.parseInt(songId!));
+      if (songId === null) {
+        /* TODO: Visually represent that the songId is missing */
+        console.log("WARNING: Generate button clicked without songId");
+        return;
+      }
+      const songIdNumber = Number.parseInt(songId);
+
+      /* Get params from search paramters */
+      const danceability = getParameterValue("danceability", searchParams);
+      const energy = getParameterValue("energy", searchParams);
+      const loudness = getParameterValue("loudness", searchParams);
+
+      /* Get recommendations from Flask */
+      return getSongRecommendations(songIdNumber, {
+        danceability_contrast: danceability,
+        energy_contrast: energy,
+        loudness_contrast: loudness,
+      });
     },
-    enabled: songId !== null,
+    enabled: false,
+  });
+
+  /* This is a hacky way to make the table update when the generate button is clicked.
+   * The reason we need to do this is because the generate button is not part of the
+   * table, so we can't use the table's onClick handler to update the table.
+   * Instead, we use a window event to trigger the refetch.
+   * Better solutions are welcome.
+   */
+  useEffect(() => {
+    window.addEventListener("generateButtonClicked", () => {
+      refetch();
+    });
+    return () => {
+      window.removeEventListener("generateButtonClicked", () => {
+        refetch();
+      });
+    };
   });
 
   const addSong = (song: Song) => {

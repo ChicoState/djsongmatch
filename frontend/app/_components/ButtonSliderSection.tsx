@@ -14,25 +14,16 @@ import { CircleHelpIcon } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-interface SliderMarkerProps {
+/* All possible parameters for recommendation algorithm */
+export type Parameter = "danceability" | "energy" | "loudness";
+
+function SliderMarker({
+  label,
+  markValue,
+}: {
   label: string;
   markValue?: number | null;
-}
-
-interface SongSliderProps {
-  /**
-   * @param defaultValue - The default value of the slider
-   * @param label - The label above the slider
-   * @param markValue - The value on the slider (from 0 to 1) to add a marker like "Input Song"
-   * @param tooltip - The message to display when hovering over the tooltip
-   */
-  defaultValue: number[];
-  label: string;
-  markValue: number | null;
-  tooltip?: string | null;
-}
-
-function SliderMarker({ label, markValue }: SliderMarkerProps) {
+}) {
   /**
    * SliderMarker component displays a marker on the slider, indicating a specific point.
    * The marker is styled to match the slider's thumb.
@@ -63,11 +54,18 @@ function SliderMarker({ label, markValue }: SliderMarkerProps) {
 }
 
 function SongSlider({
+  parameter,
   label,
   defaultValue,
   markValue,
   tooltip = null,
-}: SongSliderProps) {
+}: {
+  parameter: Parameter;
+  label?: string;
+  defaultValue: number[];
+  markValue: number | null;
+  tooltip?: string | null;
+}) {
   /**
    * SongSlider component allows users to adjust a value using a slider,
    * displaying the value with the given label. The value is saved to
@@ -75,7 +73,8 @@ function SongSlider({
    *
    * The localStorage key is `slider.<sliderLabel>`
    *
-   * @param label - The label to display next to the slider (e.g. "Energy").
+   * @param parameter - The parameter for the slider (e.g. "Energy").
+   * @param label - The label to display next to the slider (defaults to parameter if not provided).
    * @param defaultValue - The initial value of the slider if no value is saved in localStorage.
    * @param markValue - A value to mark a specific point on the slider (passed to SliderMarker).
    * @param tooltip - A string to display when hovering over the question mark (optional)
@@ -86,15 +85,18 @@ function SongSlider({
   const router = useRouter();
   const params = useSearchParams();
 
+  /* If label is null or undefined, use the parameter as the label */
+  label = label === null || label === undefined ? parameter : label;
+
   /*
    * The fn inside `useEffect()` runs every time the component is mounted.
    * Passing `[]` as second arg ensures the fn only runs on mount and not on re-render.
    */
   useEffect(() => {
-    const storageValue = window.localStorage.getItem(`slider.${label}`);
+    const storageValue = window.localStorage.getItem(`slider.${parameter}`);
     if (storageValue === null) {
       console.log(
-        `localStorage slider.${label} was null. Using default slider value: ${defaultValue}`,
+        `localStorage slider.${parameter} was null. Using default slider value: ${defaultValue}`,
       );
       setValue(defaultValue);
     } else {
@@ -102,7 +104,7 @@ function SongSlider({
 
       if (isNaN(storageValueFloat)) {
         console.log(
-          `ERROR: Could not parse slider.${label} into a float! Using default value: ${defaultValue}`,
+          `ERROR: Could not parse slider.${parameter} into a float! Using default value: ${defaultValue}`,
         );
         setValue(defaultValue);
       } else {
@@ -113,9 +115,9 @@ function SongSlider({
 
   function handleValueCommit(newValue: number[]) {
     /* localStorage key is `slider.<sliderLabel>` */
-    window.localStorage.setItem(`slider.${label}`, newValue[0].toString());
+    window.localStorage.setItem(`slider.${parameter}`, newValue[0].toString());
     const newParams = new URLSearchParams(params.toString());
-    newParams.set(label, newValue[0].toString());
+    newParams.set(parameter, newValue[0].toString());
     router.push(pathname + "?" + newParams.toString());
     /* newValue[0] assumes we only have one Thumb on the Slider */
   }
@@ -163,19 +165,19 @@ function SliderArea({ inputSong }: { inputSong: Song | null }) {
   return (
     <section className="flex flex-col gap-8 grow">
       <SongSlider
-        label="Energy"
+        parameter="energy"
         defaultValue={[0.5]}
         markValue={inputSong && inputSong.energy ? inputSong.energy : null}
         tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
       />
       <SongSlider
-        label="Loudness"
+        parameter="loudness"
         defaultValue={[0.42]}
         markValue={inputSong && inputSong.loudness ? inputSong.loudness : null}
         tooltip={null}
       />
       <SongSlider
-        label="Danceability"
+        parameter="danceability"
         defaultValue={[0.69]}
         markValue={
           inputSong && inputSong.danceability ? inputSong.danceability : null
@@ -195,7 +197,14 @@ function ButtonArea() {
       <Button variant={"outline"} className="w-full">
         Advanced Filters
       </Button>
-      <Button className="w-full">Generate</Button>
+      <Button
+        className="w-full cursor-pointer"
+        onMouseDown={() =>
+          window.dispatchEvent(new Event("generateButtonClicked"))
+        }
+      >
+        Generate
+      </Button>
     </section>
   );
 }
