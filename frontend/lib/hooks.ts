@@ -1,6 +1,9 @@
 "use client";
 
+import { Song } from "@/db/schema";
+import { useLocalStorage } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
+import { SongWithUuid } from "./utils";
 
 export function useDebounce(value: any, delay: number) {
   /**
@@ -20,4 +23,20 @@ export function useDebounce(value: any, delay: number) {
     };
   }, [value, delay]);
   return debounceValue;
+}
+
+export function useSelectedSong() {
+  const [selectedSong, setSelectedSong] = useLocalStorage<Song | undefined>(
+    "selectedSong",
+    undefined,
+  );
+  return { selectedSong, setSelectedSong };
+}
+
+export function usePlaylist() {
+  const [playlist, setPlaylist] = useLocalStorage<SongWithUuid[]>(
+    "playlist",
+    [],
+  );
+  return { playlist, setPlaylist };
 }
