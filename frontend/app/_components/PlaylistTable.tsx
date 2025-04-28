@@ -97,20 +97,23 @@ export default function PlaylistTable() {
   }, []);
 
   /* Use useCallback to memoize the handleDragEnd function */
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    /**
-     * handleDragEnd() is called when a song row is dragged to a new position in the playlist.
-     * It updates the playlist in React with the new order.
-     */
-    const { active, over } = event;
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      /**
+       * handleDragEnd() is called when a song row is dragged to a new position in the playlist.
+       * It updates the playlist in React with the new order.
+       */
+      const { active, over } = event;
 
-    if (over === null || active.id === over.id) return;
-    setPlaylist((songs) => {
-      const originalIdx = songs.findIndex((s) => s.uuid === active.id);
-      const newIdx = songs.findIndex((s) => s.uuid === over.id);
-      return arrayMove(songs, originalIdx, newIdx);
-    });
-  }, []);
+      if (over === null || active.id === over.id) return;
+      setPlaylist((songs) => {
+        const originalIdx = songs.findIndex((s) => s.uuid === active.id);
+        const newIdx = songs.findIndex((s) => s.uuid === over.id);
+        return arrayMove(songs, originalIdx, newIdx);
+      });
+    },
+    [playlist],
+  );
 
   return (
     <div
