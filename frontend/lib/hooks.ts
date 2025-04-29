@@ -4,6 +4,10 @@ import { Song } from "@/db/schema";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 import { SongWithUuid } from "./utils";
+import {
+  Parameter,
+  ParameterValues,
+} from "@/app/_components/ButtonSliderSection";
 
 export function useDebounce<T>(value: T, delay: number) {
   /**
@@ -39,4 +43,8 @@ export function usePlaylist() {
     [],
   );
   return { playlist, setPlaylist };
+}
+
+export function useParameter(parameter: Parameter) {
+  return useLocalStorage<number | undefined>(`slider.${parameter}`, undefined);
 }
