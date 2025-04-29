@@ -19,11 +19,15 @@ import { CirclePlusIcon } from "lucide-react";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
 import { useCallback, useEffect } from "react";
-import { usePlaylist, useSelectedSong } from "@/lib/hooks";
+import { usePlaylist, useSelectedSong, useParameter } from "@/lib/hooks";
 
 export default function RecommendationTable() {
   const { selectedSong } = useSelectedSong();
   const { playlist, setPlaylist } = usePlaylist();
+
+  const [danceability] = useParameter("Danceability");
+  const [energy] = useParameter("Energy");
+  const [loudness] = useParameter("Loudness");
 
   const { data: songs = [], refetch } = useQuery({
     queryKey: ["songRecommendations", selectedSong?.songId],
@@ -34,11 +38,13 @@ export default function RecommendationTable() {
         return;
       }
 
+      console.log("Fetching recommendations for songId", selectedSong.songId);
+
       /* Get recommendations from Flask */
       return getSongRecommendations(selectedSong.songId, {
-        danceability_contrast: selectedSong.danceability,
-        energy_contrast: selectedSong.energy,
-        loudness_contrast: selectedSong.loudness,
+        danceability_contrast: danceability,
+        energy_contrast: energy,
+        loudness_contrast: loudness,
       });
     },
     enabled: false,

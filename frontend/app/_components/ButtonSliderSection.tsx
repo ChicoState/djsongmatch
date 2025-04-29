@@ -10,9 +10,8 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { CircleHelpIcon } from "lucide-react";
-import { useLocalStorage } from "@uidotdev/usehooks";
 import { useState } from "react";
-import { useSelectedSong } from "@/lib/hooks";
+import { useSelectedSong, useParameter } from "@/lib/hooks";
 
 /* All possible parameters for recommendation algorithm */
 export type Parameter = "Danceability" | "Energy" | "Loudness";
@@ -70,16 +69,13 @@ function SongSlider({
   label = label ? label : parameter;
 
   /* localStorage key is `slider.<sliderLabel>` */
-  const [sliderValue, setSliderValue] = useLocalStorage(
-    `slider.${parameter}`,
-    defaultValue.toString(),
-  );
+  const [sliderValue, setSliderValue] = useParameter(parameter);
 
-  const [value, setValue] = useState(Number.parseFloat(sliderValue));
+  const [value, setValue] = useState(sliderValue ?? defaultValue);
 
   function handleValueCommit(newValue: number[]) {
     /* newValue[0] assumes we only have one Thumb on the Slider */
-    setSliderValue(newValue[0].toString());
+    setSliderValue(newValue[0]);
   }
 
   return (
