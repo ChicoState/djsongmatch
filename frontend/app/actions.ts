@@ -13,9 +13,9 @@ export async function getSong(songId: number): Promise<Song | undefined> {
 }
 
 interface FlaskParams {
-  danceability_contrast?: number;
-  energy_contrast?: number;
-  loudness_contrast?: number;
+  danceability?: number;
+  energy?: number;
+  loudness?: number;
   start_year?: number;
   end_year?: number;
   tempo_range?: number;

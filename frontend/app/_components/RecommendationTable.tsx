@@ -42,9 +42,9 @@ export default function RecommendationTable() {
 
       /* Get recommendations from Flask */
       return getSongRecommendations(selectedSong.songId, {
-        danceability_contrast: danceability,
-        energy_contrast: energy,
-        loudness_contrast: loudness,
+        danceability: danceability,
+        energy: energy,
+        loudness: loudness,
       });
     },
     enabled: false,

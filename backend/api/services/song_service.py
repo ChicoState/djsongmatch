@@ -21,10 +21,10 @@ class SongService:
 
     @staticmethod
     def get_cluster_for_input(
-        base_features: dict,
-        danceability_contrast: float = 0.0,
-        energy_contrast: float = 0.0,
-        loudness_contrast: float = 0.0,
+        base_song_id: int,
+        danceability: float,
+        energy: float,
+        loudness: float,
     ) -> int:
         """
         Adjust the base features using contrast adjustments and predict the cluster
@@ -54,10 +54,18 @@ class SongService:
 
         if kmeans_model is None:
             raise ValueError("Clustering model not loaded.")
+        
+        base_song = Song.query.get(base_song_id)
+
         adjusted_features = [
-            base_features["danceability"] + danceability_contrast,
-            base_features["energy"] + energy_contrast,
-            base_features["loudness"] + loudness_contrast,
+            danceability,
+            energy,
+            loudness,
+            base_song.speechiness,
+            base_song.acousticness,
+            base_song.instrumentalness,
+            base_song.liveness,
+            base_song.valence
         ]
         cluster = kmeans_model.predict([adjusted_features])[0]
         return int(cluster)
@@ -65,13 +73,13 @@ class SongService:
     @staticmethod
     def get_recommendations(
         base_song_id: int,
-        danceability_contrast: float = 0.0,
-        energy_contrast: float = 0.0,
-        loudness_contrast: float = 0.0,
+        danceability: float,
+        energy: float,
+        loudness: float,
         start_year: int = 0,
         end_year: int = 10000,
-        tempo_range: int = 5,
-        limit: int = 10,
+        tempo_range: int = 20,
+        limit: int = 100,
     ) -> List[Song]:
         """
         Get recommended songs with:
@@ -87,9 +95,9 @@ class SongService:
 
         # Determine cluster:
         if (
-            danceability_contrast == 0.0
-            and energy_contrast == 0.0
-            and loudness_contrast == 0.0
+            danceability == base_song.danceability
+            and energy == base_song.energy
+            and loudness == base_song.loudness
         ):
             # Use the stored cluster if available
             cluster = base_song.cluster
@@ -98,30 +106,48 @@ class SongService:
                     "Base song has no cluster assigned. Run clustering first."
                 )
         else:
-            base_features = {
-                "danceability": base_song.danceability,
-                "energy": base_song.energy,
-                "loudness": base_song.loudness,
-            }
             cluster = SongService.get_cluster_for_input(
-                base_features, danceability_contrast, energy_contrast, loudness_contrast
+                base_song_id, danceability, energy, loudness
             )
+
+        print(f"Cluster: {cluster}")
+
 
         # Get compatible key IDs
         compatible_keys = CamelotKeysService.get_compatible_keys(
             base_song.camelot_key_id
         )
         compatible_key_ids = [key.id for key in compatible_keys]
+        print(f"compatible_key_ids: {compatible_key_ids}")
+        print(f"base song tempo: {base_song.tempo}, tempo range: {tempo_range}, low: {base_song.tempo - tempo_range}, high: {base_song.tempo + tempo_range}")
 
         return (
             Song.query.filter(
                 Song.cluster == cluster,
                 Song.camelot_key_id.in_(compatible_key_ids),
                 Song.tempo.between(
-                    base_song.tempo - tempo_range, base_song.tempo + tempo_range
+                    0,200
+                ),
+                Song.tempo.between(
+                    (base_song.tempo - tempo_range), (base_song.tempo + tempo_range)
                 ),
                 Song.year.between(start_year, end_year),
                 Song.song_id != base_song_id,
+            )
+            .order_by(Song.popularity.desc())
+            # .limit(limit)
+            .all()
+        )
+
+        return (
+            Song.query.filter(
+                Song.cluster == cluster,
+                Song.camelot_key_id.in_(compatible_key_ids),
+                # Song.tempo.between(
+                #     base_song.tempo - tempo_range, base_song.tempo + tempo_range
+                # ),
+                # Song.year.between(start_year, end_year),
+                # Song.song_id != base_song_id,
             )
             .order_by(Song.popularity.desc())
             .limit(limit)
