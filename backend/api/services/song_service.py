@@ -1,6 +1,7 @@
 # backend/api/services/song_service.py
 from typing import List
 import pickle
+import os
 
 from backend.api.database.models import Song
 from backend.api.services.camelot_keys_service import CamelotKeysService
@@ -35,7 +36,9 @@ class SongService:
         """
 
         # Load the pre-trained clustering model. Make sure cluster.py has been run and the model file exists.
-        MODEL_FILENAME = "kmeans_model.pkl"
+        SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))  # Get the directory of the current script
+        MODEL_FILENAME = os.path.join(SCRIPT_DIR, "../assets/kmeans_model.pkl")  # Adjust relative path
+
         try:
             with open(MODEL_FILENAME, "rb") as f:
                 kmeans_model = pickle.load(f)
