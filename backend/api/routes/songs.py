@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify
+import logging
+
+from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
 # from backend.api.decorators import internal_only  # TODO - create decorators.py
 from backend.api.database.models import Song
@@ -49,15 +51,52 @@ def get_song(song_id: int):
 
 @songs_bp.route('/<int:song_id>/recommendations', methods=['GET'])
 def get_song_recommendations(song_id: int):
-    """Get recommended songs with compatible keys and similar BPM"""
+    """Get recommended songs based on clustering with compatible keys and similar BPM"""
+
+    # Get contrast adjustments from query parameters (default is 0.0)
+    danceability = request.args.get("danceability", type=float)
+    energy = request.args.get("energy", type=float)
+    loudness = request.args.get("loudness", type=float)
+    start_year = request.args.get("start_year", default=0, type=int)
+    end_year = request.args.get("end_year", default=10000, type=int)
+    tempo_range = request.args.get("tempo_range", type=int)
+    limit = request.args.get("limit", default=50, type=int)
+
+    # For debugging purposes, could be removed
+    for param in ["danceability", "energy", "loudness"]:
+        if request.args.get(param) is None:
+            logging.info(f"Did not find {param} in request.args")
+        else:
+            logging.info(
+                f"Found: {param} in request.args with value of: {request.args[param]}"
+            )
+
+    if not isinstance(tempo_range, (int, float)):
+        tempo_range = 20  # Default value
+        print(f"Warning: Invalid tempo_range, using default {tempo_range}")
+
     try:
         base_song = SongService.get_song(song_id)
         if not base_song:
             return jsonify({'error': 'Base song not found'}), 404
-
-        # Get recommendations (already filtered by compatible keys and tempo)
-        recommendations = SongService.get_recommendations(song_id)
         
+        if not isinstance(base_song.tempo, (int, float)):
+            raise ValueError("Base song tempo must be a number")
+        
+        recommendations = SongService.get_recommendations(
+            base_song_id=song_id,
+            danceability=danceability,
+            energy=energy,
+            loudness=loudness,
+            start_year=start_year,
+            end_year=end_year,
+            tempo_range=tempo_range,
+            limit=limit
+        )
+        print(f"Found {len(recommendations)} recommendations for song {song_id}")
+        for i, song in enumerate(recommendations[:3]):  # Print first 3
+            print(f"Rec {i+1}: {song_id} {song.title} by {song.artist} (Cluster: {song.cluster})")
+
         # Add compatibility type to each recommendation
         compatible_keys = {
             k['id']: k['compatibility_type']
