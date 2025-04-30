@@ -16,6 +16,11 @@ interface FlaskParams {
   danceability?: number;
   energy?: number;
   loudness?: number;
+  speechiness?: number;
+  acousticness?: number;
+  instrumentalness?: number;
+  liveness?: number;
+  valence?: number;
   start_year?: number;
   end_year?: number;
   tempo_range?: number;
