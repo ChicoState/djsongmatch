@@ -1,0 +1,37 @@
+name: Deploy to Windows Home Server
+
+on:
+  push:
+    branches:
+      - main
+      - gha-deploy-to-home-server
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/liatrio_exercise_docker:latest .
+
+      - name: Push Docker image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/liatrio_exercise_docker:latest
+
+      - name: Deploy to Windows 11 server via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.WINDOWS_PASSWORD }}
+          port: 22
+          script: |
+            powershell -Command "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/liatrio_exercise_docker:latest"
+            powershell -Command "docker stop app || Write-Output 'No container to stop'"
+            powershell -Command "docker rm app || Write-Output 'No container to remove'"
+            powershell -Command "docker run -d -p 80:80 --name app ${{ secrets.DOCKERHUB_USERNAME }}/liatrio_exercise_docker:latest"
