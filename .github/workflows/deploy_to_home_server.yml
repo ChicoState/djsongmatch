@@ -1,4 +1,4 @@
-name: Build, Push, and Deploy DJ Song Match
+name: Deploy DJ Song Match to Home Server
 
 on:
   push:
@@ -7,24 +7,7 @@ on:
       - gha-deploy-to-home-server
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-      - name: Build images with Docker Compose
-        run: docker compose -f ./docker-compose.yml build
-
-      - name: Push images to Docker Hub
-        run: docker compose -f ./docker-compose.yml push
-
   deploy:
-    needs: build-and-push
     runs-on: ubuntu-latest
 
     steps:
@@ -38,6 +21,5 @@ jobs:
           script: |
             cd C:\Users\Madi\djsongmatch
             git pull origin main
-            docker compose pull
             docker compose down
             docker compose up -d
