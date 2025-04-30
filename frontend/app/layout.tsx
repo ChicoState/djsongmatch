@@ -6,7 +6,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-background">
+      <body className="bg-background h-dvh w-dvw">
         <Providers>
           <TopNav />
           {children}
