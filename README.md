@@ -62,9 +62,36 @@ docker run -p 5001:5001 flask-backend
 Note: Building the containers may take a while. They don't always need to rebuilt, only in specific scenarios which include: modifying Dockerfile, changing dependencies in package.json or package-lock.json, and modifying drizzle.config.ts. Also, if wanting to work on another branch, checkout the branch and then rebuild the container(s).
 
 # Backend Scripts
-If you have not created a virtual environment (venv) for this project, create one at the root level, then activate the venv and install requirements.txt.
 
-To run backend scripts, make sure the venv is activated. Then run script of choice from the root level as a module using the -m tag. Example:  
+## Setting Up a Virtual Environment
+A virtual environment (venv) keeps project dependencies isolated. If you haven't already, create one at the root level:
+
+```bash
+python3 -m venv venv
 ```
-bash python3 -m backend.scripts.run_seed
+
+Activate your virtual environment:
+```bash
+# For macOS/Linux
+source venv/bin/activate
+
+# For Windows
+venv\Scripts\activate
+```
+
+After activating, install the requirements (only needed when first creating the environment or when dependencies change):
+```bash
+pip install -r backend/requirements.txt
+```
+
+## Running Scripts
+Make sure the virtual environment is activated before running backend scripts. Run scripts from the root level using the -m flag, for example:  
+```bash
+python3 -m backend.scripts.pre_process_data
+```
+
+## Deactivating the virtual environment
+When finished, deactivate the virtual environment:
+```bash
+deactivate
 ```
