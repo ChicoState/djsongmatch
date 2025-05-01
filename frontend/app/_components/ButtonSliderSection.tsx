@@ -9,22 +9,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CircleHelpIcon } from "lucide-react";
-import { useState } from "react";
-import { useSelectedSong, useParameter } from "@/lib/hooks";
+import { CircleHelpIcon, LockIcon, LockOpenIcon } from "lucide-react";
+import { useSelectedSong, useParameter, Parameter } from "@/lib/hooks";
 import AdvancedFiltersButton from "./AdvancedFilters";
 import { toTitleCase } from "@/lib/utils";
-
-/* All possible parameters for recommendation algorithm */
-export type Parameter =
-  | "danceability"
-  | "energy"
-  | "loudness"
-  | "speechiness"
-  | "acousticness"
-  | "instrumentalness"
-  | "liveness"
-  | "valence";
 
 function SliderMarker({
   label,
