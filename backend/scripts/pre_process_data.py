@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from pathlib import Path
 
@@ -36,21 +35,6 @@ def uniform_quantile_scale(df):
             df_rank_q[feature] = df_rank_q[feature].rank(pct=True)
 
     return df_rank_q
-
-
-def normalize_features(df):
-    ''' 
-    Function to normalize features ['Danceability', 'Energy', 'Loudness',
-    'Speechiness', 'Acousticness', 'Instrumentalness', 'Liveness', 'Valence'] 
-    to values between 0 and 1.
-    Returns a new DataFrame that contains the same feature columns as the original, but 
-    replaces the values of the above features with normalized values.
-    '''
-    # Normalize the selected features
-    scaler = MinMaxScaler()
-    df[FEATURES] = scaler.fit_transform(df[FEATURES])
-
-    return df
 
 
 def add_camelot_key(df):
