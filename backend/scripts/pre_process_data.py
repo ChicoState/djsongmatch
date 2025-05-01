@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 from pathlib import Path
 
@@ -6,36 +7,63 @@ BACKEND_ROOT = Path(__file__).parent.parent
 CSV_INPUT = BACKEND_ROOT / "assets" / "ClassicHit.csv"
 CSV_OUTPUT = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"
 
+FEATURES = ['Danceability', 'Energy', 'Loudness', 'Speechiness', 'Acousticness', 
+        'Instrumentalness', 'Liveness', 'Valence']
 
-''' 
-Function to normalize features ['Danceability', 'Energy', 'Loudness',
-'Speechiness', 'Acousticness', 'Instrumentalness', 'Liveness', 'Valence'] 
-to values between 0 and 1.
-Returns a new DataFrame that contains the same feature columns as the original, but 
-replaces the values of the above features with normalized values.
-'''
+
+def uniform_quantile_scale(df):
+    '''
+    Transforms numerical features to have a uniform distribution in the range [0, 1] using rank-based quantile scaling.
+
+    This function applies a percentile rank followed by quantile binning to each feature in the FEATURES list.
+    The transformation ensures that each feature is scaled to a uniform distribution, helping mitigate the effects
+    of skewness and outliers. This is particularly useful for clustering and models sensitive to feature scaling.
+
+    If a feature has too few unique values to be quantile-binned into 100 bins, it falls back to percentile ranking.
+
+    Parameters:
+        df (pd.DataFrame): A DataFrame containing the original features.
+
+    Returns:
+        pd.DataFrame: A new DataFrame with the specified features transformed into a uniform [0, 1] distribution.
+    '''
+    df_rank_q = df.copy()
+
+    for feature in FEATURES:
+        try:
+            df_rank_q[feature] = pd.qcut(df_rank_q[feature].rank(method='first'), q=100, labels=False) / 99
+        except ValueError:
+            df_rank_q[feature] = df_rank_q[feature].rank(pct=True)
+
+    return df_rank_q
+
+
 def normalize_features(df):
-    features = ['Danceability', 'Energy', 'Loudness', 'Speechiness', 'Acousticness', 
-            'Instrumentalness', 'Liveness', 'Valence']
-    
+    ''' 
+    Function to normalize features ['Danceability', 'Energy', 'Loudness',
+    'Speechiness', 'Acousticness', 'Instrumentalness', 'Liveness', 'Valence'] 
+    to values between 0 and 1.
+    Returns a new DataFrame that contains the same feature columns as the original, but 
+    replaces the values of the above features with normalized values.
+    '''
+    # Normalize the selected features
     scaler = MinMaxScaler()
-    
-    df['Loudness_dB'] = df['Loudness'] # Keep the original Loudness column, which is in dB, but rename it
-    df[features] = scaler.fit_transform(df[features]) # Normalize the selected features
+    df[FEATURES] = scaler.fit_transform(df[FEATURES])
 
     return df
 
-'''
-Function to add a new column 'Camelot_Key' to the DataFrame based on the 'Key' and 'Mode' columns.
-The Camelot key is a system used by DJs to mix tracks harmonically. They are typically represented as
-numbers from 1 to 12, with a letter indicating the mode (A for minor, B for major).
-This mapping uses the values 1-12 for the minor keys and 13-24 for the major keys, while still maintaining 
-relative order.
-Ex: Camelot Key 1A is represented as 1; Camelot Key 1B is represented as 13. Camelot Key 2A is represented as 2;
-Camelot Key 2B is represented as 14, etc.
-Returns the DataFrame with the new 'Camelot_Key' column.
-'''
+
 def add_camelot_key(df):
+    '''
+    Function to add a new column 'Camelot_Key' to the DataFrame based on the 'Key' and 'Mode' columns.
+    The Camelot key is a system used by DJs to mix tracks harmonically. They are typically represented as
+    numbers from 1 to 12, with a letter indicating the mode (A for minor, B for major).
+    This mapping uses the values 1-12 for the minor keys and 13-24 for the major keys, while still maintaining 
+    relative order.
+    Ex: Camelot Key 1A is represented as 1; Camelot Key 1B is represented as 13. Camelot Key 2A is represented as 2;
+    Camelot Key 2B is represented as 14, etc.
+    Returns the DataFrame with the new 'Camelot_Key' column.
+    '''
     
     # Mapping of musical keys to Camelot keys based on mode (minor/major)
     # key : value mappings
@@ -110,8 +138,11 @@ def main():
     # Read the CSV file
     df = pd.read_csv(CSV_INPUT)
 
-    # Normalize the features
-    df = normalize_features(df)
+    # Keep the original Loudness column, which is in dB, but rename it
+    df['Loudness_dB'] = df['Loudness']
+
+    # Apply quantile scale transformation
+    df = uniform_quantile_scale(df)
 
     # Add the Camelot key
     df = add_camelot_key(df)
