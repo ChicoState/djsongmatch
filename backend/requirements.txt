@@ -1,6 +1,7 @@
 dotenv
 flask
 flask-sqlalchemy
+faiss-cpu
 ipykernel
 jupyter
 matplotlib
