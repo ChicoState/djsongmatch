@@ -4,7 +4,6 @@ import { Song } from "@/db/schema";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 import { SongWithUuid } from "./utils";
-import { Parameter } from "@/app/_components/ButtonSliderSection";
 
 export function useDebounce<T>(value: T, delay: number) {
   /**
@@ -42,8 +41,78 @@ export function usePlaylist() {
   return { playlist, setPlaylist };
 }
 
+/* All possible parameters for recommendation algorithm */
+export type Parameter =
+  | "danceability"
+  | "energy"
+  | "loudness"
+  | "speechiness"
+  | "acousticness"
+  | "instrumentalness"
+  | "liveness"
+  | "valence";
+
+export interface ParameterData {
+  parameter: Parameter;
+  sliderValue: number;
+  locked: boolean;
+}
+
+export interface AllParameters {
+  danceability?: ParameterData;
+  setDanceability: (value: ParameterData) => void;
+  energy?: ParameterData;
+  setEnergy: (value: ParameterData) => void;
+  loudness?: ParameterData;
+  setLoudness: (value: ParameterData) => void;
+  speechiness?: ParameterData;
+  setSpeechiness: (value: ParameterData) => void;
+  acousticness?: ParameterData;
+  setAcousticness: (value: ParameterData) => void;
+  instrumentalness?: ParameterData;
+  setInstrumentalness: (value: ParameterData) => void;
+  liveness?: ParameterData;
+  setLiveness: (value: ParameterData) => void;
+  valence?: ParameterData;
+  setValence: (value: ParameterData) => void;
+}
+
 export function useParameter(parameter: Parameter) {
-  return useLocalStorage<number | undefined>(`slider.${parameter}`, undefined);
+  return useLocalStorage<ParameterData | undefined>(
+    `slider.${parameter}`,
+    undefined,
+  );
+}
+
+export function useParameters(): AllParameters {
+  const [danceability, setDanceability] = useParameter("danceability");
+  const [energy, setEnergy] = useParameter("energy");
+  const [loudness, setLoudness] = useParameter("loudness");
+  const [speechiness, setSpeechiness] = useParameter("speechiness");
+  const [acousticness, setAcousticness] = useParameter("acousticness");
+  const [instrumentalness, setInstrumentalness] =
+    useParameter("instrumentalness");
+  const [liveness, setLiveness] = useParameter("liveness");
+  const [valence, setValence] = useParameter("valence");
+
+  return {
+    danceability,
+    setDanceability,
+    energy,
+    setEnergy,
+    loudness,
+    setLoudness,
+    speechiness,
+    setSpeechiness,
+    acousticness,
+    setAcousticness,
+    instrumentalness,
+    setInstrumentalness,
+    liveness,
+    setLiveness,
+    valence,
+    setValence,
+  };
 }
 
 export function useYearFilter() {
