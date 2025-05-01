@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -21,9 +23,10 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import TitleArtist from "./TitleArtist";
 import TrashConfirm from "./TrashConfirm";
+import { usePlaylist } from "@/lib/hooks";
 
 function SortableSongRow({
   song,
@@ -86,90 +89,47 @@ function SortableSongRow({
 
 export default function PlaylistTable() {
   /* Which songs are in the playlist */
-  const [playlist, setPlaylist] = useState<SongWithUuid[]>([]);
+  const { playlist, setPlaylist } = usePlaylist();
   const [showConfirm, setShowConfirm] = useState(false);
-
-  useEffect(() => {
-    const getPlaylist = () => {
-      /**
-       * getPlaylist() updates the playlist in React with whatever is in localStorage.
-       * See when this gets called below.
-       */
-
-      /* Fetch the playlist from localStorage and parse it */
-      const playlistStr = window.localStorage.getItem("playlist");
-      const newPlaylist: SongWithUuid[] =
-        playlistStr !== null ? JSON.parse(playlistStr) : [];
-
-      /* Update React with the new playlist */
-      setPlaylist(newPlaylist);
-    };
-
-    /* Get the playlist from localStorage on mount */
-    getPlaylist();
-
-    /*
-     * This "addSongPlaylist" event gets sent by <RecommendationsTable /> when a song is added to the playlist.
-     * Every time this event is triggered, we want to update the playlist in React with getPlaylist()
-     */
-    window.addEventListener("addSongPlaylist", getPlaylist);
-    return () => {
-      /*
-       * When the component unmounts, remove the event listener.
-       * This is because it re-adds the event listener every time the component re-renders.
-       */
-      window.removeEventListener("addSongPlaylist", getPlaylist);
-      TableContainerRef.current?.scrollTo(0, 0);
-    };
-  }, []);
-
-  /* Reference to the container for the table.
-   * More info at @/components/ui/table.tsx and below in useEffect */
   const TableContainerRef = useRef<HTMLDivElement>(null);
+  const prevPlaylistLengthRef = useRef(playlist.length);
 
-  /* We need to use a separate useEffect from the one above because the table scrolls to the
-   * bottom _before_ the playlist is updated/rerendered. This means that the scroll position
-   * will incorrectly be at the second-to-last row of the table, which is not what we want.
-   * Instead, we wait for the playlist to be updated/rerender before scrolling to the bottom. */
-  useEffect(() => {
-    TableContainerRef.current?.scrollTo(
-      0,
-      TableContainerRef.current?.scrollHeight,
-    );
-  }, [playlist]);
-
-  const removeSong = (song: SongWithUuid) => {
-    /* The most up to date playlist (with the removed song) */
-    const newPlaylist = playlist.filter((s) => s.uuid !== song.uuid);
-
-    /* Update localStorage with the new playlist without the song */
-    window.localStorage.setItem("playlist", JSON.stringify(newPlaylist));
-
-    /* Update React with the new playlist without the song */
-    setPlaylist(newPlaylist);
-  };
-
-  /* Function called to clear your playlist */
-  const clearPlaylist = () => {
-    window.localStorage.setItem("playlist", JSON.stringify([]));
-    setPlaylist([]);
-  };
+  const removeSong = useCallback(
+    (song: SongWithUuid) => {
+      setPlaylist(playlist.filter((s) => s.uuid !== song.uuid));
+    },
+    [playlist, setPlaylist],
+  );
 
   /* Use useCallback to memoize the handleDragEnd function */
-  const handleDragEnd = useCallback((event: DragEndEvent) => {
-    /**
-     * handleDragEnd() is called when a song row is dragged to a new position in the playlist.
-     * It updates the playlist in React with the new order.
-     */
-    const { active, over } = event;
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      /**
+       * handleDragEnd() is called when a song row is dragged to a new position in the playlist.
+       * It updates the playlist in React with the new order.
+       */
+      const { active, over } = event;
 
-    if (over === null || active.id === over.id) return;
-    setPlaylist((songs) => {
-      const originalIdx = songs.findIndex((s) => s.uuid === active.id);
-      const newIdx = songs.findIndex((s) => s.uuid === over.id);
-      return arrayMove(songs, originalIdx, newIdx);
-    });
-  }, []);
+      if (over === null || active.id === over.id) return;
+      setPlaylist((songs) => {
+        const originalIdx = songs.findIndex((s) => s.uuid === active.id);
+        const newIdx = songs.findIndex((s) => s.uuid === over.id);
+        return arrayMove(songs, originalIdx, newIdx);
+      });
+    },
+    [setPlaylist],
+  );
+
+  /* Scroll to the bottom when a song is added (playlist length increases) */
+  useEffect(() => {
+    if (playlist.length > prevPlaylistLengthRef.current) {
+      TableContainerRef.current?.scrollTo(
+        0,
+        TableContainerRef.current?.scrollHeight,
+      );
+    }
+    prevPlaylistLengthRef.current = playlist.length;
+  }, [playlist]);
 
   return (
     <div
@@ -201,8 +161,8 @@ export default function PlaylistTable() {
                   {playlist.length > 0 && (
                     <Tooltip disableHoverableContent={true}>
                       <TooltipTrigger>
-                        <TrashIcon 
-                          onMouseDown={() => setShowConfirm(true)}  
+                        <TrashIcon
+                          onMouseDown={() => setShowConfirm(true)}
                           className="transition-all duration-200 cursor-pointer hover:scale-110 text-destructive hover:text-destructive/80"
                         />
                       </TooltipTrigger>
@@ -233,7 +193,7 @@ export default function PlaylistTable() {
       <TrashConfirm
         open={showConfirm}
         onConfirm={() => {
-          clearPlaylist();
+          setPlaylist([]);
           setShowConfirm(false);
         }}
         onCancel={() => setShowConfirm(false)}
