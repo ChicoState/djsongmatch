@@ -19,11 +19,8 @@ jobs:
           password: ${{ secrets.WINDOWS_PASSWORD }}
           port: 22
           script: |
-            cmd.exe /c "
-              cd C:\Users\Madi\djsongmatch &&
-              git pull origin gha-deploy-to-home-server &&
-              docker compose down &&
-              docker compose build &&
-              docker compose up -d
-            "
-
+            cd "C:\Users\Madi\djsongmatch";
+            git pull origin gha-deploy-to-home-server;
+            docker compose down;
+            docker compose build;
+            docker compose up -d;
