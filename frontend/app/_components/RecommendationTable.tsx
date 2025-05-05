@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Table,
   TableBody,
@@ -11,49 +13,86 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { camelotKeys, type Song } from "@/db/schema";
-import { type SongWithUuid, cn, generateSongUuid } from "@/lib/utils";
+import { cn, generateSongUuid } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { CirclePlusIcon } from "lucide-react";
-import { useSearchParams } from "next/navigation";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
-
-interface RecommendationTableProps {
-  setPlaylist: (songs: SongWithUuid[]) => void;
-}
+import { useCallback, useEffect } from "react";
+import {
+  usePlaylist,
+  useSelectedSong,
+  useParameter,
+  useYearFilter,
+} from "@/lib/hooks";
 
 export default function RecommendationTable() {
-  /* searchParams is like `http://localhost:3000/?songId=1` */
-  const searchParams = useSearchParams();
-  const songId = searchParams.get("songId");
+  const { selectedSong } = useSelectedSong();
+  const { playlist, setPlaylist } = usePlaylist();
 
-  const { data: songs = []} = useQuery({
-    queryKey: ["songRecommendations", songId],
+  const [danceability] = useParameter("danceability");
+  const [energy] = useParameter("energy");
+  const [loudness] = useParameter("loudness");
+  const [speechiness] = useParameter("speechiness");
+  const [acousticness] = useParameter("acousticness");
+  const [instrumentalness] = useParameter("instrumentalness");
+  const [liveness] = useParameter("liveness");
+  const [valence] = useParameter("valence");
+  const { startYear, endYear } = useYearFilter();
+
+  const { data: songs = [], refetch } = useQuery({
+    queryKey: ["songRecommendations", selectedSong?.songId],
     queryFn: () => {
-      return getSongRecommendations(Number.parseInt(songId!));
+      if (selectedSong === undefined) {
+        /* TODO: Visually represent that the songId is missing */
+        console.log("WARNING: Generate button clicked without songId");
+        return;
+      }
+
+      console.log("Fetching recommendations for songId", selectedSong.songId);
+
+      /* Get recommendations from Flask */
+      const recommendations = getSongRecommendations(selectedSong.songId, {
+        danceability: danceability,
+        energy: energy,
+        loudness: loudness,
+        speechiness: speechiness,
+        acousticness: acousticness,
+        instrumentalness: instrumentalness,
+        liveness: liveness,
+        valence: valence,
+        start_year: startYear,
+        end_year: endYear,
+      });
+      return recommendations.then((data) => {
+        return [selectedSong, ...data];
+      });
     },
-    enabled: songId !== null,
+    enabled: false,
   });
 
-  const addSong = (song: Song) => {
-    /* Get the previous state of the playlist from localStorage */
-    const songsStr = window.localStorage.getItem("playlist");
+  const handleGenerateButtonClicked = useCallback(() => {
+    refetch();
+  }, [refetch]);
 
-    /* localStorage returns a string, so we need to parse it into a JSON array */
-    const songs: SongWithUuid[] = songsStr !== null ? JSON.parse(songsStr) : [];
-
-    /* We need to generate a unique UUID for the song, so we could add the same song
-     * with the same songId to the playlist multiple times, but could still tell them apart */
-    songs.push(generateSongUuid(song));
-
-    /* Update localStorage with the new playlist */
-    window.localStorage.setItem("playlist", JSON.stringify(songs));
-
-    /* Send an event that the <PlaylistTable /> component can listen for
-     * that indicates that a song was added to the playlist */
-    window.dispatchEvent(new Event("addSongPlaylist"));
-  };
+  /* This is a hacky way to make the table update when the generate button is clicked.
+   * The reason we need to do this is because the generate button is not part of the
+   * table, so we can't use the table's onClick handler to update the table.
+   * Instead, we use a window event to trigger the refetch.
+   * Better solutions are welcome.
+   */
+  useEffect(() => {
+    window.addEventListener(
+      "generateButtonClicked",
+      handleGenerateButtonClicked,
+    );
+    return () => {
+      window.removeEventListener(
+        "generateButtonClicked",
+        handleGenerateButtonClicked,
+      );
+    };
+  });
 
   return (
     <div
@@ -93,7 +132,9 @@ export default function RecommendationTable() {
                   <Tooltip disableHoverableContent={true}>
                     <TooltipTrigger>
                       <CirclePlusIcon
-                        onMouseDown={() => addSong(song)}
+                        onMouseDown={() =>
+                          setPlaylist([...playlist, generateSongUuid(song)])
+                        }
                         className="duration-200 cursor-pointer hover:scale-110 text-chart-2 hover:text-chart-2/80"
                       />
                     </TooltipTrigger>

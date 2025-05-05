@@ -37,6 +37,7 @@ export const songs = pgTable(
     valence: doublePrecision().notNull(),
     popularity: integer().notNull(),
     genre: varchar({ length: 30 }).notNull(),
+    cluster: integer(), // leave as an optional value
   },
   (table) => [
     foreignKey({
