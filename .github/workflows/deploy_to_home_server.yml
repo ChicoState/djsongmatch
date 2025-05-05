@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - gha-deploy-to-home-server
 
 jobs:
   deploy:

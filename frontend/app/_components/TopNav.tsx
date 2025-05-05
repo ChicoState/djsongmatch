@@ -28,7 +28,7 @@ export default function TopNav() {
     <div>
       {/* Top Navigation Bar */}
       <nav className="flex justify-between items-center p-4 font-semibold border-b border-border">
-        <h1 className="text-3xl">DJ Song Match TEST</h1>
+        <h1 className="text-3xl">DJ Song Match</h1>
         <div className="flex gap-4 items-center">
           <DarkModeToggle />
           <Help />
