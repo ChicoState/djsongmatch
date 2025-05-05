@@ -1,14 +1,5 @@
-// app/signup/layout.tsx
-
-export default function SignUpLayout({
+export default function SignupLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
-  return (
-    <>
-      {/* Optional: Add a logo, nav bar, or background */}
-      {children}
-    </>
-  )
+}: Readonly<{ children: React.ReactNode }>) {
+  return <>{children}</>;
 }

@@ -1,54 +1,74 @@
-'use client'
+"use client";
+import "@/app/globals.css";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/lib/firebaseConfig'
-import "@/app/globals.css"
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { auth } from "@/lib/firebaseConfig";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 
-export default function SignUpPage() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState('')
-  const router = useRouter()
+export default function SignupPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
-  const handleCreateAccount = async () => {
+  const handleSignup = async () => {
     try {
-      await createUserWithEmailAndPassword(auth, email, password)
-      router.push('/') // redirect to login page
+      if (!email || !password) {
+        setError("Email and password are required");
+        return;
+      }
+
+      await createUserWithEmailAndPassword(auth, email, password);
+      router.push("/"); // redirect to home on successful signup
     } catch (err: any) {
-      setError(err.message)
+      console.warn("Signup error:", err.message || err);
+      setError(err.message || "Signup failed");
     }
-  }
+  };
+
+  const handleLoginRedirect = () => {
+    router.push("/login");
+  };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-4 space-y-4">
-      <h1 className="text-2xl font-bold">Create Your Account</h1>
+    <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md w-80">
+        <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+        <div className="flex flex-col gap-4">
+          <input
+            type="email"
+            placeholder="Email"
+            className="p-2 border rounded-md bg-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            className="p-2 border rounded-md bg-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button variant="default" onClick={handleSignup}>
+            Sign Up
+          </Button>
+          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+        </div>
 
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        className="px-4 py-2 border rounded w-64"
-      />
-
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        className="px-4 py-2 border rounded w-64"
-      />
-
-      {error && <p className="text-red-500 text-sm">{error}</p>}
-
-      <button
-        onClick={handleCreateAccount}
-        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-      >
-        Create Account
-      </button>
-    </main>
-  )
+        <div className="mt-6 text-center">
+          <p className="text-sm">
+            Already have an account?{" "}
+            <button
+              className="text-blue-500 hover:underline"
+              onClick={handleLoginRedirect}
+            >
+              Log in
+            </button>
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
