@@ -3,10 +3,6 @@ import TopNav from "./_components/TopNav";
 import { Providers } from "./providers";
 import { usePathname } from "next/navigation";
 
-export const metadata = {
-  title: "DJ Song Match",
-  description: "AI song matching",
-};
 
 export default function RootLayout({
   children,
