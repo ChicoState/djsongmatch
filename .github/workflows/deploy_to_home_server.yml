@@ -19,10 +19,12 @@ jobs:
           password: ${{ secrets.WINDOWS_PASSWORD }}
           port: 22
           script: |
-            cd "C:\Users\Madi\djsongmatch"
-            git checkout main
-            git pull origin main
-            docker compose down
-            docker compose build
-            docker compose up -d
-            docker compose ps
+            cmd.exe /c "
+              cd C:\Users\Madi\djsongmatch &&
+              git checkout main &&
+              git pull origin main &&
+              docker compose down &&
+              docker compose build &&
+              docker compose up -d &&
+              docker compose ps
+            "
