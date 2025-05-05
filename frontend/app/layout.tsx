@@ -1,19 +1,23 @@
-
-export const metadata = {
-  title: 'DJ Song Match',
-  description: 'Just a Next.js App',
-}
+"use client";
+import TopNav from "./_components/TopNav";
+import { Providers } from "./providers";
+import { usePathname } from "next/navigation";
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{ children: React.ReactNode }>) {
+  const pathname = usePathname();
+
+  const hideTopNav = pathname.startsWith("/login") || pathname.startsWith("/signup");
+
   return (
-    <html lang="en">
-      <body>
-        {children}
+    <html lang="en" suppressHydrationWarning>
+      <body className="bg-background">
+        <Providers>
+          {!hideTopNav && <TopNav />}
+          {children}
+        </Providers>
       </body>
     </html>
-  )
+  );
 }
