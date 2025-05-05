@@ -4,10 +4,7 @@ import { Song } from "@/db/schema";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 import { SongWithUuid } from "./utils";
-import {
-  Parameter,
-  ParameterValues,
-} from "@/app/_components/ButtonSliderSection";
+import { Parameter } from "@/app/_components/ButtonSliderSection";
 
 export function useDebounce<T>(value: T, delay: number) {
   /**
