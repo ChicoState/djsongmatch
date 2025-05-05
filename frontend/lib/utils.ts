@@ -13,3 +13,7 @@ export interface SongWithUuid extends Song {
 export function generateSongUuid(song: Song) {
   return { ...song, uuid: crypto.randomUUID() };
 }
+
+export function toTitleCase(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

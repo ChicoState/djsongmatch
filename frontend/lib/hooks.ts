@@ -45,3 +45,15 @@ export function usePlaylist() {
 export function useParameter(parameter: Parameter) {
   return useLocalStorage<number | undefined>(`slider.${parameter}`, undefined);
 }
+
+export function useYearFilter() {
+  const [startYear, setStartYear] = useLocalStorage<number | undefined>(
+    "yearFilter.startYear",
+    undefined,
+  );
+  const [endYear, setEndYear] = useLocalStorage<number | undefined>(
+    "yearFilter.endYear",
+    undefined,
+  );
+  return { startYear, setStartYear, endYear, setEndYear };
+}

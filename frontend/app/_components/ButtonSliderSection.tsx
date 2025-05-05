@@ -12,9 +12,19 @@ import {
 import { CircleHelpIcon } from "lucide-react";
 import { useState } from "react";
 import { useSelectedSong, useParameter } from "@/lib/hooks";
+import AdvancedFiltersButton from "./AdvancedFilters";
+import { toTitleCase } from "@/lib/utils";
 
 /* All possible parameters for recommendation algorithm */
-export type Parameter = "Danceability" | "Energy" | "Loudness";
+export type Parameter =
+  | "danceability"
+  | "energy"
+  | "loudness"
+  | "speechiness"
+  | "acousticness"
+  | "instrumentalness"
+  | "liveness"
+  | "valence";
 
 function SliderMarker({
   label,
@@ -52,21 +62,23 @@ function SliderMarker({
   );
 }
 
-function SongSlider({
+export function SongSlider({
   parameter,
   label,
   defaultValue,
-  markValue,
   tooltip = null,
 }: {
   parameter: Parameter;
   label?: string;
   defaultValue: number;
-  markValue: number | undefined;
   tooltip?: string | null;
 }) {
   /* If label is null or undefined, use the parameter as the label */
-  label = label ? label : parameter;
+  label = label ? label : toTitleCase(parameter);
+
+  const { selectedSong } = useSelectedSong();
+  console.log(selectedSong);
+  const markValue = selectedSong ? selectedSong[parameter] : undefined;
 
   /* localStorage key is `slider.<sliderLabel>` */
   const [sliderValue, setSliderValue] = useParameter(parameter);
@@ -126,21 +138,14 @@ function SliderArea() {
   return (
     <section className="flex flex-col gap-8 grow">
       <SongSlider
-        parameter="Energy"
+        parameter="energy"
         defaultValue={0.5}
-        markValue={selectedSong.energy}
         tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
       />
+      <SongSlider parameter="loudness" defaultValue={0.42} tooltip={null} />
       <SongSlider
-        parameter="Loudness"
-        defaultValue={0.42}
-        markValue={selectedSong.loudness}
-        tooltip={null}
-      />
-      <SongSlider
-        parameter="Danceability"
+        parameter="danceability"
         defaultValue={0.69}
-        markValue={selectedSong.danceability}
         tooltip="short"
       />
     </section>
@@ -153,9 +158,7 @@ function SliderArea() {
 function ButtonArea() {
   return (
     <section className="flex flex-col gap-4 justify-center items-center min-w-[150px]">
-      <Button variant={"outline"} className="w-full">
-        Advanced Filters
-      </Button>
+      <AdvancedFiltersButton />
       <Button
         className="w-full cursor-pointer"
         onMouseDown={() =>
