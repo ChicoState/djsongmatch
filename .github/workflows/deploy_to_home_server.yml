@@ -20,7 +20,8 @@ jobs:
           port: 22
           script: |
             cd "C:\Users\Madi\djsongmatch";
-            git pull origin gha-deploy-to-home-server;
+            git checkout main
+            git pull origin main
             docker compose down;
             docker compose build;
             docker compose up -d;
