@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to Windows 11 Home Server via SSH
+      - name: Deploy via SSH on Windows Server
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST_IP }}
@@ -19,12 +19,4 @@ jobs:
           password: ${{ secrets.WINDOWS_PASSWORD }}
           port: 22
           script: |
-            cmd.exe /c "
-              cd C:\Users\Madi\djsongmatch &&
-              git checkout main &&
-              git pull origin main &&
-              docker compose down &&
-              docker compose build &&
-              docker compose up -d &&
-              docker compose ps
-            "
+            C:\Users\Madi\deploy-djsongmatch.bat
