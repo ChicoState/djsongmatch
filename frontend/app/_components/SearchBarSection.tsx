@@ -21,19 +21,20 @@ function songToLabel(song: Song) {
 
 /**
  */
-export function SearchBar({
-  startingInputValue,
-}: {
-  startingInputValue?: string;
-}) {
+export function SearchBar({}: {}) {
   /* Whether the search bar is focused or not */
   const [open, setOpen] = useState(false);
 
   /* What the user has typed in the search bar */
-  const [inputValue, setInputValue] = useState(startingInputValue ?? "");
+  const [inputValue, setInputValue] = useState("");
 
   /* What the user has selected from the search results */
   const { selectedSong: song, setSelectedSong: setSong } = useSelectedSong();
+
+  useEffect(() => {
+    if (!song) return;
+    setInputValue(songToLabel(song));
+  }, [song]);
 
   /* Second param of useDebounce is how many milliseconds
    * should the input wait since the user stopped typing
@@ -57,7 +58,7 @@ export function SearchBar({
     placeholderData: (previousData) => previousData,
 
     /* Only search database when user has typed something */
-    enabled: inputValue.trim().length > 0 && inputValue != startingInputValue,
+    enabled: inputValue.trim().length > 0,
   });
 
   useEffect(() => {
@@ -70,10 +71,9 @@ export function SearchBar({
 
   const handleSelect = useCallback(
     (song: Song) => {
-      setInputValue(songToLabel(song));
       setSong(song);
     },
-    [setSong, setInputValue],
+    [setSong],
   );
 
   return (
@@ -120,15 +120,10 @@ export function SearchBar({
 }
 
 export function SearchBarSection() {
-  const { selectedSong } = useSelectedSong();
-  const startingInputValue = selectedSong
-    ? songToLabel(selectedSong)
-    : undefined;
-
   return (
     <div className="py-8 w-full max-w-4xl">
       <div className="w-1/2">
-        <SearchBar startingInputValue={startingInputValue} />
+        <SearchBar />
       </div>
     </div>
   );

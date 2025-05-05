@@ -77,7 +77,6 @@ export function SongSlider({
   label = label ? label : toTitleCase(parameter);
 
   const { selectedSong } = useSelectedSong();
-  console.log(selectedSong);
   const markValue = selectedSong ? selectedSong[parameter] : undefined;
 
   /* localStorage key is `slider.<sliderLabel>` */
