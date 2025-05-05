@@ -31,6 +31,7 @@ class Song(db.Model):
     valence: Mapped[float] = db.Column(Float, nullable=False)
     popularity: Mapped[int] = db.Column(Integer, nullable=False)
     genre: Mapped[Optional[str]] = db.Column(String(30), nullable=False)
+    cluster: Mapped[Optional[int]] = db.Column(db.Integer, nullable=True)
     
     # Relationships
     camelot_key: Mapped["CamelotKey"] = db.relationship(back_populates="songs")

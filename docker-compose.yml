@@ -9,13 +9,14 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
-      - ./.env:/app/.env
+      - ./frontend:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-    command: ["sh", "-c", "pnpm dev"]
+      - WATCHPACK_POLLING=true
+    env_file: ".env"
+    command: ["sh", "-c", "pnpm i && pnpm dev"]
   backend:
     build:
       context: .
@@ -23,7 +24,6 @@ services:
     container_name: python_backend
     ports:
       - "5001:5001"
-    volumes:
-      - ./.env:/app/.env
     environment:
       - FLASK_ENV=development
+    env_file: ".env"
