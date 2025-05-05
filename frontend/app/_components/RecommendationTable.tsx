@@ -52,7 +52,7 @@ export default function RecommendationTable() {
       console.log("Fetching recommendations for songId", selectedSong.songId);
 
       /* Get recommendations from Flask */
-      return getSongRecommendations(selectedSong.songId, {
+      const recommendations = getSongRecommendations(selectedSong.songId, {
         danceability: danceability,
         energy: energy,
         loudness: loudness,
@@ -63,6 +63,9 @@ export default function RecommendationTable() {
         valence: valence,
         start_year: startYear,
         end_year: endYear,
+      });
+      return recommendations.then((data) => {
+        return [selectedSong, ...data];
       });
     },
     enabled: false,
