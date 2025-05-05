@@ -12,7 +12,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="bg-background">
+      <body className="bg-background h-dvh w-dvw">
         <Providers>
           {!hideTopNav && <TopNav />}
           {children}

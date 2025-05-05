@@ -1,8 +1,8 @@
 
 from flask import Blueprint #, jsonify
-# from api.decorators import internal_only  # TODO - create decorators.py
-# from api.services.camelot_keys_service import CamelotKeysService
-# from database.models import CamelotKey
+# from backend.api.decorators import internal_only  # TODO - create decorators.py
+# from backend.api.services.camelot_keys_service import CamelotKeysService
+# from backend.api.database.models import CamelotKey
 
 camelot_keys_bp = Blueprint('camelot_keys', __name__)
 

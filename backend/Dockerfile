@@ -1,21 +1,30 @@
 # Use Python 3.11
 FROM python:3.11-slim
 
+# Container's working directory
+#   All following commands (COPY, RUN, CMD, etc) execute here
 WORKDIR /app
 
-# Copy requirements.txt and install dependencies
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./backend/requirements.txt ./requirements.txt
 
-# Create a jupyter kernel for the Python environment
-RUN python3 -m ipykernel install --user --name=backend_kernel
+# Install uv
+RUN pip install uv
 
-COPY . .
+# Install dependencies with uv
+RUN uv pip install --system -r requirements.txt
 
+# Copy the backend code into the container
+COPY ./backend ./backend
+
+# Expose network port for Flask development server
 EXPOSE 5001
 
-ENV FLASK_APP=flaskTest.py
-ENV FLASK_ENV=development
+# Environment variables
+#   - FLASK_APP: Points to our create_app() function in backend/api/__init__.py
+#   - PYTHONUNBUFFERED: Better log output
+ENV FLASK_APP=backend.api:create_app
+ENV PYTHONUNBUFFERED=1
 
 # Run Flask
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
+# CMD ["flask", "run", "--host=0.0.0.0", "--port=5001"]
+CMD ["python", "-m", "backend.api"]

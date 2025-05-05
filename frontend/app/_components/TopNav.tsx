@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -24,3 +25,9 @@ export default function TopNav() {
     </div>
   );
 }
+    // {/* Render Help Page if showHelp is true */}
+    // {showHelp && (
+    //   <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+    //       <HelpPage onClose={() => setShowHelp(false)} />
+    //     </div>
+    // )}

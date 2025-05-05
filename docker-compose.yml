@@ -11,9 +11,8 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app/frontend
-      - /app/frontend/node_modules
-      - ./db.db:/app/db.db
+      - ./frontend:/app
+      - /app/node_modules
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
@@ -24,20 +23,18 @@ services:
       - NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=${NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET}
       - NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=${NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID}
       - NEXT_PUBLIC_FIREBASE_APP_ID=${NEXT_PUBLIC_FIREBASE_APP_ID}
+      - WATCHPACK_POLLING=true
+    env_file: ".env"
+    command: ["sh", "-c", "pnpm i && pnpm dev"]
 
-    command: ["sh", "-c", "pnpm dev"]
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     container_name: python_backend
     ports:
       - "5001:5001"
-    volumes:
-      - ./backend:/app/backend
-      - ./db.db:/app/db.db
     environment:
       - FLASK_ENV=development
-      - FLASK_APP=flaskTest.py
-    command: ["python", "-m", "flask", "run", "--host=0.0.0.0", "--port=5001"]
 
+    env_file: ".env"

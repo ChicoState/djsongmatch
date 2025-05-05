@@ -1,7 +1,7 @@
 "use client";
 
 import "@/app/globals.css";
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
   Command,
@@ -10,69 +10,126 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
-import { Song } from "@/db/schema";
+import type { Song } from "@/db/schema";
+import { useDebounce, useSelectedSong } from "@/lib/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
 
-interface SearchBarSectionProps {
-  /**
-   * @param setInputSong - A function that gets called when the user selects a song from the search results
-   */
-  setInputSong: (song: Song) => void;
+function songToLabel(song: Song) {
+  return `${song.artist} - ${song.title}`;
 }
 
-function SearchBarSection({ setInputSong }: SearchBarSectionProps) {
+/**
+ */
+export function SearchBar({
+  startingInputValue,
+}: {
+  startingInputValue?: string;
+}) {
+  /* Whether the search bar is focused or not */
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
-  const [value, setValue] = useState("");
+
+  /* What the user has typed in the search bar */
+  const [inputValue, setInputValue] = useState(startingInputValue ?? "");
+
+  /* What the user has selected from the search results */
+  const { selectedSong: song, setSelectedSong: setSong } = useSelectedSong();
+
+  /* Second param of useDebounce is how many milliseconds
+   * should the input wait since the user stopped typing
+   * before triggering the search. This is to prevent
+   * the database from being hit too often.
+   */
+  const debouncedInput = useDebounce(inputValue, 150);
+
+  /* Basically pointer to the CommandList element */
+  const CommandListRef = useRef<HTMLDivElement>(null);
 
   const { data: songs = [] } = useQuery({
-    queryKey: ["songList", inputValue],
+    /* Only search the database debouncedInput changes */
+    queryKey: ["songList", debouncedInput],
+
     queryFn: () => {
-      return searchSongs(inputValue);
+      return searchSongs(debouncedInput);
     },
-    enabled: inputValue.trim().length >= 3,
+
+    /* Keep the previous data until the database returns new data */
+    placeholderData: (previousData) => previousData,
+
+    /* Only search database when user has typed something */
+    enabled: inputValue.trim().length > 0 && inputValue != startingInputValue,
   });
 
-  return (
-    <div className="py-8 w-full max-w-4xl">
-      <div className="w-1/2">
-        <Command className="border border-border">
-          <CommandInput
-            onFocus={() => setOpen(true)}
-            onBlur={() => setOpen(false)}
-            onValueChange={setInputValue}
-            placeholder={"Search for a song!"}
-            value={inputValue}
-          />
+  useEffect(() => {
+    if (CommandListRef.current) {
+      /* Every time the user input changes, scroll to the top of the list.
+       * The most relevant song is probably at the top */
+      CommandListRef.current.scrollTop = 0;
+    }
+  }, [inputValue]);
 
-          {/* Only show the choices if the user has the input focused */}
-          {open && (
-            <CommandList>
-              {value != inputValue && (
-                <CommandEmpty>No results found.</CommandEmpty>
-              )}
-              {songs.map((song: Song) => {
-                return (
-                  <CommandItem
-                    key={song.songId}
-                    value={`${song.artist} - ${song.title}`}
-                    onMouseDown={() => {
-                      setValue(`${song.artist} - ${song.title}`);
-                      setInputValue(`${song.artist} - ${song.title}`);
-                      setInputSong(song);
-                    }}
-                  >
-                    {song.artist} - {song.title}
-                  </CommandItem>
-                );
-              })}
-            </CommandList>
-          )}
-        </Command>
-      </div>
+  const handleSelect = useCallback(
+    (song: Song) => {
+      setInputValue(songToLabel(song));
+      setSong(song);
+    },
+    [setSong, setInputValue],
+  );
+
+  return (
+    <div className="relative w-full h-full">
+      <Command className="border border-border">
+        <CommandInput
+          onFocus={() => setOpen(true)}
+          onBlur={() => setOpen(false)}
+          onValueChange={setInputValue}
+          placeholder="Search for a song!"
+          value={inputValue}
+        />
+
+        {/* Only show the choices if the user has the input focused */}
+        {open && (
+          <CommandList
+            ref={CommandListRef}
+            className="absolute top-full w-full border bg-background text-foreground z-[50] border-border"
+          >
+            {/* Used to remove the "No results found" message when the user selects a song */}
+            {song && inputValue != songToLabel(song) && (
+              <CommandEmpty>No results found.</CommandEmpty>
+            )}
+            {songs.map((song: Song) => {
+              return (
+                <CommandItem
+                  key={song.songId}
+                  value={songToLabel(song)}
+                  /* I have no idea why onSelect isn't
+                   * registering mouse clicks as selection.
+                   * Just use both :P */
+                  onSelect={() => handleSelect(song)}
+                  onMouseDown={() => handleSelect(song)}
+                >
+                  {songToLabel(song)}
+                </CommandItem>
+              );
+            })}
+          </CommandList>
+        )}
+      </Command>
     </div>
   );
 }
 
-export default SearchBarSection;
+export function SearchBarSection() {
+  const { selectedSong } = useSelectedSong();
+  const startingInputValue = selectedSong
+    ? songToLabel(selectedSong)
+    : undefined;
+
+  return (
+    <div className="py-8 w-full max-w-4xl">
+      <div className="w-1/2">
+        <SearchBar startingInputValue={startingInputValue} />
+      </div>
+    </div>
+  );
+}
