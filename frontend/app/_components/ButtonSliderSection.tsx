@@ -100,7 +100,7 @@ export function SongSlider({
         <TooltipProvider>
           <Tooltip disableHoverableContent={true}>
             <TooltipTrigger
-              className="transition-all duration-300 hover:scale-105 hover:text-foreground cursor-pointer"
+              className="transition-all duration-300 cursor-pointer hover:scale-105 hover:text-foreground"
               onMouseDown={() =>
                 setParameterData({
                   parameter: parameter,
@@ -118,7 +118,7 @@ export function SongSlider({
               </div>
             </TooltipTrigger>
             <TooltipContent sideOffset={8} className="max-w-1/2">
-              <p className="text-lg w-full text-pretty">
+              <p className="w-full text-lg text-pretty">
                 <b>Locks</b> sliders in place. When <b>unlocked</b>, sliders
                 will automatically snap to the input song&apos;s values.
               </p>
@@ -130,12 +130,12 @@ export function SongSlider({
         {/* Only show icon when tooltip !== null*/}
         {tooltip !== null && (
           <TooltipProvider>
-            <Tooltip>
+            <Tooltip disableHoverableContent={true}>
               <TooltipTrigger>
                 <CircleHelpIcon size={18} className="text-muted-foreground" />
               </TooltipTrigger>
               <TooltipContent
-                sideOffset={4}
+                sideOffset={8}
                 className="p-2 max-w-lg translate-y-3 w-fit text-pretty"
               >
                 {tooltip}
