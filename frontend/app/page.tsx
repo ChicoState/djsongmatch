@@ -10,7 +10,7 @@ import { useSelectedSong } from "@/lib/hooks";
 function NoSongSelected() {
   return (
     <main className="flex justify-center items-center h-1/2">
-      <div className="flex flex-col justify-center items-center w-1/2 gap-4">
+      <div className="flex flex-col gap-4 justify-center items-center w-1/2">
         <h1>First, please select a song to generate a recommendation for!</h1>
         <SearchBar />
       </div>
@@ -18,7 +18,7 @@ function NoSongSelected() {
   );
 }
 
-export function App() {
+function App() {
   const { selectedSong } = useSelectedSong();
   if (selectedSong == undefined) {
     return <NoSongSelected />;
