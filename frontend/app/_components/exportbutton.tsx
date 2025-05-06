@@ -1,9 +1,8 @@
-import { Button } from "@/components/ui/button";
-import Help from "./Help";
-import SettingsDrawer from "./SettingsDrawer"; // import the drawer
-import ExportButton from "./exportbutton";
+"use client";
 
-export default function TopNav() {
+import { Button } from "@/components/ui/button";
+
+export default function ExportButton() {
   const handleDownload = () => {
     const blob = new Blob(["hello"], { type: "text/plain" });
     const url = URL.createObjectURL(blob);
@@ -24,17 +23,8 @@ export default function TopNav() {
     URL.revokeObjectURL(url);
   };
   return (
-    <div>
-      {/* Top Navigation Bar */}
-      <nav className="flex justify-between items-center p-4 font-semibold border-b border-border">
-        <h1 className="text-3xl">DJ Song Match</h1>
-        <div className="flex gap-4 items-center">
-          <ExportButton />
-          <Help />
-          <Button variant="outline">Log in</Button>
-          <SettingsDrawer />
-        </div>
-      </nav>
-    </div>
+    <Button variant="default" onClick={() => handleDownload()}>
+      Export
+    </Button>
   );
 }

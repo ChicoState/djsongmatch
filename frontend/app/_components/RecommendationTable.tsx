@@ -62,6 +62,7 @@ export default function RecommendationTable() {
       });
     },
     enabled: false,
+    staleTime: 0,
   });
 
   const handleGenerateButtonClicked = useCallback(() => {
