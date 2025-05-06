@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/command";
 import type { Song } from "@/db/schema";
 import {
+  Parameter,
   ParameterData,
   useDebounce,
   useParameter,
@@ -27,13 +28,21 @@ function songToLabel(song: Song) {
 const updateParameter = (
   song: Song,
   setter: (data: ParameterData) => void,
-  paramData?: ParameterData,
+  parameter: Parameter,
+  paramData: ParameterData | undefined,
 ) => {
-  if (paramData === undefined) return;
+  if (paramData === undefined) {
+    setter({
+      parameter: parameter,
+      sliderValue: song[parameter],
+      locked: false,
+    });
+    return;
+  }
   if (paramData.locked) return;
   setter({
-    parameter: paramData.parameter,
-    sliderValue: song[paramData.parameter],
+    parameter: parameter,
+    sliderValue: song[parameter],
     locked: paramData.locked ?? false,
   });
 };
@@ -101,14 +110,19 @@ export function SearchBar({
     (song: Song) => {
       setInputValue(songToLabel(song));
       setSong(song);
-      updateParameter(song, setAcousticness, acousticness);
-      updateParameter(song, setDanceability, danceability);
-      updateParameter(song, setEnergy, energy);
-      updateParameter(song, setInstrumentalness, instrumentalness);
-      updateParameter(song, setLiveness, liveness);
-      updateParameter(song, setLoudness, loudness);
-      updateParameter(song, setSpeechiness, speechiness);
-      updateParameter(song, setValence, valence);
+      updateParameter(song, setAcousticness, "acousticness", acousticness);
+      updateParameter(song, setDanceability, "danceability", danceability);
+      updateParameter(song, setEnergy, "energy", energy);
+      updateParameter(
+        song,
+        setInstrumentalness,
+        "instrumentalness",
+        instrumentalness,
+      );
+      updateParameter(song, setLiveness, "liveness", liveness);
+      updateParameter(song, setLoudness, "loudness", loudness);
+      updateParameter(song, setSpeechiness, "speechiness", speechiness);
+      updateParameter(song, setValence, "valence", valence);
     },
     [
       acousticness,
