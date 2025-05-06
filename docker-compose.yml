@@ -9,14 +9,16 @@ services:
     depends_on:
       - backend
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
+      - ./frontend:/app/frontend
+      - /app/frontend/node_modules
+      - ./.env:/app/.env
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-      - WATCHPACK_POLLING=true
-    env_file: ".env"
-    command: ["sh", "-c", "pnpm i && pnpm dev"]
+    command: ["sh", "-c", "pnpm dev"]
+    networks:
+      - app-network
+
   backend:
     build:
       context: .
@@ -24,6 +26,25 @@ services:
     container_name: python_backend
     ports:
       - "5001:5001"
+    volumes:
+      - ./.env:/app/.env
     environment:
       - FLASK_ENV=development
-    env_file: ".env"
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx_proxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - frontend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
