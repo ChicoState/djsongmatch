@@ -22,11 +22,16 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CircleMinusIcon, GripVerticalIcon, TrashIcon } from "lucide-react";
+import {
+  CircleMinusIcon,
+  GripVerticalIcon,
+  SearchIcon,
+  TrashIcon,
+} from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import TitleArtist from "./TitleArtist";
 import TrashConfirm from "./TrashConfirm";
-import { usePlaylist } from "@/lib/hooks";
+import { usePlaylist, useSelectedSong } from "@/lib/hooks";
 
 function SortableSongRow({
   song,
@@ -40,6 +45,7 @@ function SortableSongRow({
   /**
    * A row in the Playlist table that can be reordered by dragging it.
    */
+  const { setSelectedSong } = useSelectedSong();
 
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
@@ -70,6 +76,22 @@ function SortableSongRow({
       </TableCell>
       <TableCell className="text-right">{song.camelotKeyStr}</TableCell>
       <TableCell className="text-right">{Math.round(song.tempo)}</TableCell>
+      <TableCell className="pr-4 pl-6">
+        <Tooltip disableHoverableContent={true}>
+          <TooltipTrigger>
+            <SearchIcon
+              onMouseDown={() => {
+                console.log("Just set song from playlist");
+                setSelectedSong(song);
+              }}
+              className="transition-all duration-200 cursor-pointer hover:scale-110 text-muted-foreground hover:text-muted-foreground/80"
+            />
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={8}>
+            <p className="text-lg">Use as input song</p>
+          </TooltipContent>
+        </Tooltip>
+      </TableCell>
       <TableCell className="pr-4 pl-6">
         <Tooltip disableHoverableContent={true}>
           <TooltipTrigger>
@@ -157,6 +179,7 @@ export default function PlaylistTable() {
                 <TableHead className="font-bold">Track</TableHead>
                 <TableHead className="font-bold text-right">Key</TableHead>
                 <TableHead className="font-bold text-right">BPM</TableHead>
+                <TableHead className="pr-4 pl-6 w-[16px]" />
                 <TableHead className="pr-4 pl-6 w-[16px]">
                   {playlist.length > 0 && (
                     <Tooltip disableHoverableContent={true}>

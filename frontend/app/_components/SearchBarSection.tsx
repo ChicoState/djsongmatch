@@ -1,7 +1,13 @@
 "use client";
 
 import "@/app/globals.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   Command,
@@ -34,6 +40,13 @@ export function SearchBar({
 
   /* What the user has selected from the search results */
   const { selectedSong: song, setSelectedSong: setSong } = useSelectedSong();
+
+  const deferredSong = useDeferredValue(song);
+  useEffect(() => {
+    if (!song || !deferredSong) return;
+    if (song.songId === deferredSong.songId) return;
+    setInputValue(songToLabel(song));
+  }, [song, deferredSong]);
 
   /* Second param of useDebounce is how many milliseconds
    * should the input wait since the user stopped typing
