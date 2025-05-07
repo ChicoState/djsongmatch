@@ -1,144 +1,102 @@
-import logging
+"""
+Song API Routes
 
+Provides endpoints for song retrieval and recommendations.
+"""
+
+import logging
 from flask import Blueprint, jsonify, request
 from sqlalchemy.exc import SQLAlchemyError
-# from backend.api.decorators import internal_only  # TODO - create decorators.py
-from backend.api.database.models import Song
-from backend.api.services.song_service import SongService
-from backend.api.services.camelot_keys_service import CamelotKeysService
 
+from backend.api.services.song_service import SongService, RecommendationService
+
+# Configure logger
+logger = logging.getLogger(__name__)
+
+# Create a blueprint for the songs API
 songs_bp = Blueprint('songs', __name__)
 
-def _serialize_song(song: Song):
-    # @internal_only # TODO - create decorators.py to restrict route for internal use only
-    """Convert Song model to API response format"""
-    return {
-        'songId': song.song_id,
-        'title': song.title,
-        'artist': song.artist,
-        'tempo': song.tempo,
-        'camelotKeyStr': song.camelot_key.key_str if song.camelot_key else None,
-        'popularity': song.popularity,
-        'duration': song.duration,
-        'energy': song.energy,
-        'loudness': song.loudness,
-        'danceability': song.danceability
-        # can modify if needed
-    }
 
 @songs_bp.route('/', methods=['GET'])
-# @internal_only # TODO - create decorators.py to restrict route for internal use only
 def get_all_songs():
-    """Get all songs (for debugging/admin)"""
+    """Get all songs (for debugging/admin purposes)"""
     try:
-        songs = SongService.get_songs()
-        return jsonify([_serialize_song(song) for song in songs])
+        limit = request.args.get("limit", default=100, type=int)
+        songs = SongService.get_songs(limit=limit)
+        return jsonify([SongService.serialize_song(song) for song in songs])
     except SQLAlchemyError as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"Database error retrieving songs: {e}")
+        return jsonify({'error': 'Database error'}), 500
 
 @songs_bp.route('/<int:song_id>', methods=['GET'])
 def get_song(song_id: int):
-    """Get a specific song"""
+    """Get a specific song by ID"""
     try:
         song = SongService.get_song(song_id)
         if not song:
             return jsonify({'error': 'Song not found'}), 404
         
-        response = _serialize_song(song)
-        return jsonify(response)
+        return jsonify(SongService.serialize_song(song))
     except SQLAlchemyError as e:
-        return jsonify({'error': str(e)}), 500
+        logger.error(f"Database error retrieving song {song_id}: {e}")
+        return jsonify({'error': 'Database error'}), 500
 
 @songs_bp.route('/<int:song_id>/recommendations', methods=['GET'])
 def get_song_recommendations(song_id: int):
-    """Get recommended songs based on clustering with compatible keys and similar BPM"""
-
-    # Get contrast adjustments from query parameters (default is 0.0)
+    """Get DJ-optimized song recommendations"""
+    # Get parameters
     danceability = request.args.get("danceability", type=float)
     energy = request.args.get("energy", type=float)
     loudness = request.args.get("loudness", type=float)
+    tempo_tolerance = request.args.get("tempo_tolerance", default=4.0, type=float)
     start_year = request.args.get("start_year", default=0, type=int)
-    end_year = request.args.get("end_year", default=10000, type=int)
-    tempo_range = request.args.get("tempo_range", type=int)
+    end_year = request.args.get("end_year", default=3000, type=int)
     limit = request.args.get("limit", default=50, type=int)
-
-    # For debugging purposes, could be removed
-    for param in ["danceability", "energy", "loudness"]:
-        if request.args.get(param) is None:
-            logging.info(f"Did not find {param} in request.args")
-        else:
-            logging.info(
-                f"Found: {param} in request.args with value of: {request.args[param]}"
-            )
-
-    if not isinstance(tempo_range, (int, float)):
-        tempo_range = 20  # Default value
-        print(f"Warning: Invalid tempo_range, using default {tempo_range}")
 
     try:
         base_song = SongService.get_song(song_id)
         if not base_song:
             return jsonify({'error': 'Base song not found'}), 404
         
-        if not isinstance(base_song.tempo, (int, float)):
-            raise ValueError("Base song tempo must be a number")
+        # Check that FAISS index exists
+        try:
+            RecommendationService._load_assets()
+        except Exception as e:
+            logger.error(f"Failed to load FAISS index: {e}")
+            return jsonify({'error': 'Failed to load recommendation engine', 'details': str(e)}), 500
         
-        recommendations = SongService.get_recommendations(
+        
+        # Get recommendations
+        recommendations = RecommendationService.get_similar_songs(
             base_song_id=song_id,
+            tempo_tolerance=tempo_tolerance,
+            start_year=start_year,
+            end_year=end_year,
             danceability=danceability,
             energy=energy,
             loudness=loudness,
-            start_year=start_year,
-            end_year=end_year,
-            tempo_range=tempo_range,
             limit=limit
         )
-        print(f"Found {len(recommendations)} recommendations for song {song_id}")
-        for i, song in enumerate(recommendations[:3]):  # Print first 3
-            print(f"Rec {i+1}: {song_id} {song.title} by {song.artist} (Cluster: {song.cluster})")
 
-        # Add compatibility type to each recommendation
-        compatible_keys = {
-            k['id']: k['compatibility_type']
-            for k in CamelotKeysService.get_compatible_keys(base_song.camelot_key_id, as_dict=True)
-        }
-        
+
+
+        logger.info(f"Found {len(recommendations)} recommendations for song {song_id}")
+        for i, rec in enumerate(recommendations[:3]):  # Print first 3
+            song = rec['song']  # Access the song object inside the recommendation
+            logger.info(f"Rec {i+1}: {song_id} {song.title} by {song.artist}")
+
+        # Format the response
         serialized = []
-        for song in recommendations:
-            song_data = _serialize_song(song)
-            song_data['compatibility_type'] = compatible_keys.get(song.camelot_key_id)
+        for rec in recommendations:
+            song_data = SongService.serialize_song(rec['song'])
+            song_data['similarity'] = rec['similarity']
+            song_data['compatibilityType'] = rec['compatibility_type']
             serialized.append(song_data)
 
         return jsonify(serialized)
-    except SQLAlchemyError as e:
-        return jsonify({'error': str(e)}), 500
-
-# May not need this...
-# @song_bp.route('/', methods=['POST'])
-# def add_song():
-#     data = request.get_json()
-#     new_song = create_song(
-#         song_id=data['Song_ID'],
-#         title=data['Track'],
-#         artist=data['Artist'],
-#         year=data['Year'],
-#         duration=data['Duration'],
-#         time_signature=data['Time_Signature'],
-#         camelot_key_id=data['Camelot_Key'],
-#         tempo=data['Tempo'],
-#         danceability=data['Danceability'],
-#         energy=data['Energy'],
-#         loudness=data['Loudness'],
-#         loudness_dB=data['Loudness_dB'],
-#         speechiness=data['Speechiness'],
-#         acousticness=data['Acousticness'],
-#         instrumentalness=data['Instrumentalness'],
-#         liveness=data['Liveness'],
-#         valence=data['Valence'],
-#         popularity=data['Popularity'],
-#         genre=data['Genre']
-#     )
-#     return jsonify({
-#         'id': new_song.song_id,
-#         'message': 'Song created successfully'
-#     }), 201
+    except ValueError as e:
+        logger.error(f"Value error in recommendations: {str(e)}")
+        return jsonify({'error': str(e)}), 400
+    except Exception as e:
+        logger.exception(f"Error getting recommendations for song {song_id}")
+        return jsonify({'error': 'Server error', 'details': str(e)}), 500
