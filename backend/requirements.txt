@@ -10,3 +10,5 @@ flask_cors
 psycopg2-binary
 scikit-learn
 sqlalchemy
+faiss-cpu
+pytest
