@@ -140,13 +140,17 @@ function SliderArea() {
       <SongSlider
         parameter="energy"
         defaultValue={0.5}
-        tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
+        tooltip="Energy represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy."
       />
-      <SongSlider parameter="loudness" defaultValue={0.42} tooltip={null} />
+      <SongSlider
+        parameter="loudness"
+        defaultValue={0.42}
+        tooltip="Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude)"
+      />
       <SongSlider
         parameter="danceability"
         defaultValue={0.69}
-        tooltip="short"
+        tooltip="Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity"
       />
     </section>
   );
