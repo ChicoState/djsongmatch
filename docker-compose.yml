@@ -11,11 +11,11 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
+       - /app/frontend/.next
       - ./.env:/app/.env
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_API_URL=http://backend:5001
-    command: ["sh", "-c", "pnpm dev"]
     networks:
       - app-network
 

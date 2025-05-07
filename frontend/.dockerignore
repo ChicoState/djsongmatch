@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+dist
+.git
+.github
+.vscode
+**/*.log
+**/.DS_Store
+**/*.md
+.env*
+.vercel
+.turbo
+.cache
+*.pem
+.pnpm-store
