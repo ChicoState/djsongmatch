@@ -11,6 +11,7 @@ services:
     volumes:
       - ./frontend:/app/frontend
       - /app/frontend/node_modules
+       - /app/frontend/.next
       - ./.env:/app/.env
     environment:
       - NODE_ENV=development
@@ -25,7 +26,6 @@ services:
       - NEXT_PUBLIC_FIREBASE_APP_ID=${NEXT_PUBLIC_FIREBASE_APP_ID}
       - WATCHPACK_POLLING=true
       
-    command: ["sh", "-c", "pnpm dev"]
     networks:
       - app-network
 
