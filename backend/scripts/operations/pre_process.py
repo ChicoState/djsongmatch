@@ -1,16 +1,40 @@
+"""
+Data Preprocessing Operations
+
+Transforms raw song data into a normalized format ready for database seeding and model training.
+This module handles:
+    - Feature normalization via quantile scaling
+    - Musical key mappings to Camelot wheel notation
+    - Human-readable key notation
+
+This module is primarily used by the manage_data.py CLI, but the core
+functions can also be imported and used programmatically.
+
+Usage:
+    # From manage_data.py
+    from backend.scripts.operations.pre_process import process_data
+    process_data(input_path='input.csv', output_path='output.csv')
+"""
+
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
+import logging
+from typing import Optional
 from pathlib import Path
 
-BACKEND_ROOT = Path(__file__).parent.parent
-CSV_INPUT = BACKEND_ROOT / "assets" / "ClassicHit.csv"
-CSV_OUTPUT = BACKEND_ROOT / "assets" / "Processed_ClassicHit.csv"
+# Import project constants
+from backend.constants import (
+    AUDIO_FEATURES, 
+    RAW_CSV_PATH,
+    PROCESSED_CSV_PATH
+)
 
-FEATURES = ['Danceability', 'Energy', 'Loudness', 'Speechiness', 'Acousticness', 
-        'Instrumentalness', 'Liveness', 'Valence']
+# Configure logging
+logger = logging.getLogger(__name__)
 
+# Convert lowercase feature names to title case for CSV columns
+FEATURES = [feature.capitalize() for feature in AUDIO_FEATURES]
 
-def uniform_quantile_scale(df):
+def uniform_quantile_scale(df: pd.DataFrame) -> pd.DataFrame:
     '''
     Transforms numerical features to have a uniform distribution in the range [0, 1] using rank-based quantile scaling.
 
@@ -20,9 +44,8 @@ def uniform_quantile_scale(df):
 
     If a feature has too few unique values to be quantile-binned into 100 bins, it falls back to percentile ranking.
 
-    Parameters:
+    Args:
         df (pd.DataFrame): A DataFrame containing the original features.
-
     Returns:
         pd.DataFrame: A new DataFrame with the specified features transformed into a uniform [0, 1] distribution.
     '''
@@ -37,7 +60,7 @@ def uniform_quantile_scale(df):
     return df_rank_q
 
 
-def add_camelot_key(df):
+def add_camelot_key(df: pd.DataFrame) -> pd.DataFrame:
     '''
     Function to add a new column 'Camelot_Key' to the DataFrame based on the 'Key' and 'Mode' columns.
     The Camelot key is a system used by DJs to mix tracks harmonically. They are typically represented as
@@ -46,7 +69,11 @@ def add_camelot_key(df):
     relative order.
     Ex: Camelot Key 1A is represented as 1; Camelot Key 1B is represented as 13. Camelot Key 2A is represented as 2;
     Camelot Key 2B is represented as 14, etc.
-    Returns the DataFrame with the new 'Camelot_Key' column.
+
+    Args:
+        df (pd.DataFrame): DataFrame containing 'Key' and 'Mode' columns.
+    Returns:
+        pd.DataFrame: DataFrame with the new 'Camelot_Key' column.
     '''
     
     # Mapping of musical keys to Camelot keys based on mode (minor/major)
@@ -91,7 +118,19 @@ def add_camelot_key(df):
     
     return df
 
-def add_key_string(df):
+def add_key_string(df: pd.DataFrame) -> pd.DataFrame:
+    '''
+    Adds a human-readable key notation column (e.g., "C Maj", "A min").
+
+    Creates a 'Key_String' column by mapping numeric key and mode values to 
+    their standard music notation. This makes the dataset more readable for
+    musicians and DJs.
+
+    Args:
+        df (pd.DataFrame): DataFrame with 'Key' and 'Mode' columns
+    Returns:
+        pd.DataFrame: DataFrame with added 'Key_String' column
+    '''
     
     key_map = {
         0: 'C',
@@ -118,20 +157,41 @@ def add_key_string(df):
 
     return df
 
-def main():
+def process_data(input_path: Optional[str] = None, output_path: Optional[str] = None) -> pd.DataFrame:
+    """
+    Process raw CSV data into a normalized format suitable for database loading and model training.
+    
+    Args:
+        input_path: Path to input CSV file (uses default from constants if None)
+        output_path: Path to output processed CSV file (uses default from constants if None)
+    Returns:
+        The processed DataFrame
+    """
+    # Use default paths if not specified
+    if input_path is None:
+        input_path = RAW_CSV_PATH
+    if output_path is None:
+        output_path = PROCESSED_CSV_PATH
+        
+    logger.info(f"Processing data from {input_path}")
+    
     # Read the CSV file
-    df = pd.read_csv(CSV_INPUT)
+    df = pd.read_csv(input_path)
+    logger.info(f"Loaded {len(df)} songs from CSV")
 
     # Keep the original Loudness column, which is in dB, but rename it
     df['Loudness_dB'] = df['Loudness']
 
     # Apply quantile scale transformation
+    logger.info("Applying uniform quantile scaling to audio features")
     df = uniform_quantile_scale(df)
 
     # Add the Camelot key
+    logger.info("Adding Camelot wheel key notation")
     df = add_camelot_key(df)
 
     # Add the Key_String column
+    logger.info("Adding human-readable key notation")
     df = add_key_string(df)
 
     # Add Song_ID column
@@ -143,13 +203,8 @@ def main():
              'Loudness_dB', 'Speechiness', 'Acousticness', 'Instrumentalness', 'Liveness', 'Valence', 
              'Popularity', 'Genre']]
     
-    # print(df[['Song_ID', 'Track', 'Artist', 'Time_Signature', 'Key', 'Mode', 
-    #          'Key_String', 'Camelot_Key', 'Loudness', 'Loudness_dB']][df['Mode']==1].head())
-    # print(df[['Song_ID', 'Track', 'Artist', 'Time_Signature', 'Key', 'Mode', 
-    #          'Key_String', 'Camelot_Key', 'Loudness', 'Loudness_dB']][df['Mode']==0].head())
-
-    # Save the processed DataFrame to a new CSV file
-    df.to_csv(CSV_OUTPUT, index=False)
-
-if __name__ == "__main__":
-    main()
+    # Save the processed DataFrame to CSV
+    df.to_csv(output_path, index=False)
+    logger.info(f"Processed data saved to {output_path} ({len(df)} songs)")
+    
+    return df

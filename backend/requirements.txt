@@ -8,6 +8,7 @@ matplotlib
 numpy
 pandas
 flask_cors
+faiss-cpu
 psycopg2-binary
 scikit-learn
 sqlalchemy

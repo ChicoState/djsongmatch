@@ -4,10 +4,7 @@ import { Song } from "@/db/schema";
 import { useLocalStorage } from "@uidotdev/usehooks";
 import { useEffect, useState } from "react";
 import { SongWithUuid } from "./utils";
-import {
-  Parameter,
-  ParameterValues,
-} from "@/app/_components/ButtonSliderSection";
+import { Parameter } from "@/app/_components/ButtonSliderSection";
 
 export function useDebounce<T>(value: T, delay: number) {
   /**
@@ -47,4 +44,16 @@ export function usePlaylist() {
 
 export function useParameter(parameter: Parameter) {
   return useLocalStorage<number | undefined>(`slider.${parameter}`, undefined);
+}
+
+export function useYearFilter() {
+  const [startYear, setStartYear] = useLocalStorage<number | undefined>(
+    "yearFilter.startYear",
+    undefined,
+  );
+  const [endYear, setEndYear] = useLocalStorage<number | undefined>(
+    "yearFilter.endYear",
+    undefined,
+  );
+  return { startYear, setStartYear, endYear, setEndYear };
 }

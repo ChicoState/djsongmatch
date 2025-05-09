@@ -19,15 +19,26 @@ import { CirclePlusIcon } from "lucide-react";
 import { getSongRecommendations } from "../actions";
 import TitleArtist from "./TitleArtist";
 import { useCallback, useEffect } from "react";
-import { usePlaylist, useSelectedSong, useParameter } from "@/lib/hooks";
+import {
+  usePlaylist,
+  useSelectedSong,
+  useParameter,
+  useYearFilter,
+} from "@/lib/hooks";
 
 export default function RecommendationTable() {
   const { selectedSong } = useSelectedSong();
   const { playlist, setPlaylist } = usePlaylist();
 
-  const [danceability] = useParameter("Danceability");
-  const [energy] = useParameter("Energy");
-  const [loudness] = useParameter("Loudness");
+  const [danceability] = useParameter("danceability");
+  const [energy] = useParameter("energy");
+  const [loudness] = useParameter("loudness");
+  const [speechiness] = useParameter("speechiness");
+  const [acousticness] = useParameter("acousticness");
+  const [instrumentalness] = useParameter("instrumentalness");
+  const [liveness] = useParameter("liveness");
+  const [valence] = useParameter("valence");
+  const { startYear, endYear } = useYearFilter();
 
   const { data: songs = [], refetch } = useQuery({
     queryKey: ["songRecommendations", selectedSong?.songId],
@@ -41,10 +52,20 @@ export default function RecommendationTable() {
       console.log("Fetching recommendations for songId", selectedSong.songId);
 
       /* Get recommendations from Flask */
-      return getSongRecommendations(selectedSong.songId, {
+      const recommendations = getSongRecommendations(selectedSong.songId, {
         danceability: danceability,
         energy: energy,
         loudness: loudness,
+        speechiness: speechiness,
+        acousticness: acousticness,
+        instrumentalness: instrumentalness,
+        liveness: liveness,
+        valence: valence,
+        start_year: startYear,
+        end_year: endYear,
+      });
+      return recommendations.then((data) => {
+        return [selectedSong, ...data];
       });
     },
     enabled: false,

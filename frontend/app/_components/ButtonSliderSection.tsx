@@ -12,9 +12,19 @@ import {
 import { CircleHelpIcon } from "lucide-react";
 import { useState } from "react";
 import { useSelectedSong, useParameter } from "@/lib/hooks";
+import AdvancedFiltersButton from "./AdvancedFilters";
+import { toTitleCase } from "@/lib/utils";
 
 /* All possible parameters for recommendation algorithm */
-export type Parameter = "Danceability" | "Energy" | "Loudness";
+export type Parameter =
+  | "danceability"
+  | "energy"
+  | "loudness"
+  | "speechiness"
+  | "acousticness"
+  | "instrumentalness"
+  | "liveness"
+  | "valence";
 
 function SliderMarker({
   label,
@@ -52,21 +62,23 @@ function SliderMarker({
   );
 }
 
-function SongSlider({
+export function SongSlider({
   parameter,
   label,
   defaultValue,
-  markValue,
   tooltip = null,
 }: {
   parameter: Parameter;
   label?: string;
   defaultValue: number;
-  markValue: number | undefined;
   tooltip?: string | null;
 }) {
   /* If label is null or undefined, use the parameter as the label */
-  label = label ? label : parameter;
+  label = label ? label : toTitleCase(parameter);
+
+  const { selectedSong } = useSelectedSong();
+  console.log(selectedSong);
+  const markValue = selectedSong ? selectedSong[parameter] : undefined;
 
   /* localStorage key is `slider.<sliderLabel>` */
   const [sliderValue, setSliderValue] = useParameter(parameter);
@@ -126,22 +138,19 @@ function SliderArea() {
   return (
     <section className="flex flex-col gap-8 grow">
       <SongSlider
-        parameter="Energy"
+        parameter="energy"
         defaultValue={0.5}
-        markValue={selectedSong.energy}
-        tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
+        tooltip="Energy represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy."
       />
       <SongSlider
-        parameter="Loudness"
+        parameter="loudness"
         defaultValue={0.42}
-        markValue={selectedSong.loudness}
-        tooltip={null}
+        tooltip="Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude)"
       />
       <SongSlider
-        parameter="Danceability"
+        parameter="danceability"
         defaultValue={0.69}
-        markValue={selectedSong.danceability}
-        tooltip="short"
+        tooltip="Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity"
       />
     </section>
   );
@@ -153,9 +162,7 @@ function SliderArea() {
 function ButtonArea() {
   return (
     <section className="flex flex-col gap-4 justify-center items-center min-w-[150px]">
-      <Button variant={"outline"} className="w-full">
-        Advanced Filters
-      </Button>
+      <AdvancedFiltersButton />
       <Button
         className="w-full cursor-pointer"
         onMouseDown={() =>

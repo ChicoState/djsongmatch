@@ -3,8 +3,8 @@
 // do NOT export components in this file, only functions
 
 import { db } from "@/db/index";
-import { type Song, songs } from "@/db/schema";
-import { and, eq, ilike, or } from "drizzle-orm";
+import { camelotKeys, type Song, songs } from "@/db/schema";
+import { and, eq, getTableColumns, ilike, or } from "drizzle-orm";
 
 export async function getSong(songId: number): Promise<Song | undefined> {
   return db.query.songs.findFirst({
@@ -16,6 +16,11 @@ interface FlaskParams {
   danceability?: number;
   energy?: number;
   loudness?: number;
+  speechiness?: number;
+  acousticness?: number;
+  instrumentalness?: number;
+  liveness?: number;
+  valence?: number;
   start_year?: number;
   end_year?: number;
   tempo_range?: number;
@@ -64,8 +69,12 @@ export async function searchSongs(query: string): Promise<Song[]> {
   });
 
   return db
-    .select()
+    .select({
+      ...getTableColumns(songs),
+      camelotKeyStr: camelotKeys.keyStr,
+    })
     .from(songs)
+    .innerJoin(camelotKeys, eq(camelotKeys.id, songs.camelotKeyId))
     .where(and(...conditions))
     .limit(100);
 }
