@@ -11,3 +11,5 @@ faiss-cpu
 psycopg2-binary
 scikit-learn
 sqlalchemy
+faiss-cpu
+pytest
