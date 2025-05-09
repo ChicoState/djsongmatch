@@ -1,104 +1,121 @@
-## Prerequisites
-- If you don't have Docker, make sure you download it first.
-- Make sure Docker is running. If you get a Docker daemon error, it means Docker is not running.
+# 🎧 DJ Song Match
+![Lint](https://github.com/ChicoState/djsongmatch/actions/workflows/lint.yml/badge.svg)
+![Type Check](https://github.com/ChicoState/djsongmatch/actions/workflows/typecheck.yml/badge.svg)
 
-## Option 1: Running both containers for Next.js and Flask backend using Docker Compose
-Now, to build the Docker containers, use the following command. This runs both containers together, linking the services.
+A web-based tool for DJs to curate seamless sets faster.  
+It recommends harmonically compatible song transitions using:
+
+- Camelot wheel key matching
+- BPM-based tempo compatibility
+- Approximate Nearest Neighbors (ANN) using FAISS ML model
+
+**Tech Stack**  
+🧠 Python + Flask + SQLAlchemy (Backend)  
+🎵 Next.js + TypeScript + Tailwind (Frontend)  
+🔍 FAISS (Vector search for song similarity)  
+🐳 Dockerized for easy setup
+
+---
+
+## 🧠 Features in the App
+
+From your frontend, users can:
+
+- **Search for a base song**
+- **View harmonic & tempo-compatible recommendations**
+- Use **interactive sliders** and filters to fine-tune results
+- Toggle dark mode, manage playlists, and get recommendations instantly
+
+The app is designed to be **fast, modular, and DJ-friendly**.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Install [Docker](https://www.docker.com/)
+- Make sure Docker is **running**
+
+---
+
+### 🐳 Option 1: Run Full App with Docker Compose
+
+This starts both the backend and frontend.
+
 ```bash
 docker-compose up --build
 ```
-This runs both containers and you can access the frontend at:
+
+- Frontend: [http://localhost:3000](http://localhost:3000)  
+- Backend: [http://localhost:5001](http://localhost:5001)
+
+**Stop services:**
 ```bash
-http://localhost:3000
-```
-and the backend can be accessed from:
-```bash
-http://localhost:5001
-```
-How to stop both services:
-```
 docker-compose stop
 ```
-How to restart both services:
-```
+
+**Restart services:**
+```bash
 docker-compose restart
 ```
-You can also stop and restart the services individually, by adding the frontend or backend keywords to the commands. Example:
-```
+
+**Stop/restart individual containers:**
+```bash
 docker-compose stop frontend
-docker-compose restart frontend
-docker-compose stop backend
 docker-compose restart backend
 ```
-To remove all unused objects, run the following command. This will clear up some disc space!!
-```
+
+**Clean up unused Docker resources:**
+```bash
 docker system prune
 ```
 
-Troubleshooting:
-If you are having issues with building the container, run:
-```
-docker system prune -af
-docker-compose build --no-cache
-```
+---
 
-## Option 2: Run Only the Frontend
-Build the Next.js container
+### ⚛️ Option 2: Run Only the Frontend (Next.js)
+
 ```bash
 docker build -t djsongmatch .
-```
-Run the Next.js container
-```bash
 docker run -p 3000:3000 djsongmatch
 ```
 
-## Option 3: Run Only the Backend
-Navigate to the backend/ directory
+---
+
+### 🐍 Option 3: Run Only the Backend (Flask)
+
 ```bash
 cd src/app/backend
-```
-Build the Flask container
-```bash
 docker build -t flask-backend .
-```
-Run the Flask container
-```bash
 docker run -p 5001:5001 flask-backend
 ```
 
-Note: Building the containers may take a while. They don't always need to rebuilt, only in specific scenarios which include: modifying Dockerfile, changing dependencies in package.json or package-lock.json, and modifying drizzle.config.ts. Also, if wanting to work on another branch, checkout the branch and then rebuild the container(s).
+---
 
-# Backend Scripts
+## 🛠 Backend Script Usage (Optional Dev Workflows)
 
-## Setting Up a Virtual Environment
-A virtual environment (venv) keeps project dependencies isolated. If you haven't already, create one at the root level:
-
+### Set Up Virtual Environment (For Script Dev)
 ```bash
 python3 -m venv venv
+source venv/bin/activate  # macOS/Linux
+venv\Scripts\activate     # Windows
 ```
 
-Activate your virtual environment:
-```bash
-# For macOS/Linux
-source venv/bin/activate
+Install dependencies:
 
-# For Windows
-venv\Scripts\activate
-```
-
-After activating, install the requirements (only needed when first creating the environment or when dependencies change):
 ```bash
 pip install -r backend/requirements.txt
 ```
 
-## Running Scripts
-Make sure the virtual environment is activated before running backend scripts. Run scripts from the root level using the -m flag, for example:  
+### Run Backend Scripts
+
+Example (from root level):
+
 ```bash
 python3 -m backend.scripts.pre_process_data
 ```
 
-## Deactivating the virtual environment
-When finished, deactivate the virtual environment:
+### Deactivate Environment
 ```bash
 deactivate
 ```
