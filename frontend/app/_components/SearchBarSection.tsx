@@ -11,13 +11,41 @@ import {
   CommandList,
 } from "@/components/ui/command";
 import type { Song } from "@/db/schema";
-import { useDebounce, useSelectedSong } from "@/lib/hooks";
+import {
+  Parameter,
+  ParameterData,
+  useDebounce,
+  useParameter,
+  useSelectedSong,
+} from "@/lib/hooks";
 import { useQuery } from "@tanstack/react-query";
 import { searchSongs } from "../actions";
 
 function songToLabel(song: Song) {
   return `${song.artist} - ${song.title}`;
 }
+
+const updateParameter = (
+  song: Song,
+  setter: (data: ParameterData) => void,
+  parameter: Parameter,
+  paramData: ParameterData | undefined,
+) => {
+  if (paramData === undefined) {
+    setter({
+      parameter: parameter,
+      sliderValue: song[parameter],
+      locked: false,
+    });
+    return;
+  }
+  if (paramData.locked) return;
+  setter({
+    parameter: parameter,
+    sliderValue: song[parameter],
+    locked: paramData.locked ?? false,
+  });
+};
 
 /**
  */
@@ -68,12 +96,54 @@ export function SearchBar({
     }
   }, [inputValue]);
 
+  const [acousticness, setAcousticness] = useParameter("acousticness");
+  const [danceability, setDanceability] = useParameter("danceability");
+  const [energy, setEnergy] = useParameter("energy");
+  const [instrumentalness, setInstrumentalness] =
+    useParameter("instrumentalness");
+  const [liveness, setLiveness] = useParameter("liveness");
+  const [loudness, setLoudness] = useParameter("loudness");
+  const [speechiness, setSpeechiness] = useParameter("speechiness");
+  const [valence, setValence] = useParameter("valence");
+
   const handleSelect = useCallback(
     (song: Song) => {
       setInputValue(songToLabel(song));
       setSong(song);
+      updateParameter(song, setAcousticness, "acousticness", acousticness);
+      updateParameter(song, setDanceability, "danceability", danceability);
+      updateParameter(song, setEnergy, "energy", energy);
+      updateParameter(
+        song,
+        setInstrumentalness,
+        "instrumentalness",
+        instrumentalness,
+      );
+      updateParameter(song, setLiveness, "liveness", liveness);
+      updateParameter(song, setLoudness, "loudness", loudness);
+      updateParameter(song, setSpeechiness, "speechiness", speechiness);
+      updateParameter(song, setValence, "valence", valence);
     },
-    [setSong, setInputValue],
+    [
+      acousticness,
+      danceability,
+      energy,
+      instrumentalness,
+      liveness,
+      loudness,
+      setAcousticness,
+      setDanceability,
+      setEnergy,
+      setInputValue,
+      setInstrumentalness,
+      setLiveness,
+      setLoudness,
+      setSong,
+      setSpeechiness,
+      setValence,
+      speechiness,
+      valence,
+    ],
   );
 
   return (
