@@ -9,22 +9,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { CircleHelpIcon } from "lucide-react";
-import { useState } from "react";
-import { useSelectedSong, useParameter } from "@/lib/hooks";
+import { CircleHelpIcon, LockIcon, LockOpenIcon } from "lucide-react";
+import { useSelectedSong, useParameter, Parameter } from "@/lib/hooks";
 import AdvancedFiltersButton from "./AdvancedFilters";
 import { toTitleCase } from "@/lib/utils";
-
-/* All possible parameters for recommendation algorithm */
-export type Parameter =
-  | "danceability"
-  | "energy"
-  | "loudness"
-  | "speechiness"
-  | "acousticness"
-  | "instrumentalness"
-  | "liveness"
-  | "valence";
 
 function SliderMarker({
   label,
@@ -73,36 +61,71 @@ export function SongSlider({
   defaultValue: number;
   tooltip?: string | null;
 }) {
+  const [parameterData, setParameterData] = useParameter(parameter);
+  const { selectedSong } = useSelectedSong();
+
   /* If label is null or undefined, use the parameter as the label */
   label = label ? label : toTitleCase(parameter);
 
-  const { selectedSong } = useSelectedSong();
-  console.log(selectedSong);
+  /* Where to put the marker */
   const markValue = selectedSong ? selectedSong[parameter] : undefined;
-
-  /* localStorage key is `slider.<sliderLabel>` */
-  const [sliderValue, setSliderValue] = useParameter(parameter);
-
-  const [value, setValue] = useState(sliderValue ?? defaultValue);
 
   function handleValueCommit(newValue: number[]) {
     /* newValue[0] assumes we only have one Thumb on the Slider */
-    setSliderValue(newValue[0]);
+    setParameterData({
+      parameter: parameter,
+      sliderValue: newValue[0],
+      locked: parameterData?.locked ?? false,
+    });
   }
 
   return (
     <div className="flex flex-col gap-2">
       <SliderMarker label="Input Song" markValue={markValue} />
       <Slider
-        value={[value]}
-        onValueChange={(value) => setValue(value[0])}
+        value={[parameterData?.sliderValue ?? defaultValue]}
+        onValueChange={(value) =>
+          setParameterData({
+            parameter: parameter,
+            sliderValue: value[0],
+            locked: parameterData?.locked ?? false,
+          })
+        }
         onValueCommit={handleValueCommit}
         min={0}
         max={1}
         step={0.01}
       />
       <div className="flex overflow-hidden gap-1 items-center">
-        {label}
+        <TooltipProvider>
+          <Tooltip disableHoverableContent={true}>
+            <TooltipTrigger
+              className="transition-all duration-300 hover:scale-105 hover:text-foreground cursor-pointer"
+              onMouseDown={() =>
+                setParameterData({
+                  parameter: parameter,
+                  locked: !parameterData?.locked,
+                  sliderValue: parameterData?.sliderValue ?? defaultValue,
+                })
+              }
+            >
+              <div>
+                {parameterData?.locked ? (
+                  <LockIcon className="text-primary" />
+                ) : (
+                  <LockOpenIcon className="text-muted-foreground" />
+                )}
+              </div>
+            </TooltipTrigger>
+            <TooltipContent sideOffset={8} className="max-w-1/2">
+              <p className="text-lg w-full text-pretty">
+                <b>Locks</b> sliders in place. When <b>unlocked</b>, sliders
+                will automatically snap to the input song&apos;s values.
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+        <label>{label}</label>
 
         {/* Only show icon when tooltip !== null*/}
         {tooltip !== null && (
@@ -140,13 +163,17 @@ function SliderArea() {
       <SongSlider
         parameter="energy"
         defaultValue={0.5}
-        tooltip="This is a really long tooltip. Basically, we got this data from spotify, so we didn't generate the metrics ourselves. We could reference the Spotify API to understand it, tho"
+        tooltip="Energy represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy."
       />
-      <SongSlider parameter="loudness" defaultValue={0.42} tooltip={null} />
+      <SongSlider
+        parameter="loudness"
+        defaultValue={0.42}
+        tooltip="Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude)"
+      />
       <SongSlider
         parameter="danceability"
         defaultValue={0.69}
-        tooltip="short"
+        tooltip="Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity"
       />
     </section>
   );

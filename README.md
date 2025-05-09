@@ -35,6 +35,13 @@ To remove all unused objects, run the following command. This will clear up some
 docker system prune
 ```
 
+Troubleshooting:
+If you are having issues with building the container, run:
+```
+docker system prune -af
+docker-compose build --no-cache
+```
+
 ## Option 2: Run Only the Frontend
 Build the Next.js container
 ```bash

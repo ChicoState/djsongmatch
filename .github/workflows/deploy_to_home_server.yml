@@ -1,0 +1,21 @@
+name: Deploy DJ Song Match to Home Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH on Windows Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST_IP }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.WINDOWS_PASSWORD }}
+          port: 22
+          script: |
+            C:\Users\Madi\deploy-djsongmatch.bat

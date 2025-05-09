@@ -22,22 +22,15 @@ import { useCallback, useEffect } from "react";
 import {
   usePlaylist,
   useSelectedSong,
-  useParameter,
   useYearFilter,
+  useParameters,
 } from "@/lib/hooks";
 
 export default function RecommendationTable() {
   const { selectedSong } = useSelectedSong();
   const { playlist, setPlaylist } = usePlaylist();
 
-  const [danceability] = useParameter("danceability");
-  const [energy] = useParameter("energy");
-  const [loudness] = useParameter("loudness");
-  const [speechiness] = useParameter("speechiness");
-  const [acousticness] = useParameter("acousticness");
-  const [instrumentalness] = useParameter("instrumentalness");
-  const [liveness] = useParameter("liveness");
-  const [valence] = useParameter("valence");
+  const parameters = useParameters();
   const { startYear, endYear } = useYearFilter();
 
   const { data: songs = [], refetch } = useQuery({
@@ -53,14 +46,14 @@ export default function RecommendationTable() {
 
       /* Get recommendations from Flask */
       const recommendations = getSongRecommendations(selectedSong.songId, {
-        danceability: danceability,
-        energy: energy,
-        loudness: loudness,
-        speechiness: speechiness,
-        acousticness: acousticness,
-        instrumentalness: instrumentalness,
-        liveness: liveness,
-        valence: valence,
+        danceability: parameters?.danceability?.sliderValue,
+        energy: parameters?.energy?.sliderValue,
+        loudness: parameters?.loudness?.sliderValue,
+        speechiness: parameters?.speechiness?.sliderValue,
+        acousticness: parameters?.acousticness?.sliderValue,
+        instrumentalness: parameters?.instrumentalness?.sliderValue,
+        liveness: parameters?.liveness?.sliderValue,
+        valence: parameters?.valence?.sliderValue,
         start_year: startYear,
         end_year: endYear,
       });
