@@ -28,21 +28,21 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="bg-white dark:bg-gray-900 p-8 rounded-lg shadow-md w-80">
-        <h2 className="text-2xl font-bold mb-6 text-center">Log In</h2>
+    <div className="flex justify-center items-center min-h-screen bg-background">
+      <div className="p-8 w-80 bg-white rounded-lg shadow-md dark:bg-gray-900">
+        <h2 className="mb-6 text-2xl font-bold text-center">Log In</h2>
         <div className="flex flex-col gap-4">
           <input
             type="email"
             placeholder="Email"
-            className="p-2 border rounded-md bg-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 bg-gray-100 rounded-md border dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <input
             type="password"
             placeholder="Password"
-            className="p-2 border rounded-md bg-gray-100 dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="p-2 bg-gray-100 rounded-md border dark:bg-gray-800 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -51,13 +51,13 @@ export default function LoginPage() {
           </Button>
 
           {/* Show error if there is one */}
-          {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+          {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
         </div>
 
         {/* Sign up link */}
         <div className="mt-6 text-center">
           <p className="text-sm">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <button
               className="text-blue-500 hover:underline"
               onClick={handleSignupRedirect}
