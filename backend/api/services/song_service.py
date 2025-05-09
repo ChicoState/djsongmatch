@@ -261,51 +261,44 @@ class RecommendationService:
         #                   for feature in AUDIO_FEATURES], dtype=np.float32)
         # query_vector = query_vector * weights
         
-        # Search with FAISS - get many more than needed for filtering
+
+        # Search with FAISS – overfetch then filter in bulk
         search_k = min(limit * 20, len(cls._song_ids))
         distances, indices = cls._index.search(query_vector, search_k)
-
-        # Convert similarity scores (smaller distance = more similar)
         similarities = 1.0 / (1.0 + distances[0])
-        
-        # Process and filter results
-        candidates = []
 
-        for idx, similarity in zip(indices[0], similarities):
-            # Get the song ID from our mapping
-            song_id = int(cls._song_ids[idx])
-            
-            # Skip the base song itself
-            if song_id == base_song_id:
-                continue
-            
-            # Get the full song object
-            song = SongService.get_song(song_id)
+        # Build list of (song_id, similarity), exclude base song
+        raw = [
+            (int(cls._song_ids[idx]), similarities[i])
+            for i, idx in enumerate(indices[0])
+            if int(cls._song_ids[idx]) != base_song_id
+        ][:search_k]
+
+        # Bulk-fetch songs from DB
+        ids = [sid for sid, _ in raw]
+        songs = Song.query.filter(Song.song_id.in_(ids)).all()
+        song_map = {s.song_id: s for s in songs}
+
+        # Filter and collect results
+        candidates = []
+        for song_id, sim in raw:
+            song = song_map.get(song_id)
             if not song:
                 continue
-            
-            # Apply filters
             if song.camelot_key_id not in compatible_key_ids:
                 continue
-                
             if not cls._is_compatible_tempo(base_song.tempo, song.tempo, tempo_tolerance):
                 continue
-                
             if song.year < start_year or song.year > end_year:
                 continue
-            
-            # Add to candidates
             candidates.append({
                 'song': song,
-                'similarity': float(similarity),
+                'similarity': float(sim),
                 'compatibility_type': key_compatibility_types.get(song.camelot_key_id)
             })
-            
-            # Stop if we have enough results
             if len(candidates) >= limit:
                 break
-        
-        # Sort by similarity (highest first)
+
+        # Final sort and return
         candidates.sort(key=lambda x: x['similarity'], reverse=True)
-        
-        return candidates[:limit]
+        return candidates
