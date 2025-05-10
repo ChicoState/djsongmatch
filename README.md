@@ -1,6 +1,7 @@
 # 🎧 DJ Song Match
 ![Lint](https://github.com/ChicoState/djsongmatch/actions/workflows/lint.yml/badge.svg)
 ![Type Check](https://github.com/ChicoState/djsongmatch/actions/workflows/typecheck.yml/badge.svg)
+[![Deploy to Production](https://github.com/ChicoState/djsongmatch/actions/workflows/deploy_to_home_server.yml/badge.svg)](https://github.com/ChicoState/djsongmatch/actions/workflows/deploy_to_home_server.yml)
 
 [www.djsongmatch.com](www.djsongmatch.com)
 
