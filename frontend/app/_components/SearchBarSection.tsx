@@ -71,9 +71,12 @@ export function SearchBar({
 
   const deferredSong = useDeferredValue(song);
   useEffect(() => {
+    console.log("useEffect ran");
+    console.log("song", song?.songId);
+    console.log("deferredSong", deferredSong?.songId);
     if (!song || !deferredSong) return;
     if (song.songId === deferredSong.songId) return;
-    setInputValue(songToLabel(song));
+    handleSelect(song);
   }, [song, deferredSong]);
 
   /* Second param of useDebounce is how many milliseconds
