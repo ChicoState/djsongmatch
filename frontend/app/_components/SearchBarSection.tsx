@@ -69,16 +69,6 @@ export function SearchBar({
   /* What the user has selected from the search results */
   const { selectedSong: song, setSelectedSong: setSong } = useSelectedSong();
 
-  const deferredSong = useDeferredValue(song);
-  useEffect(() => {
-    console.log("useEffect ran");
-    console.log("song", song?.songId);
-    console.log("deferredSong", deferredSong?.songId);
-    if (!song || !deferredSong) return;
-    if (song.songId === deferredSong.songId) return;
-    handleSelect(song);
-  }, [song, deferredSong]);
-
   /* Second param of useDebounce is how many milliseconds
    * should the input wait since the user stopped typing
    * before triggering the search. This is to prevent
@@ -161,6 +151,16 @@ export function SearchBar({
       valence,
     ],
   );
+
+  const deferredSong = useDeferredValue(song);
+  useEffect(() => {
+    console.log("useEffect ran");
+    console.log("song", song?.songId);
+    console.log("deferredSong", deferredSong?.songId);
+    if (!song || !deferredSong) return;
+    if (song.songId === deferredSong.songId) return;
+    handleSelect(song);
+  }, [song, deferredSong, handleSelect]);
 
   return (
     <div className="relative w-full h-full">
