@@ -62,12 +62,18 @@ def build_faiss_index():
         # Normalize features for cosine similarity
         X_normalized = (X - feature_stats['mean']) / feature_stats['std']
         
-        # Build the index
+        # Choose a quantizer and cluster count
+        quantizer = faiss.IndexFlatL2(dimension)
+        nlist = 100   
         dimension = len(AUDIO_FEATURES)
-        index = faiss.IndexFlatL2(dimension)  # L2 distance index
+
+        # Build the index & train
+        index = faiss.IndexIVFFlat(quantizer, dimension, nlist, faiss.METRIC_L2)
+        index.train(X_normalized) 
         
-        # Add vectors to the index
+        # Add vectors to the index and tune search speed/accuracy
         index.add(X_normalized)
+        index.nprobe = 10              # how many clusters to search (lower = faster)
         
         # Save the index, song IDs, and feature statistics
         logger.info(f"Saving index to {FAISS_INDEX_PATH}")

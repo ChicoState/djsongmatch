@@ -13,6 +13,9 @@ const eslintConfig = [
         rootDir: "frontend/",
       },
     },
+    rules: {
+      "@next/next/no-html-link-for-pages": "off",
+    },
   }),
 ];
 
