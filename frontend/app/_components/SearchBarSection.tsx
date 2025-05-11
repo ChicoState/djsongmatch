@@ -1,7 +1,13 @@
 "use client";
 
 import "@/app/globals.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useDeferredValue,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 
 import {
   Command,
@@ -145,6 +151,16 @@ export function SearchBar({
       valence,
     ],
   );
+
+  const deferredSong = useDeferredValue(song);
+  useEffect(() => {
+    console.log("useEffect ran");
+    console.log("song", song?.songId);
+    console.log("deferredSong", deferredSong?.songId);
+    if (!song || !deferredSong) return;
+    if (song.songId === deferredSong.songId) return;
+    handleSelect(song);
+  }, [song, deferredSong, handleSelect]);
 
   return (
     <div className="relative w-full h-full">
