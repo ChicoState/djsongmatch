@@ -3,7 +3,7 @@
 ![Type Check](https://github.com/ChicoState/djsongmatch/actions/workflows/typecheck.yml/badge.svg)
 [![Deploy to Production](https://github.com/ChicoState/djsongmatch/actions/workflows/deploy_to_home_server.yml/badge.svg)](https://github.com/ChicoState/djsongmatch/actions/workflows/deploy_to_home_server.yml)
 
-[www.djsongmatch.com](www.djsongmatch.com)
+[www.djsongmatch.com](http://www.djsongmatch.com)
 
 A web-based tool for DJs to curate seamless sets faster.  
 It recommends harmonically compatible song transitions using:
